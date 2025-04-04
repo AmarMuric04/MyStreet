@@ -52,6 +52,9 @@ With the virtual environment activated, install all the required dependencies:
 pip install -r requirements.txt
 ```
 
+Sit there for 2/5/10 minutes, don't worry if there's no UI, as long as it says installing ... It's installing.
+When it's done, it will say "Successfully installed ..."
+
 ```bash
 deactivate
 ```
@@ -72,7 +75,9 @@ python backend\\src\\microblog.py
 python3 backend/src/microblog.py
 ```
 
-## 6. Either run the Toga (Beeware) Frontend or the Kivy Frontend
+## 6. Open up a new terminal.
+
+## 6.5 Either run the Toga (Beeware) Frontend or the Kivy Frontend
 
 - Toga
 
