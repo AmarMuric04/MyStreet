@@ -6,11 +6,6 @@ from app import app, mongo
 from bson import ObjectId
 from flask import jsonify, request
 
-
-@app.route("/")
-def home():
-    return "Hello from Flask and MongoDB!"
-
 # ------------------ AUTH ROUTES ------------------
 
 
@@ -97,8 +92,7 @@ def add_post():
     title = data.get("title")
     text = data.get("text")
     image = data.get("image")  # optional Cloudinary image URL
-    tags = data.get("tags")  # optional list of tags
-    # You can add any extra fields here – e.g., category, location etc.
+    tags = data.get("tags")
 
     if not title or not text:
         return jsonify({"error": "Title and text are required"}), 400

@@ -1,8 +1,5 @@
 import toga
-from backend_api import (  # These should be implemented to call your Flask API endpoints
-    login_api,
-    signup_api,
-)
+from backend_api import login_api, signup_api
 from session import get_token
 from toga.style import Pack
 from toga.style.pack import CENTER, COLUMN, ROW
@@ -12,21 +9,24 @@ class MyBeeWareApp(toga.App):
     def startup(self):
         # Create the main window
         self.main_window = toga.MainWindow(title=self.formal_name, size=(400, 350))
-        # Start with the login page
+        # Check if a session exists
         token = get_token()
         if token:
-            # Optionally, verify the token with your server here
+            # If it does, go to home page
             self.show_home_page()
         else:
+            # if not, go to login page
             self.show_login_page()
         self.main_window.show()
 
     def show_login_page(self, widget=None):
-        # Build the login page layout
+        # login page layout
         login_box = toga.Box(
             style=Pack(direction=COLUMN, margin=20, align_items=CENTER)
         )
-        title = toga.Label("Login", style=Pack(font_size=24, margin_bottom=20))
+        title = toga.Label(
+            "Login", style=Pack(font_size=24, margin_bottom=20, width=350)
+        )
         login_box.add(title)
 
         self.login_email_input = toga.TextInput(
@@ -62,18 +62,20 @@ class MyBeeWareApp(toga.App):
         switch_to_signup = toga.Button(
             "Don't have an account? Sign up",
             on_press=self.show_signup_page,
-            style=Pack(margin=10, font_size=12),
+            style=Pack(margin=10, font_size=12, width=350),
         )
         login_box.add(switch_to_signup)
 
         self.main_window.content = login_box
 
     def show_signup_page(self, widget=None):
-        # Build the signup page layout
+        # signup page layout
         signup_box = toga.Box(
             style=Pack(direction=COLUMN, margin=20, align_items=CENTER)
         )
-        title = toga.Label("Sign Up", style=Pack(font_size=24, margin_bottom=20))
+        title = toga.Label(
+            "Sign Up", style=Pack(font_size=24, margin_bottom=20, width=350)
+        )
         signup_box.add(title)
 
         self.signup_email_input = toga.TextInput(
@@ -112,7 +114,7 @@ class MyBeeWareApp(toga.App):
         switch_to_login = toga.Button(
             "Already have an account? Login",
             on_press=self.show_login_page,
-            style=Pack(margin=10, font_size=12),
+            style=Pack(margin=10, font_size=12, width=350),
         )
         signup_box.add(switch_to_login)
 
@@ -150,14 +152,20 @@ class MyBeeWareApp(toga.App):
     def show_home_page(self, widget=None):
         # Build a simple home page layout
         home_box = toga.Box(style=Pack(direction=COLUMN, margin=20, align_items=CENTER))
-        title = toga.Label("Home Page", style=Pack(font_size=24, margin_bottom=20))
+        title = toga.Label(
+            "Home Page", style=Pack(font_size=24, margin_bottom=20, width=350)
+        )
         home_box.add(title)
 
         logout_button = toga.Button(
             "Log Out",
             on_press=self.show_login_page,
             style=Pack(
-                margin=10, font_size=16, background_color="#f44336", color="white"
+                margin=10,
+                font_size=16,
+                background_color="#f44336",
+                color="white",
+                width=200,
             ),
         )
         home_box.add(logout_button)
@@ -168,5 +176,7 @@ def main():
     return MyBeeWareApp("MyStreet", "com.example.mystreet", icon="icon.png")
 
 
+if __name__ == "__main__":
+    main().main_loop()
 if __name__ == "__main__":
     main().main_loop()

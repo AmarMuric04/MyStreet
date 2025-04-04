@@ -62,7 +62,6 @@ def signup_api(email, password):
 
     try:
         response = requests.post(url, json=payload)
-        # Assuming a successful signup returns a 201 status code
         if response.status_code == 201:
             return {"status": "success", "message": "Signup successful!"}
         else:
