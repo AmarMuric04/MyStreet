@@ -11,11 +11,12 @@ def home():
 def add_message():
     # Get JSON data from the request body
     data = request.get_json()
-    if not data or "message" not in data:
-        return jsonify({"error": "Missing 'message' field"}), 400
+    if not data or "email" not in data or "password" not in data:
+        return jsonify({"error": "Missing fields"}), 400
 
     # Insert the document into the "messages" collection in MongoDB
-    result = mongo.db.messages.insert_one({"message": data["message"]})
+    print(data)
+    result = mongo.db.messages.insert_one({data["email"]: data["password"]})
 
     # Return the inserted document's id as a response
     return jsonify({"inserted_id": str(result.inserted_id)}), 201

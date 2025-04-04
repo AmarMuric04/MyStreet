@@ -7,33 +7,53 @@ from toga.style.pack import CENTER, COLUMN, ROW
 class MyBeeWareApp(toga.App):
     def startup(self):
         # Main box to hold widgets
-        main_box = toga.Box(style=Pack(direction=COLUMN, padding=20, alignment=CENTER))
+        main_box = toga.Box(style=Pack(direction=COLUMN, margin=20, align_items=CENTER))
 
-        # Title label with styling
+        # Title label
         title_label = toga.Label(
-            "BeeWare & Flask Demo",
-            style=Pack(font_size=20, font_weight="bold", padding_bottom=20),
+            "MyStreet",
+            style=Pack(font_size=20, font_weight="bold", margin_bottom=4),
         )
         main_box.add(title_label)
+
+        subtitle_label = toga.Label(
+            "MyStreet is a social media application designed for neighbors to communicate,\n"
+            "share updates, and stay connected. The app will feature a feed similar to Instagram, "
+            "where users can log in, post updates, interact with posts, like, and comment.",
+            style=Pack(font_size=12, color="gray", margin_bottom=20),
+        )
+        main_box.add(subtitle_label)
+
+        # Email input field
+        self.email_input = toga.TextInput(
+            placeholder="Enter your email", style=Pack(width=300, margin_bottom=10)
+        )
+        main_box.add(self.email_input)
+
+        # Password input field
+        self.password_input = toga.TextInput(
+            placeholder="Enter your password", style=Pack(width=300, margin_bottom=10)
+        )
+        main_box.add(self.password_input)
 
         # Status label
         self.status_label = toga.Label(
             "Press the button to send data!",
-            style=Pack(font_size=14, color="grey", padding_bottom=20),
+            style=Pack(font_size=14, color="grey", margin_bottom=20),
         )
         main_box.add(self.status_label)
 
-        # Button box (helps with layout)
+        # Button box
         button_box = toga.Box(
-            style=Pack(direction=ROW, alignment=CENTER, padding_top=10)
+            style=Pack(direction=ROW, align_items=CENTER, margin_top=10)
         )
 
-        # Send Data Button with styling
+        # Send Data Button
         send_button = toga.Button(
             "Send Data",
             on_press=self.send_data,
             style=Pack(
-                padding=10,
+                margin=10,
                 font_size=16,
                 background_color="#4CAF50",
                 color="white",
@@ -45,13 +65,21 @@ class MyBeeWareApp(toga.App):
         main_box.add(button_box)
 
         # Setup main window
-        self.main_window = toga.MainWindow(title=self.formal_name, size=(400, 250))
+        self.main_window = toga.MainWindow(title=self.formal_name, size=(400, 300))
         self.main_window.content = main_box
         self.main_window.show()
 
     def send_data(self, widget):
         url = "http://localhost:5000/add"
-        payload = {"message": "Hello from BeeWare!"}
+        payload = {
+            "email": self.email_input.value.strip(),
+            "password": self.password_input.value.strip(),
+        }
+
+        if not payload["email"] or not payload["password"]:
+            self.status_label.text = "⚠️ Please enter both email and password!"
+            self.status_label.style.color = "red"
+            return
 
         try:
             response = requests.post(url, json=payload)
