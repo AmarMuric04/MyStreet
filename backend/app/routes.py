@@ -155,6 +155,37 @@ def delete_post(post_id):
     return jsonify({"message": "Post deleted"}), 200
 
 
+@app.route("/posts", methods=["GET"])
+def get_posts():
+    # Retrieve all posts from the database
+    posts_cursor = mongo.db.posts.find()
+    posts = []
+    for post in posts_cursor:
+        posts.append(
+            {
+                "post_id": str(post.get("_id")),
+                "user_id": str(post.get("user_id")),
+                "title": post.get("title"),
+                "text": post.get("text"),
+                "image": post.get("image"),
+                "tags": post.get("tags"),
+                "likes": post.get("likes"),
+                "comments": post.get("comments"),
+                "created_at": (
+                    post.get("created_at").isoformat()
+                    if post.get("created_at")
+                    else None
+                ),
+                "updated_at": (
+                    post.get("updated_at").isoformat()
+                    if post.get("updated_at")
+                    else None
+                ),
+            }
+        )
+    return jsonify(posts), 200
+
+
 # ------------------ LIKE ROUTE ------------------
 
 

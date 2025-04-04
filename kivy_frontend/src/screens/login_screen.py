@@ -1,9 +1,10 @@
-from backend_api import login_api
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
+
+from backend_api import login_api
 from session import save_token
 
 
@@ -12,7 +13,7 @@ class LoginScreen(Screen):
         super(LoginScreen, self).__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
         
-        layout.add_widget(Label(text="Login", font_size=24))
+        layout.add_widget(Label(text="Login", font_size=24, color="black"))
         
         self.email_input = TextInput(hint_text="Enter your email", size_hint=(1, None), height=40)
         layout.add_widget(self.email_input)

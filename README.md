@@ -5,10 +5,11 @@
 ### If you're accessing from GitHub:
 
 Clone this repository to your local machine using Git:
-\`\`\`bash
+
+```bash
 git clone ...
 cd MyStreet_template
-\`\`\`
+```
 
 ### If you're accessing from a Zipped file:
 

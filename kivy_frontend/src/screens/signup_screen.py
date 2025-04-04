@@ -1,9 +1,10 @@
-from backend_api import signup_api
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
+
+from backend_api import signup_api
 
 
 class SignupScreen(Screen):
@@ -11,10 +12,11 @@ class SignupScreen(Screen):
         super(SignupScreen, self).__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
         
-        layout.add_widget(Label(text="Sign Up", font_size=24))
+        layout.add_widget(Label(text="Sign Up", font_size=24, color="black"))
         
         self.email_input = TextInput(hint_text="Enter your email", size_hint=(1, None), height=40)
         layout.add_widget(self.email_input)
+        
         
         self.password_input = TextInput(hint_text="Enter your password", password=True, size_hint=(1, None), height=40)
         layout.add_widget(self.password_input)

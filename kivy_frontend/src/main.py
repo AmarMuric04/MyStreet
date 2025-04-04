@@ -1,7 +1,9 @@
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
+
 from screens.home_screen import HomeScreen
 from screens.login_screen import LoginScreen
+from screens.posts_screen import PostsScreen
 from screens.signup_screen import SignupScreen
 from session import get_token
 
@@ -14,6 +16,7 @@ class MyStreetApp(MDApp):
         self.sm.add_widget(LoginScreen(name="login"))
         self.sm.add_widget(SignupScreen(name="signup"))
         self.sm.add_widget(HomeScreen(name="home"))
+        self.sm.add_widget(PostsScreen(name="posts"))
         
         # Start with the home screen if a token exists, otherwise login
         if get_token():
