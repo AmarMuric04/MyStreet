@@ -40,7 +40,7 @@ class LoginScreen(Screen):
         response = login_api(email, password)
         if response.get("status") == "success":
             self.status_label.text = "Login successful!"
-            save_token("dummy_token")  # Set a dummy token; replace with actual token from your API.
+            save_token(response.get("token")) 
             self.manager.current = "home"
         else:
             self.status_label.text = response.get("message", "Login failed.")

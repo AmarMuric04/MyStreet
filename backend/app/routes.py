@@ -5,6 +5,7 @@ import jwt
 from app import app, mongo
 from bson import ObjectId
 from flask import jsonify, request
+from pymongo import DESCENDING
 
 # ------------------ AUTH ROUTES ------------------
 
@@ -26,6 +27,7 @@ def login():
             app.config["SECRET_KEY"],
             algorithm="HS256",
         )
+        print(f"Created a token: {token}")
         # For PyJWT v2.x token is returned as a string, if not decode it.
         if isinstance(token, bytes):
             token = token.decode("utf-8")
@@ -66,7 +68,7 @@ def signup():
 
 
 def get_current_user():
-    token = request.headers.get("Authorization")
+    token = request.headers.get("Authorization").split()[1]
     if not token:
         return None, jsonify({"error": "Token is missing"}), 401
     try:
@@ -158,7 +160,7 @@ def delete_post(post_id):
 @app.route("/posts", methods=["GET"])
 def get_posts():
     # Retrieve all posts from the database
-    posts_cursor = mongo.db.posts.find()
+    posts_cursor = mongo.db.posts.find().sort("created_at", DESCENDING)
     posts = []
     for post in posts_cursor:
         posts.append(

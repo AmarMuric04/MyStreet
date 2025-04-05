@@ -1,0 +1,17 @@
+# MyStreet Release Notes
+
+## 0.0.1 (04 Apr 2025)
+
+* Initial release
+
+## 0.0.2 (04 Apr 2025)
+
+* Add Mock authentication
+* Add JWT authentication
+* Add Session storage
+
+## 0.0.3 (05 Apr 2025)
+
+* Add Posts page
+* Add Creating a post functionaility
+* Add Displaying posts
