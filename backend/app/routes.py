@@ -69,6 +69,7 @@ def signup():
 
 def get_current_user():
     token = request.headers.get("Authorization").split()[1]
+    print(token)
     if not token:
         return None, jsonify({"error": "Token is missing"}), 401
     try:
@@ -159,14 +160,21 @@ def delete_post(post_id):
 
 @app.route("/posts", methods=["GET"])
 def get_posts():
-    # Retrieve all posts from the database
     posts_cursor = mongo.db.posts.find().sort("created_at", DESCENDING)
     posts = []
     for post in posts_cursor:
+        user_id = post.get("user_id")
+        user_email = None
+
+        if user_id:
+            user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+            user_email = user.get("email") if user else None
+
         posts.append(
             {
                 "post_id": str(post.get("_id")),
-                "user_id": str(post.get("user_id")),
+                "user_id": str(user_id),
+                "user_email": user_email,
                 "title": post.get("title"),
                 "text": post.get("text"),
                 "image": post.get("image"),

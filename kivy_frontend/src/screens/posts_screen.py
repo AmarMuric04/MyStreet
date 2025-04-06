@@ -3,54 +3,86 @@ import threading
 
 import requests
 from kivy.clock import Clock
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.textinput import TextInput
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDIconButton, MDRaisedButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.scrollview import MDScrollView
+from kivymd.uix.textfield import MDTextField, MDTextFieldRect
 
 from session import get_token
 
 API_URL = "http://localhost:5000/posts"  # Change if needed
 
-class PostsScreen(Screen):
+class PostsScreen(MDScreen):
     def __init__(self, **kwargs):
         super(PostsScreen, self).__init__(**kwargs)
         # Outer layout for the entire screen
-        outer_layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
+        outer_layout = MDBoxLayout(
+            orientation="vertical", 
+            padding=20, 
+            spacing=10, 
+            size_hint=(None, 1),  
+            width=400  # Maximum width set to 400px
+        )
         self.add_widget(outer_layout)
         
         # Header layout with the Posts title
-        header_layout = BoxLayout(size_hint=(1, None), height=50)
-        header_label = Label(text="Posts", font_size=24, color="black")
+        header_layout = MDBoxLayout(size_hint=(1, None), height=50)
+        header_label = MDLabel(
+            text="Posts",
+            font_style="H5",
+            halign="center",
+            theme_text_color="Custom",
+            text_color=(0, 0, 0, 1)
+        )
         header_layout.add_widget(header_label)
         outer_layout.add_widget(header_layout)
         
         # Input layout for new post creation
-        input_layout = BoxLayout(orientation="vertical", size_hint=(1, None), height=150, spacing=10)
+        input_layout = MDBoxLayout(orientation="vertical", size_hint=(1, None), height=200, spacing=10)
         
-        # Title input
-        self.title_input = TextInput(hint_text="Enter title", multiline=False, size_hint=(1, None), height=40)
+        # Title input using MDTextField
+        self.title_input = MDTextField(
+            hint_text="Enter title",
+            multiline=False,
+            size_hint=(1, None),
+            height=40
+        )
         input_layout.add_widget(self.title_input)
         
-        # Text input
-        self.text_input = TextInput(hint_text="Enter post text", multiline=True, size_hint=(1, None), height=70)
+        # Text input for post content using MDTextFieldRect (multiline)
+        self.text_input = MDTextFieldRect(
+            hint_text="Enter post text",
+            size_hint=(1, None),
+            height=70
+        )
         input_layout.add_widget(self.text_input)
         
-        # Button to post the new post
-        self.post_button = Button(text="Submit Post", size_hint=(1, None), height=40)
+        # Button to post the new post using MDRaisedButton
+        self.post_button = MDRaisedButton(
+            text="Submit Post",
+            size_hint=(1, None),
+            height=40
+        )
         self.post_button.bind(on_press=self.create_post)
         input_layout.add_widget(self.post_button)
         
         outer_layout.add_widget(input_layout)
         
         # Content layout that will contain the posts (or a status message)
-        self.content_layout = BoxLayout(orientation="vertical")
+        self.content_layout = MDBoxLayout(orientation="vertical")
         outer_layout.add_widget(self.content_layout)
         
         # Status label to show messages such as "Fetching posts..."
-        self.status_label = Label(text="Fetching posts...", size_hint=(1, None), height=40)
+        self.status_label = MDLabel(
+            text="Fetching posts...",
+            size_hint=(1, None),
+            height=40,
+            halign="center",
+            theme_text_color="Custom",
+            text_color=(0, 0, 0, 1)
+        )
         self.content_layout.add_widget(self.status_label)
         
         # Schedule fetching posts once the screen is built
@@ -120,27 +152,86 @@ class PostsScreen(Screen):
                 self.status_label.text = f"Error fetching posts: {response.status_code}"
         except Exception as e:
             self.status_label.text = f"Error: {str(e)}"
+            print(e)
     
     def display_posts(self, posts):
         # Clear the content layout (this will remove the status label)
         self.content_layout.clear_widgets()
         
         # Create a scrollable view to hold posts if there are many.
-        scroll = ScrollView(size_hint=(1, 1))
-        posts_layout = BoxLayout(orientation="vertical", size_hint_y=None, spacing=10, padding=10)
+        scroll = MDScrollView(size_hint=(1, 1))
+        posts_layout = MDBoxLayout(orientation="vertical", size_hint_y=None, spacing=10, padding=10)
         posts_layout.bind(minimum_height=posts_layout.setter('height'))
         
         # Iterate through the posts and create a widget for each
         for post in posts:
-            post_box = BoxLayout(orientation="vertical", size_hint_y=None, height=100, padding=5, spacing=5)
+            post_box = MDBoxLayout(orientation="vertical", size_hint_y=None, height=170, padding=5, spacing=5)
             
-            # Title label with bold text
-            title_label = Label(text=post.get("title", "No Title"), bold=True, size_hint_y=None, height=30, color="black")
-            # Text label for post content
-            text_label = Label(text=post.get("text", "No Content"), size_hint_y=None, height=50, color="black")
+            email_label = MDLabel(
+                text=post.get("user_email", "Invalid Email"),
+                bold=True,
+                size_hint_y=None,
+                height=30,
+                theme_text_color="Custom",
+                text_color=(0, 0, 0, 1)
+            )
+            title_label = MDLabel(
+                text=post.get("title", "No Title"),
+                bold=True,
+                size_hint_y=None,
+                height=30,
+                theme_text_color="Custom",
+                text_color=(0, 0, 0, 1)
+            )
+            text_label = MDLabel(
+                text=post.get("text", "No Content"),
+                size_hint_y=None,
+                height=50,
+                theme_text_color="Custom",
+                text_color=(0, 0, 0, 1)
+            )
             
+            post_box.add_widget(email_label)
             post_box.add_widget(title_label)
             post_box.add_widget(text_label)
+            
+            # Create an icons row for like and comment
+            icons_box = MDBoxLayout(orientation="horizontal", size_hint_y=None, height=30, spacing=10)
+            
+            
+            like_button = MDIconButton(
+                icon="heart-outline",
+                icon_size="24sp"
+            )
+            like_count = MDLabel(
+                text="0",
+                size_hint=(None, None),
+                size=(30, 30),
+                halign="center",
+                valign="middle",
+                theme_text_color="Custom",
+                text_color=(0, 0, 0, 1)
+            )
+            comment_button = MDIconButton(
+                icon="comment-outline",
+                icon_size="24sp"
+            )
+            comment_count = MDLabel(
+                text="0",
+                size_hint=(None, None),
+                size=(30, 30),
+                halign="center",
+                valign="middle",
+                theme_text_color="Custom",
+                text_color=(0, 0, 0, 1)
+            )
+            
+            icons_box.add_widget(like_button)
+            icons_box.add_widget(like_count)
+            icons_box.add_widget(comment_button)
+            icons_box.add_widget(comment_count)
+            
+            post_box.add_widget(icons_box)
             posts_layout.add_widget(post_box)
         
         scroll.add_widget(posts_layout)
