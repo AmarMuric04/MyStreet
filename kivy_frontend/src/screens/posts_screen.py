@@ -23,7 +23,7 @@ class PostsScreen(MDScreen):
             padding=20, 
             spacing=10, 
             size_hint=(None, 1),  
-            width=400  # Maximum width set to 400px
+            width=400 
         )
         self.add_widget(outer_layout)
         

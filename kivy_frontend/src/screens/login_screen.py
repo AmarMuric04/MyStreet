@@ -1,49 +1,147 @@
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
-from kivy.uix.textinput import TextInput
+from kivy.clock import Clock
+from kivy.metrics import dp
+from kivy.uix.anchorlayout import AnchorLayout
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDRaisedButton, MDRectangleFlatButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.textfield import MDTextField
 
 from backend_api import login_api
 from session import save_token
 
 
-class LoginScreen(Screen):
+class LoginScreen(MDScreen):
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
         
-        layout.add_widget(Label(text="Login", font_size=24, color="black"))
+        # Use AnchorLayout to center the content
+        anchor_layout = AnchorLayout(anchor_x='center', anchor_y='center')
         
-        self.email_input = TextInput(hint_text="Enter your email", size_hint=(1, None), height=40)
-        layout.add_widget(self.email_input)
+        # Create a BoxLayout with fixed width (400dp) for the login content
+        content_layout = MDBoxLayout(
+            orientation='vertical',
+            padding=20,
+            spacing=20,
+            size_hint_x=None,
+            width=dp(400)
+        )
         
-        self.password_input = TextInput(hint_text="Enter your password", password=True, size_hint=(1, None), height=40)
-        layout.add_widget(self.password_input)
+        content_layout.add_widget(MDLabel(
+            text="[i]MyStreet[/i]", 
+            halign="left",
+            theme_text_color="Primary",
+            font_style="Body1", 
+            markup=True 
+        ))
         
-        self.status_label = Label(text="", font_size=14)
-        layout.add_widget(self.status_label)
+        title_layout = MDBoxLayout(
+            orientation='vertical',
+            padding=20,
+            spacing=50,
+            size_hint_x=None,
+            width=dp(400)
+        )
         
-        login_button = Button(text="Login", size_hint=(1, None), height=40)
-        login_button.bind(on_press=self.on_login)
-        layout.add_widget(login_button)
+        title_layout.add_widget(MDLabel(
+            text="[b]Welcome back![/b]", 
+            halign="left",
+            theme_text_color="Primary",
+            font_style="H3", 
+            markup=True 
+        ))
         
-        switch_to_signup = Button(text="Don't have an account? Sign up", size_hint=(1, None), height=40)
-        switch_to_signup.bind(on_press=self.go_to_signup)
-        layout.add_widget(switch_to_signup)
+        title_layout.add_widget(MDLabel(
+            text="Enter your email & password to continue",  
+            halign="left",
+            padding=4,
+            theme_text_color="Hint",  
+            font_style="Body1",
+            markup=True  
+        ))
         
-        self.add_widget(layout)
+        content_layout.add_widget(title_layout)
+        self.status_label = MDLabel(
+            text="",
+            halign="center",
+            theme_text_color="Error",
+            font_style="Caption"
+        )
+        content_layout.add_widget(self.status_label)
+        
+        self.email_input = MDTextField(
+            hint_text="Enter your email",
+            size_hint_x=1,
+            pos_hint={"center_x": 0.5},
+            mode="rectangle"
+        )
+        content_layout.add_widget(self.email_input)
+        
+        self.password_input = MDTextField(
+            hint_text="Enter your password",
+            password=True,
+            size_hint_x=1,
+            pos_hint={"center_x": 0.5},
+            mode="rectangle",
+        )
+        content_layout.add_widget(self.password_input)
+        
+        login_layout = MDBoxLayout(
+            orientation='vertical',
+            padding=20,
+            spacing=20,
+            size_hint_x=None,
+            width=dp(400)
+        )
+        
+        self.login_button = MDRaisedButton(
+            text="Log In",
+            pos_hint={"center_x": 0.5},
+            size_hint_x=None,  # Disable size_hint_x to set a fixed width
+            width=dp(400),  # Set the width to 400 pixels
+            md_bg_color=[1, 1, 1, 1],
+            text_color=(0, 0, 0, 1),
+        )
+        self.login_button.bind(on_press=self.login_helper)
+        login_layout.add_widget(self.login_button)
+        
+        # Create an MDLabel with clickable 'Sign up' text using markup.
+        switch_to_signup = MDLabel(
+            text="Don't have an account? [ref=signup][u][b]Sign up[/b][/u][/ref]",
+            markup=True,
+            halign="center",
+            theme_text_color="Primary"
+        )
+        switch_to_signup.bind(on_ref_press=self.go_to_signup)
+        login_layout.add_widget(switch_to_signup)
+        
+        content_layout.add_widget(login_layout)
+        
+        # Add the content layout to the anchor layout, centering it on the screen.
+        anchor_layout.add_widget(content_layout)
+        self.add_widget(anchor_layout)
+
+    def login_helper(self, instance):
+        # Set the button text to "Checking..." and schedule the actual login
+        self.login_button.text = "Checking..."
+        # Schedule on_login to run after a small delay, so the UI can update
+        Clock.schedule_once(lambda dt: self.on_login(instance), 0.1)
 
     def on_login(self, instance):
         email = self.email_input.text.strip()
         password = self.password_input.text.strip()
         response = login_api(email, password)
         if response.get("status") == "success":
-            self.status_label.text = "Login successful!"
-            save_token(response.get("token")) 
+            self.status_label.text = ""
+            self.email_input.text = ""
+            self.password_input.text = ""
+            save_token(response.get("token"))
             self.manager.current = "home"
+            self.login_button.text = "Log In"
         else:
             self.status_label.text = response.get("message", "Login failed.")
+            # Reset the button text after showing the error
+            self.login_button.text = "Log In"
 
-    def go_to_signup(self, instance):
+    def go_to_signup(self, instance, value):
         self.manager.current = "signup"

@@ -11,7 +11,9 @@ from session import get_token
 class MyStreetApp(MDApp):
     def build(self):
         self.sm = ScreenManager()
-        
+        self.theme_cls.theme_style = "Dark"
+        # self.theme_cls.theme_style_switch_animation = True
+        # self.theme_cls.theme_style_switch_animation_duration = 0.8 
         # Create and add the screens
         self.sm.add_widget(LoginScreen(name="login"))
         self.sm.add_widget(SignupScreen(name="signup"))
