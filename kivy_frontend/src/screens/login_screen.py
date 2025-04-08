@@ -21,7 +21,6 @@ class LoginScreen(MDScreen):
         # Create a BoxLayout with fixed width (400dp) for the login content
         content_layout = MDBoxLayout(
             orientation='vertical',
-            padding=20,
             spacing=20,
             size_hint_x=None,
             width=dp(400)
@@ -38,7 +37,7 @@ class LoginScreen(MDScreen):
         title_layout = MDBoxLayout(
             orientation='vertical',
             padding=20,
-            spacing=50,
+            spacing=5,
             size_hint_x=None,
             width=dp(400)
         )
@@ -61,18 +60,10 @@ class LoginScreen(MDScreen):
         ))
         
         content_layout.add_widget(title_layout)
-        self.status_label = MDLabel(
-            text="",
-            halign="center",
-            theme_text_color="Error",
-            font_style="Caption"
-        )
-        content_layout.add_widget(self.status_label)
         
         self.email_input = MDTextField(
             hint_text="Enter your email",
             size_hint_x=1,
-            pos_hint={"center_x": 0.5},
             mode="rectangle"
         )
         content_layout.add_widget(self.email_input)
@@ -81,27 +72,26 @@ class LoginScreen(MDScreen):
             hint_text="Enter your password",
             password=True,
             size_hint_x=1,
-            pos_hint={"center_x": 0.5},
             mode="rectangle",
         )
         content_layout.add_widget(self.password_input)
         
         login_layout = MDBoxLayout(
             orientation='vertical',
-            padding=20,
             spacing=20,
             size_hint_x=None,
             width=dp(400)
         )
-        
+
         self.login_button = MDRaisedButton(
             text="Log In",
-            pos_hint={"center_x": 0.5},
-            size_hint_x=None,  # Disable size_hint_x to set a fixed width
-            width=dp(400),  # Set the width to 400 pixels
+            size_hint=(1, None),
+            height=dp(100),
+            halign="center",
             md_bg_color=[1, 1, 1, 1],
             text_color=(0, 0, 0, 1),
         )
+
         self.login_button.bind(on_press=self.login_helper)
         login_layout.add_widget(self.login_button)
         
@@ -132,16 +122,20 @@ class LoginScreen(MDScreen):
         password = self.password_input.text.strip()
         response = login_api(email, password)
         if response.get("status") == "success":
-            self.status_label.text = ""
             self.email_input.text = ""
             self.password_input.text = ""
             save_token(response.get("token"))
             self.manager.current = "home"
             self.login_button.text = "Log In"
         else:
-            self.status_label.text = response.get("message", "Login failed.")
             # Reset the button text after showing the error
             self.login_button.text = "Log In"
+            self.email_input.error = True
+            self.email_input.helper_text = "Invalid credentials"
+            self.email_input.helper_text_mode = "on_error"
+            self.password_input.error = True
+            self.password_input.helper_text = "Invalid credentials"
+            self.password_input.helper_text_mode = "on_error"
 
     def go_to_signup(self, instance, value):
         self.manager.current = "signup"

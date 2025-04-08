@@ -3,6 +3,8 @@ import threading
 
 import requests
 from kivy.clock import Clock
+from kivy.metrics import dp
+from kivy.uix.anchorlayout import AnchorLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDIconButton, MDRaisedButton
 from kivymd.uix.label import MDLabel
@@ -18,6 +20,9 @@ class PostsScreen(MDScreen):
     def __init__(self, **kwargs):
         super(PostsScreen, self).__init__(**kwargs)
         # Outer layout for the entire screen
+        anchor_layout = AnchorLayout(anchor_x='center', anchor_y='center')
+        
+        self.add_widget(anchor_layout)
         outer_layout = MDBoxLayout(
             orientation="vertical", 
             padding=20, 
@@ -25,23 +30,30 @@ class PostsScreen(MDScreen):
             size_hint=(None, 1),  
             width=400 
         )
-        self.add_widget(outer_layout)
         
         # Header layout with the Posts title
         header_layout = MDBoxLayout(size_hint=(1, None), height=50)
         header_label = MDLabel(
-            text="Posts",
+            text="MyStreet Posts",
             font_style="H5",
-            halign="center",
+            bold=True,
             theme_text_color="Custom",
-            text_color=(0, 0, 0, 1)
+            text_color=(1, 1, 1, 1)
         )
         header_layout.add_widget(header_label)
         outer_layout.add_widget(header_layout)
         
+
+        
         # Input layout for new post creation
         input_layout = MDBoxLayout(orientation="vertical", size_hint=(1, None), height=200, spacing=10)
-        
+        cta_text = MDLabel(
+            text="Create a Post",
+            bold=True,
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1)
+        )
+        input_layout.add_widget(cta_text)        
         # Title input using MDTextField
         self.title_input = MDTextField(
             hint_text="Enter title",
@@ -63,7 +75,10 @@ class PostsScreen(MDScreen):
         self.post_button = MDRaisedButton(
             text="Submit Post",
             size_hint=(1, None),
-            height=40
+            height=dp(100),
+            halign="center",
+            md_bg_color=[1, 1, 1, 1],
+            text_color=(0, 0, 0, 1),
         )
         self.post_button.bind(on_press=self.create_post)
         input_layout.add_widget(self.post_button)
@@ -84,6 +99,7 @@ class PostsScreen(MDScreen):
             text_color=(0, 0, 0, 1)
         )
         self.content_layout.add_widget(self.status_label)
+        anchor_layout.add_widget(outer_layout)
         
         # Schedule fetching posts once the screen is built
         Clock.schedule_once(self.fetch_posts, 0)
@@ -171,24 +187,26 @@ class PostsScreen(MDScreen):
                 text=post.get("user_email", "Invalid Email"),
                 bold=True,
                 size_hint_y=None,
-                height=30,
+                height=25,
                 theme_text_color="Custom",
-                text_color=(0, 0, 0, 1)
+                text_color=(1, 1, 1, 1)
             )
             title_label = MDLabel(
                 text=post.get("title", "No Title"),
                 bold=True,
                 size_hint_y=None,
-                height=30,
+                height=25,
                 theme_text_color="Custom",
-                text_color=(0, 0, 0, 1)
+                text_color=(1, 1, 1, 1)
+
             )
             text_label = MDLabel(
                 text=post.get("text", "No Content"),
                 size_hint_y=None,
                 height=50,
                 theme_text_color="Custom",
-                text_color=(0, 0, 0, 1)
+                text_color=(200/255, 200/255, 200/255, 1)
+
             )
             
             post_box.add_widget(email_label)
@@ -196,12 +214,17 @@ class PostsScreen(MDScreen):
             post_box.add_widget(text_label)
             
             # Create an icons row for like and comment
-            icons_box = MDBoxLayout(orientation="horizontal", size_hint_y=None, height=30, spacing=10)
-            
-            
+            icons_box = MDBoxLayout(
+                orientation="horizontal",
+                size_hint_y=None,
+                height=30,
+                spacing=5  # Optional: add some spacing between widgets
+            )
+
             like_button = MDIconButton(
                 icon="heart-outline",
-                icon_size="24sp"
+                icon_size="18sp",  # Reduced icon size
+                pos_hint={"center_y": 0.5}
             )
             like_count = MDLabel(
                 text="0",
@@ -209,12 +232,14 @@ class PostsScreen(MDScreen):
                 size=(30, 30),
                 halign="center",
                 valign="middle",
+                pos_hint={"center_y": 0.5},
                 theme_text_color="Custom",
-                text_color=(0, 0, 0, 1)
+                text_color=(1, 1, 1, 1)
             )
             comment_button = MDIconButton(
                 icon="comment-outline",
-                icon_size="24sp"
+                icon_size="18sp",  # Reduced icon size
+                pos_hint={"center_y": 0.5}
             )
             comment_count = MDLabel(
                 text="0",
@@ -222,10 +247,11 @@ class PostsScreen(MDScreen):
                 size=(30, 30),
                 halign="center",
                 valign="middle",
+                pos_hint={"center_y": 0.5},
                 theme_text_color="Custom",
-                text_color=(0, 0, 0, 1)
+                text_color=(1, 1, 1, 1)
             )
-            
+
             icons_box.add_widget(like_button)
             icons_box.add_widget(like_count)
             icons_box.add_widget(comment_button)
