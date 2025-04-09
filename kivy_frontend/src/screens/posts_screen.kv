@@ -11,7 +11,6 @@
             size_hint: None, 1
             width: dp(400)
 
-            # Header layout with the title.
             MDBoxLayout:
                 size_hint: 1, None
                 height: dp(50)
@@ -22,7 +21,6 @@
                     theme_text_color: "Custom"
                     text_color: 1, 1, 1, 1
 
-            # Input layout for post creation.
             MDBoxLayout:
                 orientation: "vertical"
                 size_hint: 1, None
@@ -39,10 +37,12 @@
                     multiline: False
                     size_hint: 1, None
                     height: dp(40)
-                MDTextFieldRect:
+                MDTextField:
                     id: text_input
+                    multiline: True
                     hint_text: "Enter post text"
                     size_hint: 1, None
+                    mode: "line"
                     height: dp(70)
                 MDRaisedButton:
                     id: post_button
@@ -54,7 +54,6 @@
                     text_color: 0, 0, 0, 1
                     on_press: root.create_post()
 
-            # Posts list displayed using a RecycleView.
             MDBoxLayout:
                 orientation: "vertical"
                 RecycleView:
@@ -67,21 +66,23 @@
                         size_hint_y: None
                         height: self.minimum_height
                         orientation: "vertical"
-
-# Define the appearance of each post in the RecycleView.
 <PostItem@BoxLayout>:
-    # These properties are provided via the RecycleView data dictionary.
-    user_email: ""
+    post_id: ""
+    like_count: 0
+    comment_count: 0
+    username: ""
     title: ""
     text: ""
+    user_email: ""
+    liked_by_user: root  
     orientation: "vertical"
     size_hint_y: None
     height: dp(170)
     padding: dp(5)
     spacing: dp(5)
     MDLabel:
-        text: root.user_email if root.user_email else "Invalid Email"
-        bold: True
+        text: "[b]@{}[/b] [i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
+        markup: True
         size_hint_y: None
         height: dp(25)
         theme_text_color: "Custom"
@@ -105,11 +106,12 @@
         height: dp(30)
         spacing: dp(5)
         MDIconButton:
-            icon: "heart-outline"
+            icon: "heart" if root.liked_by_user else "heart-outline"
             icon_size: "18sp"
             pos_hint: {"center_y": 0.5}
+            on_release: app.root.get_screen("posts").toggle_like(root)
         MDLabel:
-            text: "0"
+            text: str(root.like_count)
             size_hint: None, None
             size: dp(30), dp(30)
             halign: "center"
@@ -121,8 +123,9 @@
             icon: "comment-outline"
             icon_size: "18sp"
             pos_hint: {"center_y": 0.5}
+            on_release: app.root.get_screen("posts").prompt_comment(root.post_id)
         MDLabel:
-            text: "0"
+            text: str(root.comment_count)
             size_hint: None, None
             size: dp(30), dp(30)
             halign: "center"

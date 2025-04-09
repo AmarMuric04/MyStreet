@@ -7,6 +7,8 @@ from bson import ObjectId
 from flask import jsonify, request
 from pymongo import DESCENDING
 
+from .session import save_token
+
 # ------------------ AUTH ROUTES ------------------
 
 
@@ -18,11 +20,12 @@ def login():
 
     # Retrieve the user from MongoDB
     user = mongo.db.users.find_one({"email": email})
+
     if user and bcrypt.checkpw(password.encode("utf-8"), user["password"]):
         token = jwt.encode(
             {
                 "email": email,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30),
             },
             app.config["SECRET_KEY"],
             algorithm="HS256",
@@ -31,7 +34,10 @@ def login():
         # For PyJWT v2.x token is returned as a string, if not decode it.
         if isinstance(token, bytes):
             token = token.decode("utf-8")
-        return jsonify({"token": token}), 200
+
+        save_token(token)
+
+        return jsonify(), 200
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 
@@ -39,10 +45,9 @@ def login():
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json()
+    username = data.get("username")
     email = data.get("email")
     password = data.get("password")
-
-    print(email, password)
 
     # Check if the user already exists
     if mongo.db.users.find_one({"email": email}):
@@ -51,20 +56,10 @@ def signup():
     # Hash the password before saving it
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
     user_id = mongo.db.users.insert_one(
-        {"email": email, "password": hashed_password}
+        {"email": email, "password": hashed_password, "username": username}
     ).inserted_id
 
-    token = jwt.encode(
-        {
-            "email": email,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
-        },
-        app.config["SECRET_KEY"],
-        algorithm="HS256",
-    )
-    if isinstance(token, bytes):
-        token = token.decode("utf-8")
-    return jsonify({"token": token, "user_id": str(user_id)}), 201
+    return jsonify({"user_id": str(user_id)}), 201
 
 
 def get_current_user():
@@ -160,6 +155,11 @@ def delete_post(post_id):
 
 @app.route("/posts", methods=["GET"])
 def get_posts():
+    current_user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    current_user_email = current_user.get("email")
     posts_cursor = mongo.db.posts.find().sort("created_at", DESCENDING)
     posts = []
     for post in posts_cursor:
@@ -168,18 +168,27 @@ def get_posts():
 
         if user_id:
             user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+            username = user.get("username") if user else None
             user_email = user.get("email") if user else None
+
+        likes = post.get("likes", [])
+        liked_users = list(mongo.db.users.find({"_id": {"$in": likes}}, {"email": 1}))
+        liked_user_emails = [user["email"] for user in liked_users if "email" in user]
+
+        liked_by_user = current_user_email in liked_user_emails
 
         posts.append(
             {
                 "post_id": str(post.get("_id")),
                 "user_id": str(user_id),
                 "user_email": user_email,
+                "username": username,
                 "title": post.get("title"),
                 "text": post.get("text"),
                 "image": post.get("image"),
                 "tags": post.get("tags"),
-                "likes": post.get("likes"),
+                "likes": likes,
+                "liked_by_user": liked_by_user,
                 "comments": post.get("comments"),
                 "created_at": (
                     post.get("created_at").isoformat()
@@ -201,6 +210,7 @@ def get_posts():
 
 @app.route("/posts/<post_id>/like", methods=["POST"])
 def toggle_like(post_id):
+    print(post_id)
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status

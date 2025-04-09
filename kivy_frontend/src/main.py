@@ -1,3 +1,4 @@
+from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 
@@ -7,6 +8,7 @@ from screens.posts_screen import PostsScreen
 from screens.signup_screen import SignupScreen
 from session import get_token
 
+Window.size = (450, 750)
 
 class MyStreetApp(MDApp):
     def build(self):

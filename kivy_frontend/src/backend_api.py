@@ -1,5 +1,4 @@
 import requests
-from session import save_token
 
 
 def login_api(email, password):
@@ -15,7 +14,6 @@ def login_api(email, password):
     """
     url = "http://localhost:5000/login"
     payload = {"email": email.strip(), "password": password.strip()}
-
     if not email or not password:
         return {"status": "error", "message": "Please enter both email and password!"}
 
@@ -23,17 +21,10 @@ def login_api(email, password):
         response = requests.post(url, json=payload)
         if response.status_code == 200:
             data = response.json()
-            token = data.get("token")
-            if token:
-                # Save the token to a file
-                save_token(token)
-                return {
+            return {
                     "status": "success",
-                    "token": token,
                     "message": "Login successful!",
                 }
-            else:
-                return {"status": "error", "message": "Token not found in response."}
         else:
             error_message = response.json().get(
                 "error", f"Error: {response.status_code}"
@@ -43,7 +34,7 @@ def login_api(email, password):
         return {"status": "error", "message": f"Request failed: {e}"}
 
 
-def signup_api(email, password):
+def signup_api(email, password, username):
     """
     Sends signup credentials to the backend server.
 
@@ -55,9 +46,9 @@ def signup_api(email, password):
         dict: Response from the server.
     """
     url = "http://localhost:5000/signup"
-    payload = {"email": email.strip(), "password": password.strip()}
+    payload = {"email": email.strip(), "password": password.strip(), "username": username.strip()}
 
-    if not email or not password:
+    if not email or not password or not username:
         return {"status": "error", "message": "Please enter both email and password!"}
 
     try:

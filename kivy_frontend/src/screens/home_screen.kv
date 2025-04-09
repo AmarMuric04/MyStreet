@@ -1,0 +1,51 @@
+<HomeScreen>:
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: 20
+            spacing: 20
+            size_hint: None, None
+            width: dp(400)
+            height: dp(700)
+            MDLabel:
+                text: "Welcome to the Home Page"
+                halign: "center"
+                theme_text_color: "Primary"
+                font_style: "H4"
+                size_hint_y: None
+                height: "50dp"
+
+            MDCard:
+                size_hint: None, None
+                size: "280dp", "180dp"
+                pos_hint: {"center_x": 0.5}
+                orientation: "vertical"
+                padding: "10dp"
+                spacing: "10dp"
+
+                FitImage:
+                    source: "path_to_image.jpg"
+
+                MDLabel:
+                    text: "Featured Content"
+                    theme_text_color: "Secondary"
+                    size_hint_y: None
+                    height: "30dp"
+
+                MDLabel:
+                    text: "Some description about the featured content goes here."
+                    theme_text_color: "Secondary"
+                    size_hint_y: None
+                    height: "50dp"
+
+            MDRaisedButton:
+                text: "Log Out"
+                pos_hint: {"center_x": 0.5}
+                on_press: root.on_logout()
+
+            MDRaisedButton:
+                text: "View Posts"
+                pos_hint: {"center_x": 0.5}
+                on_press: app.root.current = "posts"
