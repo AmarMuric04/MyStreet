@@ -1,0 +1,132 @@
+#:import dp kivy.metrics.dp
+
+<PostsScreen>:
+    AnchorLayout:
+        anchor_x: "center"
+        anchor_y: "center"
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: dp(20)
+            spacing: dp(10)
+            size_hint: None, 1
+            width: dp(400)
+
+            # Header layout with the title.
+            MDBoxLayout:
+                size_hint: 1, None
+                height: dp(50)
+                MDLabel:
+                    text: "MyStreet Posts"
+                    font_style: "H5"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+
+            # Input layout for post creation.
+            MDBoxLayout:
+                orientation: "vertical"
+                size_hint: 1, None
+                height: dp(200)
+                spacing: dp(10)
+                MDLabel:
+                    text: "Create a Post"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDTextField:
+                    id: title_input
+                    hint_text: "Enter title"
+                    multiline: False
+                    size_hint: 1, None
+                    height: dp(40)
+                MDTextFieldRect:
+                    id: text_input
+                    hint_text: "Enter post text"
+                    size_hint: 1, None
+                    height: dp(70)
+                MDRaisedButton:
+                    id: post_button
+                    text: "Submit Post"
+                    size_hint: 1, None
+                    height: dp(100)
+                    halign: "center"
+                    md_bg_color: 1, 1, 1, 1
+                    text_color: 0, 0, 0, 1
+                    on_press: root.create_post()
+
+            # Posts list displayed using a RecycleView.
+            MDBoxLayout:
+                orientation: "vertical"
+                RecycleView:
+                    id: posts_rv
+                    viewclass: "PostItem"
+                    data: root.posts_data
+                    RecycleBoxLayout:
+                        default_size: None, dp(170)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: "vertical"
+
+# Define the appearance of each post in the RecycleView.
+<PostItem@BoxLayout>:
+    # These properties are provided via the RecycleView data dictionary.
+    user_email: ""
+    title: ""
+    text: ""
+    orientation: "vertical"
+    size_hint_y: None
+    height: dp(170)
+    padding: dp(5)
+    spacing: dp(5)
+    MDLabel:
+        text: root.user_email if root.user_email else "Invalid Email"
+        bold: True
+        size_hint_y: None
+        height: dp(25)
+        theme_text_color: "Custom"
+        text_color: 1, 1, 1, 1
+    MDLabel:
+        text: root.title if root.title else "No Title"
+        bold: True
+        size_hint_y: None
+        height: dp(25)
+        theme_text_color: "Custom"
+        text_color: 1, 1, 1, 1
+    MDLabel:
+        text: root.text if root.text else "No Content"
+        size_hint_y: None
+        height: dp(50)
+        theme_text_color: "Custom"
+        text_color: (200/255.0, 200/255.0, 200/255.0, 1)
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_y: None
+        height: dp(30)
+        spacing: dp(5)
+        MDIconButton:
+            icon: "heart-outline"
+            icon_size: "18sp"
+            pos_hint: {"center_y": 0.5}
+        MDLabel:
+            text: "0"
+            size_hint: None, None
+            size: dp(30), dp(30)
+            halign: "center"
+            valign: "middle"
+            pos_hint: {"center_y": 0.5}
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+        MDIconButton:
+            icon: "comment-outline"
+            icon_size: "18sp"
+            pos_hint: {"center_y": 0.5}
+        MDLabel:
+            text: "0"
+            size_hint: None, None
+            size: dp(30), dp(30)
+            halign: "center"
+            valign: "middle"
+            pos_hint: {"center_y": 0.5}
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1

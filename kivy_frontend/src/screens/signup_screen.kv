@@ -1,0 +1,73 @@
+<SignupScreen>:
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        MDBoxLayout:
+            orientation: 'vertical'
+            spacing: dp(20)
+            size_hint_x: None
+            width: dp(400)
+            MDLabel:
+                text: "[i]MyStreet[/i]"
+                halign: "left"
+                theme_text_color: "Primary"
+                font_style: "Body1"
+                markup: True
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(5)
+                size_hint_x: None
+                width: dp(400)
+                MDLabel:
+                    text: "[b]Create an Account[/b]"
+                    halign: "left"
+                    theme_text_color: "Primary"
+                    font_style: "H4"
+                    markup: True
+                MDLabel:
+                    text: "Enter your email & password to sign up"
+                    halign: "left"
+                    padding: dp(4)
+                    theme_text_color: "Hint"
+                    font_style: "Body1"
+                    markup: True
+            MDTextField:
+                id: username_input
+                hint_text: "Enter your username"
+                size_hint_x: 1
+                mode: "rectangle"
+            MDTextField:
+                id: email_input
+                hint_text: "Enter your email"
+                size_hint_x: 1
+                mode: "rectangle"
+            MDTextField:
+                id: password_input
+                hint_text: "Enter your password"
+                password: True
+                size_hint_x: 1
+                mode: "rectangle"
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(20)
+                size_hint_x: None
+                width: dp(400)
+                MDRaisedButton:
+                    id: signup_button
+                    text: "Sign Up"
+                    size_hint: (1, None)
+                    height: dp(100)
+                    halign: "center"
+                    md_bg_color: [1, 1, 1, 1]
+                    text_color: (0, 0, 0, 1)
+                    on_press: root.signup_helper()
+                MDLabel:
+                    text: "Already have an account? [ref=login][u][b]Log in[/b][/u][/ref]"
+                    markup: True
+                    halign: "center"
+                    theme_text_color: "Primary"
+                    on_ref_press: 
+                        app.root.current = "login"
+                        root.manager.transition.direction = "left"
+
