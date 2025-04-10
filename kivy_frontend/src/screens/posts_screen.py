@@ -11,7 +11,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
 
-from session import get_token
+from utils.session import get_token
 
 Builder.load_file("kivy_frontend/src/screens/posts_screen.kv")
 

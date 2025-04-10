@@ -1,8 +1,9 @@
+from kivy.app import App
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 
-from backend_api import login_api
+from utils.auth import login_api
 
 Builder.load_file("kivy_frontend/src/screens/login_screen.kv")
 
@@ -20,8 +21,8 @@ class LoginScreen(MDScreen):
             self.ids.email_input.text = ""
             self.ids.password_input.text = ""
 
-            self.manager.transition.direction = "left"  
-            self.manager.current = "home"
+            app = App.get_running_app()
+            app.switch_screen('home')
         else:
             self.ids.email_input.error = True
             self.ids.email_input.helper_text = "Invalid credentials"

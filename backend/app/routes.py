@@ -62,6 +62,62 @@ def signup():
     return jsonify({"user_id": str(user_id)}), 201
 
 
+import random
+import smtplib
+
+
+@app.route("/send-code", methods=["POST"])
+def send_code():
+    data = request.get_json()
+    recipient_email = data.get("email")
+
+    if not recipient_email:
+        return {"error": "Email address not provided"}, 400
+
+    code = f"{random.randint(0, 999999):06}"
+    subject = "Signup Code from MyStreet"
+    message_body = f"Your signup code is: {code}"
+
+    message = f"Subject:{subject}\n\n{message_body}"
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+            connection.starttls()  
+            connection.login(
+                user="muricamar2005@gmail.com", password="jpdvuuwfipwgninx"
+            )
+            connection.sendmail(
+                from_addr="muricamar2005@gmail.com",
+                to_addrs=recipient_email,
+                msg=message,
+            )
+        return {"status": "Email sent successfully", "code": code}, 200
+
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+@app.route("/verify-code", methods=["POST"])
+def verify_code():
+    data = request.get_json()
+    email = data.get("email")
+    input_code = data.get("code")
+
+    record = codes_collection.find_one({"email": email})
+
+    if not record:
+        return {"error": "Code not found or expired"}, 400
+
+    if record["code"] != input_code:
+        return {"error": "Invalid code"}, 400
+
+    codes_collection.delete_one({"email": email})  # optional cleanup
+    return {"status": "Code verified successfully"}, 200
+
+
 def get_current_user():
     token = request.headers.get("Authorization").split()[1]
     print(token)

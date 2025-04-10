@@ -1,0 +1,56 @@
+<EmailCode>:
+    AnchorLayout:
+        anchor_x: "center"
+        anchor_y: "center"
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: dp(20)
+            size_hint: None, None
+            width: dp(400)
+            height: dp(700)
+            MDLabel:
+                text: "[i]MyStreet[/i]"
+                halign: "left"
+                theme_text_color: "Primary"
+                font_style: "Body1"
+                markup: True
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: dp(20)
+                spacing: dp(5)
+                size_hint_x: None
+                width: dp(400)
+                MDLabel:
+                    text: "[b]We sent a code to your email[/b]"
+                    halign: "left"
+                    theme_text_color: "Primary"
+                    font_style: "H4"
+                    markup: True
+                MDLabel:
+                    text: "Enter the code to proceed!"
+                    halign: "left"
+                    padding: dp(4)
+                    theme_text_color: "Hint"
+                    font_style: "Body1"
+                    markup: True
+            MDTextField:
+                id: code_input
+                hint_text: "Enter the verification code"
+                helper_text: ""
+                helper_text_mode: "on_error"
+                mode: "rectangle"
+                size_hint_x: None
+                width: dp(400)
+            MDRaisedButton:
+                id: verify_button
+                text: "Verify"
+                size_hint: None, None
+                width: dp(400)
+                height: dp(60)
+                on_press: root.verify_helper()
+            MDLabel:
+                text: "Already have an account? [ref=login][u][b]Log in[/b][/u][/ref]"
+                markup: True
+                halign: "center"
+                theme_text_color: "Primary"
+                on_ref_press: app.loadscreen("login")

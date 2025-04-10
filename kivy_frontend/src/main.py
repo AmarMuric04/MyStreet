@@ -2,11 +2,13 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 
+from screens.email_code import EmailCode
+from screens.forgot_password import ForgotPassword
 from screens.home_screen import HomeScreen
 from screens.login_screen import LoginScreen
 from screens.posts_screen import PostsScreen
 from screens.signup_screen import SignupScreen
-from session import get_token
+from utils.session import get_token
 
 Window.size = (450, 750)
 
@@ -14,22 +16,39 @@ class MyStreetApp(MDApp):
     def build(self):
         self.sm = ScreenManager()
         self.theme_cls.theme_style = "Dark"
-        # self.theme_cls.theme_style_switch_animation = True
-        # self.theme_cls.theme_style_switch_animation_duration = 0.8 
-        # Create and add the screens
-        self.sm.add_widget(LoginScreen(name="login"))
-        self.sm.add_widget(SignupScreen(name="signup"))
-        self.sm.add_widget(HomeScreen(name="home"))
-        self.sm.add_widget(PostsScreen(name="posts"))
-        
-        # Start with the home screen if a token exists, otherwise login
-        if get_token():
-            self.sm.current = "home"
-        else:
-            self.sm.current = "login"
-        
+        self.load_initial_screen()
         return self.sm
 
+    def load_initial_screen(self):
+        if get_token():
+            self.load_screen('home')
+            self.sm.current = 'home'
+        else:
+            self.load_screen('login')
+            self.sm.current = 'login'
+
+    def load_screen(self, screen_name):
+        if not self.sm.has_screen(screen_name):
+            screen = None
+            if screen_name == 'login':
+                screen = LoginScreen(name='login')
+            elif screen_name == 'signup':
+                screen = SignupScreen(name='signup')
+            elif screen_name == 'home':
+                screen = HomeScreen(name='home')
+            elif screen_name == 'posts':
+                screen = PostsScreen(name='posts')
+            elif screen_name == 'forgot_password':
+                screen = ForgotPassword(name='forgot_password')
+            elif screen_name == 'email_code':
+                screen = EmailCode(name='email_code')
+
+            if screen:
+                self.sm.add_widget(screen)
+
+    def switch_screen(self, screen_name):
+        self.load_screen(screen_name)
+        self.sm.current = screen_name
+        
 if __name__ == "__main__":
     MyStreetApp().run()
-
