@@ -10,9 +10,10 @@
             MDLabel:
                 text: "[i]MyStreet[/i]"
                 halign: "left"
-                theme_text_color: "Primary"
                 font_style: "Body1"
                 markup: True
+                theme_text_color: "Custom"
+                text_color: app.theme_cls.primary_color
             MDBoxLayout:
                 orientation: 'vertical'
                 padding: dp(20)
@@ -59,11 +60,11 @@
                     size_hint: (1, None)
                     height: dp(100)
                     halign: "center"
-                    md_bg_color: [1, 1, 1, 1]
+                    # md_bg_color: app.theme_cls.primary_color
                     text_color: (0, 0, 0, 1)
                     on_press: root.signup_helper()
                 MDLabel:
-                    text: "Already have an account? [ref=login][u][b]Log in[/b][/u][/ref]"
+                    text: "Already have an account? [ref=login][color=00FF00][u][b]Log in[/b][/u][/ref]"
                     markup: True
                     halign: "center"
                     theme_text_color: "Primary"

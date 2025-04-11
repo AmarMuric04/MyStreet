@@ -264,6 +264,7 @@ def get_posts():
         )
     return jsonify(posts), 200
 
+
 # ------------------ NEW POSTS ROUTES -----------------
 
 
@@ -286,7 +287,7 @@ def create_post_in_group():
     data = request.get_json()
     title = data.get("title")
     text = data.get("text")
-    image = data.get("image")  # Optional image URL
+    image = data.get("image")
     tags = data.get("tags", [])
 
     if not title or not text:

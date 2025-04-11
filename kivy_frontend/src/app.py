@@ -17,6 +17,7 @@ class MyStreetApp(MDApp):
     def build(self):
         self.sm = ScreenManager(transition=SlideTransition())
         self.theme_cls.theme_style = "Dark"
+        self.theme_cls.primary_palette = "Green"
         self.load_initial_screen()
         return self.sm
 
