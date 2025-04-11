@@ -4,6 +4,25 @@
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
+        FloatLayout:
+            MDFloatingActionButton:
+                icon: "plus"
+                md_bg_color: 0, 1, 0, 1 
+                elevation_normal: 8
+                size_hint: None, None
+                size: dp(56), dp(56)
+                pos_hint: {"top": 0.10, "right": 0.95}
+                on_release: 
+                    app.switch_screen("create_post")
+                    root.manager.transition.direction = "right"
+            MDSpinner:
+                id: loader
+                size_hint: None, None
+                size: dp(48), dp(48)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                active: False
+                opacity: 0
+                color: 1, 1, 1, 1 
         MDBoxLayout:
             orientation: "vertical"
             padding: dp(20)
@@ -20,40 +39,6 @@
                     bold: True
                     theme_text_color: "Custom"
                     text_color: 1, 1, 1, 1
-
-            MDBoxLayout:
-                orientation: "vertical"
-                size_hint: 1, None
-                height: dp(200)
-                spacing: dp(10)
-                MDLabel:
-                    text: "Create a Post"
-                    bold: True
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDTextField:
-                    id: title_input
-                    hint_text: "Enter title"
-                    multiline: False
-                    size_hint: 1, None
-                    height: dp(40)
-                MDTextField:
-                    id: text_input
-                    multiline: True
-                    hint_text: "Enter post text"
-                    size_hint: 1, None
-                    mode: "line"
-                    height: dp(70)
-                MDRaisedButton:
-                    id: post_button
-                    text: "Submit Post"
-                    size_hint: 1, None
-                    height: dp(100)
-                    halign: "center"
-                    md_bg_color: 1, 1, 1, 1
-                    text_color: 0, 0, 0, 1
-                    on_press: root.create_post()
-
             MDBoxLayout:
                 orientation: "vertical"
                 RecycleView:
@@ -66,6 +51,7 @@
                         size_hint_y: None
                         height: self.minimum_height
                         orientation: "vertical"
+
 <PostItem@BoxLayout>:
     post_id: ""
     like_count: 0

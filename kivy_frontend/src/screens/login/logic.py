@@ -5,7 +5,7 @@ from kivymd.uix.screen import MDScreen
 
 from utils.auth import login_api
 
-Builder.load_file("kivy_frontend/src/screens/login_screen.kv")
+Builder.load_file("kivy_frontend/src/screens/login/design.kv")
 
 class LoginScreen(MDScreen):
     def login_helper(self):

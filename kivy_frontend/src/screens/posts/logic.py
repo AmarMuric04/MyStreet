@@ -13,7 +13,7 @@ from kivymd.uix.textfield import MDTextField
 
 from utils.session import get_token
 
-Builder.load_file("kivy_frontend/src/screens/posts_screen.kv")
+Builder.load_file("kivy_frontend/src/screens/posts/design.kv")
 
 API_URL = "http://localhost:5000/posts"
 
@@ -24,66 +24,42 @@ class PostsScreen(MDScreen):
         super(PostsScreen, self).__init__(**kwargs)
         self.dialog = None
         self.current_post_id = None
-        Clock.schedule_once(self.fetch_posts, 0)
 
-    def create_post(self):
-        title = self.ids.title_input.text.strip()
-        text = self.ids.text_input.text.strip()
-        if not title or not text:
-            print("Error: Title and text are required.")
-            return
+    def on_enter(self):
+        self.show_loader()
+        threading.Thread(target=self.fetch_posts_thread).start()
 
-        self.ids.post_button.text = "Submitting Post..."
-        self.ids.post_button.disabled = True
+    def show_loader(self):
+        if "loader" in self.ids:
+            self.ids.loader.active = True
+            self.ids.loader.opacity = 1
 
-        post_data = {
-            "title": title,
-            "text": text,
-            "image": None,
-            "tags": []
-        }
-        threading.Thread(target=self.create_post_thread, args=(post_data,)).start()
-
-    def create_post_thread(self, post_data):
-        try:
-            response = requests.post(
-                API_URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {get_token()}"
-                },
-                data=json.dumps(post_data)
-            )
-            if response.status_code == 201:
-                msg = "Post created successfully!"
-                Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
-                Clock.schedule_once(lambda dt: self.fetch_posts(0), 0)
-            else:
-                msg = f"Error creating post: {response.status_code}"
-        except Exception as e:
-            msg = f"Error: {str(e)}"
-
-        Clock.schedule_once(lambda dt: self.update_post_status(msg), 0)
+    def hide_loader(self):
+        if "loader" in self.ids:
+            self.ids.loader.active = False
+            self.ids.loader.opacity = 0
 
     def update_post_status(self, msg):
         print(msg)
         self.ids.post_button.text = "Submit Post"
         self.ids.post_button.disabled = False
 
-    def clear_inputs(self):
-        self.ids.title_input.text = ""
-        self.ids.text_input.text = ""
-
-    def fetch_posts(self, dt):
+    def on_leave(self):
+        self.posts_data = []
+        self.hide_loader()
+        
+    def fetch_posts_thread(self):
         try:
-            response = requests.get(API_URL,
+            response = requests.get(
+                API_URL,
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {get_token()}"
-                },)
+                }
+            )
             if response.status_code == 200:
                 posts = response.json()
-                self.posts_data = [
+                data = [
                     {
                         "post_id": str(post.get("post_id")),
                         "username": post.get("username", "No Username"),
@@ -97,9 +73,18 @@ class PostsScreen(MDScreen):
                     for post in posts
                 ]
             else:
+                data = []
                 print(f"Error fetching posts: {response.status_code}")
         except Exception as e:
+            data = []
             print(f"Error: {str(e)}")
+
+        # Update posts_data in the main thread and hide loader.
+        Clock.schedule_once(lambda dt: self.update_posts_data(data), 0)
+
+    def update_posts_data(self, data):
+        self.posts_data = data
+        self.hide_loader()
 
     def toggle_like(self, post_item):
         previous_like_status = post_item.liked_by_user
@@ -114,7 +99,8 @@ class PostsScreen(MDScreen):
 
         threading.Thread(
             target=self.toggle_like_thread,
-            args=(post_item, previous_like_status, previous_like_count)
+            args=(post_item, previous_like_status, previous_like_count),
+            daemon=True
         ).start()
 
     def toggle_like_thread(self, post_item, previous_like_status, previous_like_count):
@@ -132,7 +118,7 @@ class PostsScreen(MDScreen):
             post_item.liked_by_user = previous_like_status
             post_item.like_count = previous_like_count
             print(f"Error toggling like: {str(e)}")
-        
+
     def prompt_comment(self, post_id):
         self.current_post_id = post_id
         self.dialog = MDDialog(
@@ -154,7 +140,8 @@ class PostsScreen(MDScreen):
             return
         threading.Thread(
             target=self.submit_comment_thread,
-            args=(self.current_post_id, comment_text)
+            args=(self.current_post_id, comment_text),
+            daemon=True
         ).start()
         self.dialog.dismiss()
 
@@ -169,7 +156,7 @@ class PostsScreen(MDScreen):
                 data=json.dumps({"comment": comment_text})
             )
             if response.status_code == 201:
-                Clock.schedule_once(lambda dt: self.fetch_posts(0), 0)
+                threading.Thread(target=self.fetch_posts_thread, daemon=True).start()
             else:
                 print(f"Error adding comment: {response.status_code}")
         except Exception as e:

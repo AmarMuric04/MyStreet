@@ -5,7 +5,7 @@ from kivymd.uix.screen import MDScreen
 
 from utils.auth import send_code_api
 
-Builder.load_file("kivy_frontend/src/screens/signup_screen.kv")
+Builder.load_file("kivy_frontend/src/screens/signup/design.kv")
 
 
 class SignupScreen(MDScreen):
@@ -21,7 +21,8 @@ class SignupScreen(MDScreen):
 
         response = send_code_api(email)
         if response.get("status") == "success":
-            App.get_running_app().signup_data = {
+            app = App.get_running_app()
+            app.signup_data = {
                 "email": email,
                 "password": password,
                 "username": username,
@@ -29,8 +30,7 @@ class SignupScreen(MDScreen):
             self.ids.email_input.text = ""
             self.ids.password_input.text = ""
             self.ids.username_input.text = ""
-            app = App.get_running_app()
-            App.switch_screen("email_code")
+            app.switch_screen("email_code")
         else:
             self.ids.email_input.error = True
             self.ids.email_input.helper_text = response.get("message", "Signup failed.")

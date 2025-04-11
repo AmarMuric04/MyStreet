@@ -1,0 +1,34 @@
+<CreatePost>:
+    AnchorLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint: 1, None
+            padding: dp(20)
+            height: dp(200)
+            spacing: dp(10)
+            MDLabel:
+                text: "Create a Post"
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+            MDTextField:
+                id: title_input
+                hint_text: "Enter title"
+                multiline: False
+                size_hint: 1, None
+                height: dp(40)
+            MDTextField:
+                id: text_input
+                hint_text: "Enter title"
+                multiline: False
+                size_hint: 1, None
+                height: dp(40)
+            MDRaisedButton:
+                id: post_button
+                text: "Submit Post"
+                size_hint: 1, None
+                height: dp(100)
+                halign: "center"
+                md_bg_color: 1, 1, 1, 1
+                text_color: 0, 0, 0, 1
+                on_press: root.create_post()

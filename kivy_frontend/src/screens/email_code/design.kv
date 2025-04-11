@@ -21,6 +21,7 @@
                 size_hint_x: None
                 width: dp(400)
                 MDLabel:
+                    id: email_label
                     text: "[b]We sent a code to your email[/b]"
                     halign: "left"
                     theme_text_color: "Primary"
@@ -47,7 +48,7 @@
                 size_hint: None, None
                 width: dp(400)
                 height: dp(60)
-                on_press: root.verify_helper()
+                on_press: root.on_verify()
             MDLabel:
                 text: "Already have an account? [ref=login][u][b]Log in[/b][/u][/ref]"
                 markup: True
