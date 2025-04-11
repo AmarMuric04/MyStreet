@@ -178,7 +178,6 @@ def edit_post(post_id):
         return error_response, status
 
     data = request.get_json()
-    # Allow updating title, text, image, and tags
     update_fields = {}
     for field in ["title", "text", "image", "tags"]:
         if field in data:
@@ -263,6 +262,486 @@ def get_posts():
                 ),
             }
         )
+    return jsonify(posts), 200
+
+# ------------------ NEW POSTS ROUTES -----------------
+
+
+@app.route("/groups/<group_id>/posts", methods=["POST"])
+def create_post_in_group():
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    # Validate group existence.
+    try:
+        group_obj_id = ObjectId(group_id)
+    except Exception:
+        return jsonify({"error": "Invalid group_id format"}), 400
+
+    group = mongo.db.groups.find_one({"_id": group_obj_id})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    data = request.get_json()
+    title = data.get("title")
+    text = data.get("text")
+    image = data.get("image")  # Optional image URL
+    tags = data.get("tags", [])
+
+    if not title or not text:
+        return jsonify({"error": "Title and text are required"}), 400
+
+    post = {
+        "user_id": user["_id"],
+        "group_id": group_obj_id,
+        "title": title,
+        "text": text,
+        "image": image,
+        "tags": tags,
+        "likes": [],  # List of user ObjectIds who liked this post
+        "comments": [],  # Comment subdocuments can be stored here
+        "created_at": datetime.datetime.utcnow(),
+        "updated_at": datetime.datetime.utcnow(),
+    }
+
+    result = mongo.db.posts.insert_one(post)
+    return (
+        jsonify(
+            {"message": "Post created in group", "post_id": str(result.inserted_id)}
+        ),
+        201,
+    )
+
+
+@app.route("/groups/<group_id>/posts", methods=["GET"])
+def get_posts_in_group():
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    try:
+        group_obj_id = ObjectId(group_id)
+    except Exception:
+        return jsonify({"error": "Invalid group_id format"}), 400
+
+    group = mongo.db.groups.find_one({"_id": group_obj_id})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    posts_cursor = mongo.db.posts.find({"group_id": group_obj_id}).sort(
+        "created_at", -1
+    )
+    posts = []
+    for post in posts_cursor:
+        posts.append(
+            {
+                "post_id": str(post["_id"]),
+                "user_id": str(post["user_id"]),
+                "title": post.get("title"),
+                "text": post.get("text"),
+                "image": post.get("image"),
+                "tags": post.get("tags"),
+                "likes": post.get("likes"),
+                "comments": post.get("comments"),
+                "created_at": (
+                    post.get("created_at").isoformat()
+                    if post.get("created_at")
+                    else None
+                ),
+                "updated_at": (
+                    post.get("updated_at").isoformat()
+                    if post.get("updated_at")
+                    else None
+                ),
+            }
+        )
+    return jsonify(posts), 200
+
+
+@app.route("/groups/<group_id>/posts/<post_id>", methods=["GET"])
+def get_single_post_in_group(group_id, post_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    try:
+        group_obj_id = ObjectId(group_id)
+        post_obj_id = ObjectId(post_id)
+    except Exception:
+        return jsonify({"error": "Invalid group_id or post_id format"}), 400
+
+    group = mongo.db.groups.find_one({"_id": group_obj_id})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    post = mongo.db.posts.find_one({"_id": post_obj_id, "group_id": group_obj_id})
+    if not post:
+        return jsonify({"error": "Post not found in this group"}), 404
+
+    # Prepare the post data for output.
+    post_data = {
+        "post_id": str(post["_id"]),
+        "user_id": str(post["user_id"]),
+        "group_id": str(post["group_id"]),
+        "title": post.get("title"),
+        "text": post.get("text"),
+        "image": post.get("image"),
+        "tags": post.get("tags"),
+        "likes": post.get("likes"),
+        "comments": post.get("comments"),
+        "created_at": (
+            post.get("created_at").isoformat() if post.get("created_at") else None
+        ),
+        "updated_at": (
+            post.get("updated_at").isoformat() if post.get("updated_at") else None
+        ),
+    }
+    return jsonify(post_data), 200
+
+
+@app.route("/groups/<group_id>/posts/<post_id>", methods=["PUT"])
+def update_post_in_group(group_id, post_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    try:
+        group_obj_id = ObjectId(group_id)
+        post_obj_id = ObjectId(post_id)
+    except Exception:
+        return jsonify({"error": "Invalid group_id or post_id format"}), 400
+
+    group = mongo.db.groups.find_one({"_id": group_obj_id})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    data = request.get_json()
+    update_fields = {}
+    for field in ["title", "text", "image", "tags"]:
+        if field in data:
+            update_fields[field] = data[field]
+    if not update_fields:
+        return jsonify({"error": "No valid fields to update"}), 400
+
+    update_fields["updated_at"] = datetime.datetime.utcnow()
+
+    post = mongo.db.posts.find_one({"_id": post_obj_id, "group_id": group_obj_id})
+    if not post:
+        return jsonify({"error": "Post not found in this group"}), 404
+
+    # For example, only allow the post creator to update.
+    if post["user_id"] != user["_id"]:
+        return jsonify({"error": "Not authorized to update this post"}), 403
+
+    mongo.db.posts.update_one({"_id": post_obj_id}, {"$set": update_fields})
+    return jsonify({"message": "Post updated in group"}), 200
+
+
+@app.route("/groups/<group_id>/posts/<post_id>", methods=["DELETE"])
+def delete_post_in_group(group_id, post_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    try:
+        group_obj_id = ObjectId(group_id)
+        post_obj_id = ObjectId(post_id)
+    except Exception:
+        return jsonify({"error": "Invalid group_id or post_id format"}), 400
+
+    group = mongo.db.groups.find_one({"_id": group_obj_id})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    post = mongo.db.posts.find_one({"_id": post_obj_id, "group_id": group_obj_id})
+    if not post:
+        return jsonify({"error": "Post not found in this group"}), 404
+
+    if post["user_id"] != user["_id"]:
+        return jsonify({"error": "Not authorized to delete this post"}), 403
+
+    mongo.db.posts.delete_one({"_id": post_obj_id})
+    return jsonify({"message": "Post deleted from group"}), 200
+
+
+# ------------------ GROUP ROUTES ------------------
+
+
+@app.route("/groups", methods=["POST"])
+def create_group():
+    # Ensure the user is authenticated
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    data = request.get_json()
+    name = data.get("name")
+    description = data.get("description", "")
+
+    if not name:
+        return jsonify({"error": "Group name is required"}), 400
+
+    group = {
+        "name": name,
+        "description": description,
+        "creator": user["_id"],
+        "members": [user["_id"]],  # Initialize with creator as first member
+        "created_at": datetime.datetime.utcnow(),
+        "updated_at": datetime.datetime.utcnow(),
+    }
+    result = mongo.db.groups.insert_one(group)
+    return (
+        jsonify({"message": "Group created", "group_id": str(result.inserted_id)}),
+        201,
+    )
+
+
+@app.route("/groups/<group_id>", methods=["GET"])
+def get_group(group_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    group["_id"] = str(group["_id"])
+    group["creator"] = str(group["creator"])
+    group["members"] = [str(member) for member in group.get("members", [])]
+    group["created_at"] = (
+        group.get("created_at").isoformat() if group.get("created_at") else None
+    )
+    group["updated_at"] = (
+        group.get("updated_at").isoformat() if group.get("updated_at") else None
+    )
+    return jsonify(group), 200
+
+
+@app.route("/groups", methods=["GET"])
+def list_groups():
+    # Lists all groups available.
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    groups_cursor = mongo.db.groups.find().sort("created_at", -1)
+    groups = []
+    for group in groups_cursor:
+        groups.append(
+            {
+                "group_id": str(group.get("_id")),
+                "name": group.get("name"),
+                "description": group.get("description"),
+                "creator": str(group.get("creator")),
+                "members": [str(member) for member in group.get("members", [])],
+                "created_at": (
+                    group.get("created_at").isoformat()
+                    if group.get("created_at")
+                    else None
+                ),
+                "updated_at": (
+                    group.get("updated_at").isoformat()
+                    if group.get("updated_at")
+                    else None
+                ),
+            }
+        )
+    return jsonify(groups), 200
+
+
+@app.route("/groups/<group_id>", methods=["PUT"])
+def update_group(group_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    data = request.get_json()
+    update_fields = {}
+    for field in ["name", "description"]:
+        if field in data:
+            update_fields[field] = data[field]
+
+    if not update_fields:
+        return jsonify({"error": "No valid fields to update"}), 400
+
+    # Optional: Only allow the creator to edit group details.
+    group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+    if group["creator"] != user["_id"]:
+        return jsonify({"error": "Not authorized to update this group"}), 403
+
+    update_fields["updated_at"] = datetime.datetime.utcnow()
+
+    mongo.db.groups.update_one({"_id": ObjectId(group_id)}, {"$set": update_fields})
+    return jsonify({"message": "Group updated"}), 200
+
+
+@app.route("/groups/<group_id>", methods=["DELETE"])
+def delete_group(group_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    # Only allow the creator of the group to delete it.
+    if group["creator"] != user["_id"]:
+        return jsonify({"error": "Not authorized to delete this group"}), 403
+
+    mongo.db.groups.delete_one({"_id": ObjectId(group_id)})
+    return jsonify({"message": "Group deleted"}), 200
+
+
+# === Group Posts Routes === #
+
+
+@app.route("/groups/<group_id>/posts", methods=["POST"])
+def add_post_to_group(group_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    # Verify group exists
+    group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    data = request.get_json()
+    title = data.get("title")
+    text = data.get("text")
+    image = data.get("image")  # Optional Cloudinary image URL
+    tags = data.get("tags")
+
+    if not title or not text:
+        return jsonify({"error": "Title and text are required"}), 400
+
+    # You can add additional checks here to ensure the user is a member of the group.
+
+    post = {
+        "user_id": user["_id"],
+        "group_id": ObjectId(group_id),  # Associate the post with the group
+        "title": title,
+        "text": text,
+        "image": image,
+        "tags": tags if tags else [],
+        "likes": [],
+        "comments": [],
+        "created_at": datetime.datetime.utcnow(),
+        "updated_at": datetime.datetime.utcnow(),
+    }
+    result = mongo.db.posts.insert_one(post)
+    return (
+        jsonify(
+            {"message": "Post created in group", "post_id": str(result.inserted_id)}
+        ),
+        201,
+    )
+
+
+@app.route("/groups/<group_id>/posts/<post_id>", methods=["PUT"])
+def edit_group_post(group_id, post_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    data = request.get_json()
+    update_fields = {}
+    for field in ["title", "text", "image", "tags"]:
+        if field in data:
+            update_fields[field] = data[field]
+    if not update_fields:
+        return jsonify({"error": "No valid fields to update"}), 400
+
+    update_fields["updated_at"] = datetime.datetime.utcnow()
+
+    # Verify post exists and that it belongs to the group
+    post = mongo.db.posts.find_one(
+        {"_id": ObjectId(post_id), "group_id": ObjectId(group_id)}
+    )
+    if not post:
+        return jsonify({"error": "Group post not found"}), 404
+    if post["user_id"] != user["_id"]:
+        return jsonify({"error": "Not authorized to update this post"}), 403
+
+    mongo.db.posts.update_one({"_id": ObjectId(post_id)}, {"$set": update_fields})
+    return jsonify({"message": "Group post updated"}), 200
+
+
+@app.route("/groups/<group_id>/posts/<post_id>", methods=["DELETE"])
+def delete_group_post(group_id, post_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    post = mongo.db.posts.find_one(
+        {"_id": ObjectId(post_id), "group_id": ObjectId(group_id)}
+    )
+    if not post:
+        return jsonify({"error": "Group post not found"}), 404
+    if post["user_id"] != user["_id"]:
+        return jsonify({"error": "Not authorized to delete this post"}), 403
+
+    mongo.db.posts.delete_one({"_id": ObjectId(post_id)})
+    return jsonify({"message": "Group post deleted"}), 200
+
+
+@app.route("/groups/<group_id>/posts", methods=["GET"])
+def get_group_posts(group_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    # Verify group exists
+    group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    posts_cursor = mongo.db.posts.find({"group_id": ObjectId(group_id)}).sort(
+        "created_at", -1
+    )
+    posts = []
+    for post in posts_cursor:
+        user_record = mongo.db.users.find_one({"_id": ObjectId(post["user_id"])})
+        username = user_record.get("username") if user_record else None
+        user_email = user_record.get("email") if user_record else None
+
+        likes = post.get("likes", [])
+        liked_users = list(mongo.db.users.find({"_id": {"$in": likes}}, {"email": 1}))
+        liked_user_emails = [u["email"] for u in liked_users if "email" in u]
+        current_user_email = user.get("email")
+        liked_by_user = current_user_email in liked_user_emails
+
+        posts.append(
+            {
+                "post_id": str(post["_id"]),
+                "user_id": str(post["user_id"]),
+                "username": username,
+                "user_email": user_email,
+                "title": post.get("title"),
+                "text": post.get("text"),
+                "image": post.get("image"),
+                "tags": post.get("tags"),
+                "likes": likes,
+                "liked_by_user": liked_by_user,
+                "comments": post.get("comments"),
+                "created_at": (
+                    post.get("created_at").isoformat()
+                    if post.get("created_at")
+                    else None
+                ),
+                "updated_at": (
+                    post.get("updated_at").isoformat()
+                    if post.get("updated_at")
+                    else None
+                ),
+            }
+        )
+
     return jsonify(posts), 200
 
 
