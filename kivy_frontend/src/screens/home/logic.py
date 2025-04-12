@@ -43,7 +43,8 @@ class HomeScreen(MDScreen):
                     {
                         "group_name": group.get("name", "No Name"),
                         "description": group.get("description", "No Description"),
-                        "creator": group.get("creator", "Unknown Creator")
+                        "creator": group.get("creator", "Unknown Creator"),
+                        "id": group.get("group_id", "No Id")
                     }
                     for group in groups
                 ]

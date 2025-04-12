@@ -5,7 +5,7 @@ import threading
 import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, StringProperty
 from kivymd.uix.button import MDButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.screen import MDScreen
@@ -19,6 +19,7 @@ API_URL = "http://localhost:5000/posts"
 
 class PostsScreen(MDScreen):
     posts_data = ListProperty([])
+    group_id = StringProperty("")
 
     def __init__(self, **kwargs):
         super(PostsScreen, self).__init__(**kwargs)
@@ -28,6 +29,11 @@ class PostsScreen(MDScreen):
     def on_enter(self):
         self.show_loader()
         threading.Thread(target=self.fetch_posts_thread).start()
+
+    def on_pre_enter(self):
+        # Use self.group_id to fetch and display group details.
+        print("Displaying details for group:", self.group_id)
+        # Add your fetching logic here.
 
     def show_loader(self):
         if "loader" in self.ids:
