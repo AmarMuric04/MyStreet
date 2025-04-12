@@ -4,33 +4,146 @@
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: dp(20)
+            size_hint: None, None
+            height: dp(400)
+            width: dp(400)
+
+            MDLabel:
+                text: "Home Page!"
+                bold: True
+                halign: "center"
+                size_hint_y: None
+                height: dp(20)
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(8)
+                MDListItem:
+                    radius: 12
+
+                    MDListItemLeadingIcon:
+                        icon: "map"
+
+                    MDListItemHeadlineText:
+                        text: "Novi Pazar"
+
+                    MDListItemSupportingText:
+                        text: "Samo pazarci"
+
+                    MDListItemTertiaryText:
+                        text: "i tutinci"
+
+                    MDButton:
+                        style: "filled"
+                        on_press:
+                            app.switch_screen("posts")
+                            root.manager.transition.direction = "left"
+
+                        MDButtonIcon:
+                            icon: "login"
+                        MDButtonText:
+                            id: login_button
+                            text: "Request to join"
+                MDListItem:
+                    radius: 12
+
+                    MDListItemLeadingIcon:
+                        icon: "map"
+
+                    MDListItemHeadlineText:
+                        text: "England"
+
+                    MDListItemSupportingText:
+                        text: "Only UK"
+
+                    MDListItemTertiaryText:
+                        text: "please"
+
+                    MDButton:
+                        style: "filled"
+                        on_press:
+                            app.switch_screen("posts")
+                            root.manager.transition.direction = "left"
+
+                        MDButtonIcon:
+                            icon: "login"
+                        MDButtonText:
+                            id: login_button
+                            text: "Request to join"
+
+                MDListItem:
+                    radius: 12
+
+                    MDListItemLeadingIcon:
+                        icon: "map"
+
+                    MDListItemHeadlineText:
+                        text: "Netherlands"
+
+                    MDListItemSupportingText:
+                        text: "Only retards"
+
+                    MDButton:
+                        style: "filled"
+                        on_press:
+                            app.switch_screen("posts")
+                            root.manager.transition.direction = "left"
+
+                        MDButtonIcon:
+                            icon: "login"
+                        MDButtonText:
+                            id: login_button
+                            text: "Request to join"
+
+                MDListItem:
+                    radius: 12
+
+                    MDListItemLeadingIcon:
+                        icon: "map"
+
+                    MDListItemHeadlineText:
+                        text: "Tutin"
+
+                    MDListItemSupportingText:
+                        text: "Samo tutinci"
+
+                    MDListItemTertiaryText:
+                        text: "i pazarci"
+
+                    MDButton:
+                        style: "filled"
+                        on_press:
+                            app.switch_screen("posts")
+                            root.manager.transition.direction = "left"
+
+                        MDButtonIcon:
+                            icon: "login"
+                        MDButtonText:
+                            id: login_button
+                            text: "Request to join"
 
         FloatLayout:
-            MDBoxLayout:
-                orientation: "vertical"
-                size_hint: 1, 1
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                MDLabel:
-                    text: "Home Page!"
-                    bold: True
-                    halign: "center"
-
-            MDFloatingActionButton:
-                icon: "minus"
-                md_bg_color: 1, 0, 0, 1
-                elevation_normal: 8
-                size_hint: None, None
-                size: dp(56), dp(56)
-                pos_hint: {"x": 0.05, "y": 0.05} 
-                on_release: root.on_logout()
-            MDFloatingActionButton:
-                icon: "plus"
-                md_bg_color: 0, 1, 0, 1
-                elevation_normal: 8
-                size_hint: None, None
-                size: dp(56), dp(56)
-                pos_hint: {"right": 0.95, "y": 0.05}
-                on_release: 
+            # MDIconButton:
+            #     icon: "plus"
+            #     style: "filled"
+            #     radius: [self.height / 2, ]
+            #     size: "56dp", "56dp"
+            #     pos_hint: {"right": 0.95, "top": 0.10}
+            #     on_press:
+            #         app.switch_screen("posts")
+            #         root.manager.transition.direction = "right"
+            MDButton:
+                style: "elevated"
+                pos_hint: {"right": 0.95, "y": 0.025}
+                on_press:
                     app.switch_screen("posts")
                     root.manager.transition.direction = "left"
+
+                MDButtonIcon:
+                    icon: "plus"
+
+                MDButtonText:
+                    text: "Create a Group"

@@ -2,73 +2,84 @@
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
+
         MDBoxLayout:
             orientation: 'vertical'
             spacing: dp(20)
-            size_hint_x: None
+            size_hint: None, None
             width: dp(400)
+            height: dp(700)
+
             MDLabel:
                 text: "[i]MyStreet[/i]"
                 halign: "left"
-                font_style: "Body1"
                 markup: True
                 theme_text_color: "Custom"
-                text_color: app.theme_cls.primary_color
-            MDBoxLayout:
-                orientation: 'vertical'
-                padding: dp(20)
-                spacing: dp(5)
-                size_hint_x: None
-                width: dp(400)
-                MDLabel:
-                    text: "[b]Create an Account[/b]"
-                    halign: "left"
-                    theme_text_color: "Primary"
-                    font_style: "H4"
-                    markup: True
-                MDLabel:
-                    text: "Enter your email & password to sign up"
-                    halign: "left"
-                    padding: dp(4)
-                    theme_text_color: "Hint"
-                    font_style: "Body1"
-                    markup: True
-            MDTextField:
-                id: username_input
-                hint_text: "Enter your username"
-                size_hint_x: 1
-                mode: "rectangle"
-            MDTextField:
-                id: email_input
-                hint_text: "Enter your email"
-                size_hint_x: 1
-                mode: "rectangle"
-            MDTextField:
-                id: password_input
-                hint_text: "Enter your password"
-                password: True
-                size_hint_x: 1
-                mode: "rectangle"
+
             MDBoxLayout:
                 orientation: 'vertical'
                 spacing: dp(20)
                 size_hint_x: None
                 width: dp(400)
-                MDRaisedButton:
+
+                MDLabel:
+                    text: "[b]Create an Account[/b]"
+                    halign: "left"
+                    theme_text_color: "Primary"
+                    markup: True
+                    font_style: "Headline"
+                    role: "medium"
+
+                MDLabel:
+                    text: "Enter your username, email & password to sign up"
+                    halign: "left"
+                    padding: dp(4)
+                    markup: True
+                    font_style: "Body"
+                    role: "medium"
+
+                MDTextField:
+                    id: username_input
+                    mode: "outlined"
+                    MDTextFieldHintText:
+                        text: "Username"
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 32
+
+                MDTextField:
+                    id: email_input
+                    mode: "outlined"
+                    MDTextFieldHintText:
+                        text: "Email"
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 64
+
+                MDTextField:
+                    id: password_input
+                    mode: "outlined"
+                    password: True
+                    MDTextFieldHintText:
+                        text: "Password"
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 20
+
+            MDButton:
+                style: "filled"
+                size_hint_x: 1
+                radius: 8
+                on_press: root.signup_helper()
+
+                MDButtonIcon:
+                    icon: "account-plus"
+                MDButtonText:
                     id: signup_button
                     text: "Sign Up"
-                    size_hint: (1, None)
-                    height: dp(100)
-                    halign: "center"
-                    # md_bg_color: app.theme_cls.primary_color
-                    text_color: (0, 0, 0, 1)
-                    on_press: root.signup_helper()
-                MDLabel:
-                    text: "Already have an account? [ref=login][color=00FF00][u][b]Log in[/b][/u][/ref]"
-                    markup: True
-                    halign: "center"
-                    theme_text_color: "Primary"
-                    on_ref_press: 
-                        app.switch_screen("login")
-                        root.manager.transition.direction = "left"
 
+            MDLabel:
+                text: "Already have an account? [ref=login][color=00FF00][u][b]Log in[/b][/u][/ref]"
+                markup: True
+                halign: "center"
+                theme_text_color: "Primary"
+                on_ref_press: 
+                    app.switch_screen("login")
+                    root.manager.transition.direction = "left"

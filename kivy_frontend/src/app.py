@@ -9,7 +9,7 @@ from screens.home.logic import HomeScreen
 from screens.login.logic import LoginScreen
 from screens.posts.logic import PostsScreen
 from screens.signup.logic import SignupScreen
-from utils.session import get_token
+from utils.session import clear_token, get_token
 
 Window.size = (450, 750)
 

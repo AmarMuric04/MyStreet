@@ -6,7 +6,7 @@ import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ListProperty
-from kivymd.uix.button import MDFlatButton, MDRaisedButton
+from kivymd.uix.button import MDButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
@@ -126,8 +126,8 @@ class PostsScreen(MDScreen):
             type="custom",
             content_cls=MDTextField(hint_text="Enter comment text", multiline=True),
             buttons=[
-                MDRaisedButton(text="Submit", on_release=self.submit_comment),
-                MDFlatButton(text="Cancel", on_release=lambda x: self.dialog.dismiss())
+                MDButton(text="Submit", on_release=self.submit_comment),
+                MDButton(text="Cancel", on_release=lambda x: self.dialog.dismiss())
             ]
         )
         self.dialog.open()

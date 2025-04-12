@@ -4,54 +4,65 @@
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: dp(40)
+            size_hint: None, None
+            height: dp(700)
+            width: dp(400)
+
+            MDLabel:
+                text: "MyStreet Posts"
+                role: "large"
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                size_hint_y: None
+                font_style: "Headline"
+                role: "medium"
+                height: dp(50)
+            RecycleView:
+                id: posts_rv
+                viewclass: "PostItem"
+                data: root.posts_data
+                RecycleBoxLayout:
+                    spacing: dp(25)
+                    pos_hint: {'center_x': 0.5,'center_y': 0.8}
+                    default_size: None, dp(170)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: "vertical"
         FloatLayout:
-            MDFloatingActionButton:
-                icon: "plus"
-                md_bg_color: 0, 1, 0, 1 
-                elevation_normal: 8
-                size_hint: None, None
-                size: dp(56), dp(56)
-                pos_hint: {"top": 0.10, "right": 0.95}
-                on_release: 
+            # MDIconButton:
+            #     icon: "plus"
+            #     style: "filled"
+            #     radius: [self.height / 2, ]
+            #     size: "56dp", "56dp"
+            #     pos_hint: {"right": 0.95, "top": 0.10}
+            #     on_press:
+            #         app.switch_screen("create_post")
+            #         root.manager.transition.direction = "left"
+            MDButton:
+                style: "elevated"
+                pos_hint: {"right": 0.95, "y": 0.025}
+                on_press:
                     app.switch_screen("create_post")
                     root.manager.transition.direction = "right"
-            MDSpinner:
+
+                MDButtonIcon:
+                    icon: "plus"
+
+                MDButtonText:
+                    text: "Create a Post"
+            MDCircularProgressIndicator:
                 id: loader
                 size_hint: None, None
                 size: dp(48), dp(48)
                 pos_hint: {"center_x": 0.5, "center_y": 0.5}
                 active: False
                 opacity: 0
-                color: 1, 1, 1, 1 
-        MDBoxLayout:
-            orientation: "vertical"
-            padding: dp(20)
-            spacing: dp(10)
-            size_hint: None, 1
-            width: dp(400)
-
-            MDBoxLayout:
-                size_hint: 1, None
-                height: dp(50)
-                MDLabel:
-                    text: "MyStreet Posts"
-                    font_style: "H5"
-                    bold: True
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-            MDBoxLayout:
-                orientation: "vertical"
-                RecycleView:
-                    id: posts_rv
-                    viewclass: "PostItem"
-                    data: root.posts_data
-                    RecycleBoxLayout:
-                        default_size: None, dp(170)
-                        default_size_hint: 1, None
-                        size_hint_y: None
-                        height: self.minimum_height
-                        orientation: "vertical"
-
 <PostItem@BoxLayout>:
     post_id: ""
     like_count: 0
@@ -60,62 +71,87 @@
     title: ""
     text: ""
     user_email: ""
-    liked_by_user: root  
+    liked_by_user: False  
     orientation: "vertical"
     size_hint_y: None
-    height: dp(170)
-    padding: dp(5)
-    spacing: dp(5)
-    MDLabel:
-        text: "[b]@{}[/b] [i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
-        markup: True
+    height: self.minimum_height
+
+    MDCard:
+        md_bg_color: 0, 0, 0, 1
+        elevation: 4
+        padding: dp(10)
         size_hint_y: None
-        height: dp(25)
-        theme_text_color: "Custom"
-        text_color: 1, 1, 1, 1
-    MDLabel:
-        text: root.title if root.title else "No Title"
-        bold: True
-        size_hint_y: None
-        height: dp(25)
-        theme_text_color: "Custom"
-        text_color: 1, 1, 1, 1
-    MDLabel:
-        text: root.text if root.text else "No Content"
-        size_hint_y: None
-        height: dp(50)
-        theme_text_color: "Custom"
-        text_color: (200/255.0, 200/255.0, 200/255.0, 1)
-    BoxLayout:
-        orientation: "horizontal"
-        size_hint_y: None
-        height: dp(30)
-        spacing: dp(5)
-        MDIconButton:
-            icon: "heart" if root.liked_by_user else "heart-outline"
-            icon_size: "18sp"
-            pos_hint: {"center_y": 0.5}
-            on_release: app.root.get_screen("posts").toggle_like(root)
-        MDLabel:
-            text: str(root.like_count)
-            size_hint: None, None
-            size: dp(30), dp(30)
-            halign: "center"
-            valign: "middle"
-            pos_hint: {"center_y": 0.5}
-            theme_text_color: "Custom"
-            text_color: 1, 1, 1, 1
-        MDIconButton:
-            icon: "comment-outline"
-            icon_size: "18sp"
-            pos_hint: {"center_y": 0.5}
-            on_release: app.root.get_screen("posts").prompt_comment(root.post_id)
-        MDLabel:
-            text: str(root.comment_count)
-            size_hint: None, None
-            size: dp(30), dp(30)
-            halign: "center"
-            valign: "middle"
-            pos_hint: {"center_y": 0.5}
-            theme_text_color: "Custom"
-            text_color: 1, 1, 1, 1
+        height: self.minimum_height
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(5)
+            size_hint_y: None
+            height: self.minimum_height  
+
+            MDLabel:
+                text: "[b]@{}[/b][i][color=aaaaaa] • {}[/color][/i]".format(root.username, root.user_email)
+                markup: True
+                size_hint_y: None
+                height: dp(20)
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+
+            MDLabel:
+                text: root.title if root.title else "No Title"
+                bold: True
+                size_hint_y: None
+                height: dp(25)
+                font_style: "Title"
+                role: "large"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+
+            MDLabel:
+                text: root.text if root.text else "No Content"
+                size_hint_y: None
+                text_size: self.width, None
+                height: self.texture_size[1] + dp(10)
+                padding_y: dp(5)
+                font_style: "Body"
+                role: "large"
+                theme_text_color: "Custom"
+                text_color: (200/255.0, 200/255.0, 200/255.0, 1)
+
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint_y: None
+                height: dp(40)
+                spacing: dp(20)
+
+                MDIconButton:
+                    icon: "heart" if root.liked_by_user else "heart-outline"
+                    icon_size: "24sp"
+                    pos_hint: {"center_y": 0.5}
+                    on_release: app.root.get_screen("posts").toggle_like(root)
+
+                MDLabel:
+                    text: str(root.like_count)
+                    size_hint: None, None
+                    size: dp(40), dp(40)
+                    halign: "center"
+                    valign: "middle"
+                    pos_hint: {"center_y": 0.5}
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+
+                MDIconButton:
+                    icon: "comment-outline"
+                    icon_size: "24sp"
+                    pos_hint: {"center_y": 0.5}
+                    on_release: app.root.get_screen("posts").prompt_comment(root.post_id)
+
+                MDLabel:
+                    text: str(root.comment_count)
+                    size_hint: None, None
+                    size: dp(40), dp(40)
+                    halign: "center"
+                    valign: "middle"
+                    pos_hint: {"center_y": 0.5}
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1

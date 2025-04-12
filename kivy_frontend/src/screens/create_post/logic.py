@@ -17,6 +17,7 @@ class CreatePost(MDScreen):
     def create_post(self):
         title = self.ids.title_input.text.strip()
         text = self.ids.text_input.text.strip()
+        print(title, text)
         if not title or not text:
             print("Error: Title and text are required.")
             return

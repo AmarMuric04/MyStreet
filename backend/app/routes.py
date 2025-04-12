@@ -65,17 +65,23 @@ def signup():
 import random
 import smtplib
 
+from flask import request
+
 
 @app.route("/send-code", methods=["POST"])
 def send_code():
     data = request.get_json()
     recipient_email = data.get("email")
 
-    print(recipient_email)
-
     if not recipient_email:
         return {"status": "error", "message": "Email address not provided"}, 400
 
+    # Check if the user already exists
+    existing_user = mongo.db.users.find_one({"email": recipient_email})
+    if existing_user:
+        return {"status": "error", "message": "Email already registered"}, 400
+
+    # Generate a 6-digit code
     code = f"{random.randint(0, 999999):06}"
     subject = "Signup Code from MyStreet"
     message_body = f"Your signup code is: {code}"
@@ -92,6 +98,10 @@ def send_code():
                 to_addrs=recipient_email,
                 msg=message,
             )
+
+        # Remove any existing code for the email
+        mongo.db.codes.delete_many({"email": recipient_email})
+        # Insert the new code
         mongo.db.codes.insert_one({"email": recipient_email, "code": code})
 
         return {

@@ -2,54 +2,78 @@
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
+
         MDBoxLayout:
             orientation: "vertical"
             spacing: dp(20)
             size_hint: None, None
             width: dp(400)
             height: dp(700)
+
             MDLabel:
                 text: "[i]MyStreet[/i]"
                 halign: "left"
-                theme_text_color: "Primary"
-                font_style: "Body1"
                 markup: True
+                theme_text_color: "Custom"
+
             MDBoxLayout:
                 orientation: "vertical"
-                padding: dp(20)
-                spacing: dp(5)
+                spacing: dp(20)
                 size_hint_x: None
                 width: dp(400)
+
                 MDLabel:
                     id: email_label
-                    text: "[b]We sent a code to your email[/b]"
+                    text: "We sent a code to your email"
                     halign: "left"
+                    bold: True
                     theme_text_color: "Primary"
-                    font_style: "H4"
-                    markup: True
+                    font_style: "Headline"
+                    role: "medium"
+                    size_hint_y: None
+
                 MDLabel:
                     text: "Enter the code to proceed!"
                     halign: "left"
-                    theme_text_color: "Hint"
-                    font_style: "Body1"
+                    padding: dp(4)
                     markup: True
-            MDTextField:
-                id: code_input
-                hint_text: "Enter the verification code"
-                helper_text: ""
-                helper_text_mode: "on_error"
-                mode: "rectangle"
-                size_hint_x: None
-                width: dp(400)
-            MDRaisedButton:
-                id: verify_button
-                text: "Verify"
-                size_hint: 1, None
-                height: dp(60)
+                    font_style: "Body"
+                    role: "medium"
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDTextField:
+                    id: code_input
+                    mode: "outlined"
+                    MDTextFieldHintText:
+                        text: "Enter the verification code"
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 6
+
+            MDButton:
+                style: "filled"
+                size_hint_x: 1
+                radius: 8
                 on_press: root.on_verify()
+                MDButtonIcon:
+                    icon: "check"
+                MDButtonText:
+                    id: verify_button
+                    text: "Verify"
+            MDButton:
+                style: "filled"
+                size_hint_x: 1
+                radius: 8
+                on_press: root.on_verify()
+                MDButtonIcon:
+                    icon: "repeat"
+                MDButtonText:
+                    id: verify_button
+                    text: "Send Again"
+
             MDLabel:
-                text: "Already have an account? [ref=login][u][b]Log in[/b][/u][/ref]"
+                text: "Already have an account? [ref=login][color=00FF00][u][b]Log in[/b][/u][/ref]"
                 markup: True
                 halign: "center"
                 theme_text_color: "Primary"
-                on_ref_press: app.loadscreen("login")
+                on_ref_press: app.switch_screen("login")

@@ -4,8 +4,8 @@
             orientation: "vertical"
             size_hint: None, None
             padding: dp(20)
-            spacing: dp(10)
-            height: dp(500)
+            spacing: dp(32)
+            height: dp(400)
             width: dp(400)
             MDLabel:
                 text: "Create a Post"
@@ -17,47 +17,84 @@
                 height: dp(50)
             MDTextField:
                 id: title_input
-                hint_text: "Enter title"
-                multiline: False
-                size_hint: 1, None
-                height: dp(40)
+                mode: "outlined"
+
+                MDTextFieldHintText:
+                    text: "Title"
+
+                MDTextFieldMaxLengthText:
+                    max_text_length: 10
+
             MDTextField:
                 id: text_input
-                hint_text: "Enter your post content"
-                multiline: True
-                size_hint: 1, None
-                height: dp(80)
-            BoxLayout:
+                mode: "outlined"
+
+                MDTextFieldHintText:
+                    text: "Content"
+
+                MDTextFieldMaxLengthText:
+                    max_text_length: 512
+            # MDTextField:
+            #     id: title_input
+            #     hint_text: "Enter title"
+            #     multiline: False
+            #     size_hint: 1, None
+            #     height: dp(40)
+            # MDTextField:
+            #     id: text_input
+            #     hint_text: "Enter your post content"
+            #     multiline: True
+            #     size_hint: 1, None
+            #     height: dp(80)
+            MDBoxLayout:
                 size_hint_y: None
                 height: dp(40)
                 spacing: dp(10)
+
                 MDCheckbox:
                     id: anonymous_checkbox
                     size_hint: None, None
                     size: dp(30), dp(30)
+
                 MDLabel:
                     text: "Post anonymously"
                     theme_text_color: "Custom"
                     text_color: 1, 1, 1, 1
-                    valign: "center"
-            MDTextField:
-                id: image_input
-                hint_text: "Image URL or file path"
-                multiline: False
-                size_hint: 1, None
-                height: dp(40)
-            MDTextField:
-                id: tags_input
-                hint_text: "Enter tags separated by commas"
-                multiline: False
-                size_hint: 1, None
-                height: dp(40)
-            MDRaisedButton:
-                id: post_button
-                text: "Submit Post"
-                size_hint: 1, None
-                height: dp(50)
-                halign: "center"
-                md_bg_color: 1, 1, 1, 1
-                text_color: 0, 0, 0, 1
+                    size_hint_y: None
+                    height: dp(18)
+            # MDTextField:
+            #     id: image_input
+            #     hint_text: "Image URL or file path"
+            #     multiline: False
+            #     size_hint: 1, None
+            #     height: dp(40)
+            # MDTextField:
+            #     id: tags_input
+            #     hint_text: "Enter tags separated by commas"
+            #     multiline: False
+            #     size_hint: 1, None
+            #     height: dp(40)
+
+            MDButton:
+                style: "filled"
+                size_hint_x: None
+                width: dp(400)
+                radius: 8
                 on_press: root.create_post()
+
+                MDButtonIcon:
+                    icon: "pencil"
+
+                MDButtonText:
+                    id: post_button
+                    text: "Create Post"
+
+            # MDRaisedButton:
+            #     id: post_button
+            #     text: "Submit Post"
+            #     size_hint: 1, None
+            #     height: dp(50)
+            #     halign: "center"
+            #     md_bg_color: 1, 1, 1, 1
+            #     text_color: 0, 0, 0, 1
+            #     on_press: root.create_post()
