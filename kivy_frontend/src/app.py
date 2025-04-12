@@ -20,6 +20,7 @@ class MyStreetApp(MDApp):
         self.sm = ScreenManager(transition=SlideTransition())
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Green"
+        self.sm.add_widget(PostsScreen(name="posts"))
         self.load_initial_screen()
         return self.sm
 

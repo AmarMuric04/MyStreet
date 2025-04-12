@@ -22,3 +22,30 @@
 -   Add Ability to like & comment
 -   JTW Session lasts 30 days
 -   Updated UI for Login - Signup & Posts Pages
+
+# 0.0.5 (13 Apr 2025)
+
+-   Add Email Verification through sending a code in mail
+-   Home Pages show groups & users can choose which group they want to join
+-   Add CTA Button on the BOTTOM-left to create a post, when in a group
+-   Add Anonymous mode when creating a post
+-   Add Forgot Password Page
+-   Add Sending Email Page
+-   Add Seperate Posts Page
+-   Add Create A Post Page
+-   Add Create A Group Page
+-   Enhanced Post Look (Bold, italic & general typography fixes)
+
+# To be added in the future
+
+-   Add OAuth
+-   Allow Images in posts (possibly more than 1 per post)
+-   A Preview of the post the user created before actually posting it
+-   Fix Commenting logic, Add Deleting comments
+-   A "Soft Delete", where a user marks the post as removed, and then a moderator can fully delete it
+-   Add Editing posts & comments
+-   Reporting users & only allow admins to view the reports
+-   Non Logged in users can view up to 5 latest posts per group
+-   Add Group Admins
+-   Notification system (Most likely through email, to dodge using sockets)
+-   Desktop responsiveness (Currently only responsive for a mobile device)

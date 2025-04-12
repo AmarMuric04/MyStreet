@@ -162,6 +162,7 @@ def add_post():
     text = data.get("text")
     image = data.get("image")  # optional Cloudinary image URL
     tags = data.get("tags")
+    anonymous = data.get("anonymous")
 
     if not title or not text:
         return jsonify({"error": "Title and text are required"}), 400
@@ -172,6 +173,7 @@ def add_post():
         "text": text,
         "image": image,
         "tags": tags if tags else [],
+        "anonymous": anonymous,
         "likes": [],  # will store user ObjectIds who liked the post
         "comments": [],  # list of comment subdocuments
         "created_at": datetime.datetime.utcnow(),
@@ -233,24 +235,55 @@ def get_posts():
     posts_cursor = mongo.db.posts.find().sort("created_at", DESCENDING)
     posts = []
     for post in posts_cursor:
-        user_id = post.get("user_id")
-        user_email = None
-
-        if user_id:
-            user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
-            username = user.get("username") if user else None
-            user_email = user.get("email") if user else None
-
-        likes = post.get("likes", [])
-        liked_users = list(mongo.db.users.find({"_id": {"$in": likes}}, {"email": 1}))
-        liked_user_emails = [user["email"] for user in liked_users if "email" in user]
-
-        liked_by_user = current_user_email in liked_user_emails
-
-        posts.append(
-            {
+        # Check whether the post is marked as anonymous
+        if post.get("anonymous", False):
+            post_data = {
                 "post_id": str(post.get("_id")),
-                "user_id": str(user_id),
+                "user_id": None,  # No user id is displayed for anonymous posts
+                "user_email": "Anonymous",  # Mark as anonymous
+                "username": "Anonymous",  # Mark as anonymous
+                "title": post.get("title"),
+                "text": post.get("text"),
+                "image": post.get("image"),
+                "tags": post.get("tags"),
+                "likes": post.get("likes", []),
+                # No liked_by_user check is performed since user details are hidden
+                "liked_by_user": False,
+                "comments": post.get("comments"),
+                "created_at": (
+                    post.get("created_at").isoformat()
+                    if post.get("created_at")
+                    else None
+                ),
+                "updated_at": (
+                    post.get("updated_at").isoformat()
+                    if post.get("updated_at")
+                    else None
+                ),
+            }
+        else:
+            user_id = post.get("user_id")
+            user_email = None
+            username = None
+
+            if user_id:
+                user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+                if user:
+                    username = user.get("username")
+                    user_email = user.get("email")
+
+            likes = post.get("likes", [])
+            liked_users = list(
+                mongo.db.users.find({"_id": {"$in": likes}}, {"email": 1})
+            )
+            liked_user_emails = [
+                user["email"] for user in liked_users if "email" in user
+            ]
+            liked_by_user = current_user_email in liked_user_emails
+
+            post_data = {
+                "post_id": str(post.get("_id")),
+                "user_id": str(user_id) if user_id else None,
                 "user_email": user_email,
                 "username": username,
                 "title": post.get("title"),
@@ -271,7 +304,7 @@ def get_posts():
                     else None
                 ),
             }
-        )
+        posts.append(post_data)
     return jsonify(posts), 200
 
 
@@ -299,6 +332,9 @@ def create_post_in_group():
     text = data.get("text")
     image = data.get("image")
     tags = data.get("tags", [])
+    anonymous = data.get("anonymous", False)
+
+    print(anonymous)
 
     if not title or not text:
         return jsonify({"error": "Title and text are required"}), 400
@@ -310,8 +346,9 @@ def create_post_in_group():
         "text": text,
         "image": image,
         "tags": tags,
-        "likes": [],  # List of user ObjectIds who liked this post
-        "comments": [],  # Comment subdocuments can be stored here
+        "anonymous": anonymous,
+        "likes": [],
+        "comments": [],
         "created_at": datetime.datetime.utcnow(),
         "updated_at": datetime.datetime.utcnow(),
     }
@@ -345,28 +382,52 @@ def get_posts_in_group():
     )
     posts = []
     for post in posts_cursor:
-        posts.append(
-            {
-                "post_id": str(post["_id"]),
-                "user_id": str(post["user_id"]),
-                "title": post.get("title"),
-                "text": post.get("text"),
-                "image": post.get("image"),
-                "tags": post.get("tags"),
-                "likes": post.get("likes"),
-                "comments": post.get("comments"),
-                "created_at": (
-                    post.get("created_at").isoformat()
-                    if post.get("created_at")
-                    else None
-                ),
-                "updated_at": (
-                    post.get("updated_at").isoformat()
-                    if post.get("updated_at")
-                    else None
-                ),
-            }
-        )
+        if post.get("anonymous", False):
+            posts.append(
+                {
+                    "post_id": str(post["_id"]),
+                    "user": "Anonymous",
+                    "title": post.get("title"),
+                    "text": post.get("text"),
+                    "image": post.get("image"),
+                    "tags": post.get("tags"),
+                    "likes": post.get("likes"),
+                    "comments": post.get("comments"),
+                    "created_at": (
+                        post.get("created_at").isoformat()
+                        if post.get("created_at")
+                        else None
+                    ),
+                    "updated_at": (
+                        post.get("updated_at").isoformat()
+                        if post.get("updated_at")
+                        else None
+                    ),
+                }
+            )
+        else:
+            posts.append(
+                {
+                    "post_id": str(post["_id"]),
+                    "user_id": str(post["user_id"]),
+                    "title": post.get("title"),
+                    "text": post.get("text"),
+                    "image": post.get("image"),
+                    "tags": post.get("tags"),
+                    "likes": post.get("likes"),
+                    "comments": post.get("comments"),
+                    "created_at": (
+                        post.get("created_at").isoformat()
+                        if post.get("created_at")
+                        else None
+                    ),
+                    "updated_at": (
+                        post.get("updated_at").isoformat()
+                        if post.get("updated_at")
+                        else None
+                    ),
+                }
+            )
     return jsonify(posts), 200
 
 

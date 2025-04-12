@@ -25,13 +25,15 @@ class CreatePost(MDScreen):
         self.ids.post_button.text = "Submitting Post..."
         self.ids.post_button.disabled = True
 
+        anonymous = self.ids.anonymous_checkbox.active
+
         post_data = {
             "title": title,
             "text": text,
             "image": None,
-            "tags": []
+            "tags": [],
+            "anonymous": anonymous  
         }
-        # Mark the thread as daemon so it doesn't hang the app on exit.
         threading.Thread(target=self.create_post_thread, args=(post_data,), daemon=True).start()
 
     def create_post_thread(self, post_data):
@@ -50,7 +52,6 @@ class CreatePost(MDScreen):
                 app = App.get_running_app()
                 posts_screen = app.root.get_screen("posts")
                 posts_screen.posts_fetched = False
-                # Now, switch to the posts screen so that on_enter triggers a refetch.
                 Clock.schedule_once(lambda dt: app.switch_screen("posts"), 0)
             else:
                 msg = f"Error creating post: {response.status_code}"
