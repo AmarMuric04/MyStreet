@@ -1,0 +1,42 @@
+<CreateGroup>:
+    AnchorLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint: None, None
+            padding: dp(20)
+            spacing: dp(32)
+            height: dp(400)
+            width: dp(400)
+            MDLabel:
+                text: "Create a Group"
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                halign: "center"
+                size_hint: 1, None
+                height: dp(50)
+            MDTextField:
+                id: name_input
+                mode: "outlined"
+                MDTextFieldHintText:
+                    text: "Group Name"
+                MDTextFieldMaxLengthText:
+                    max_text_length: 50
+            MDTextField:
+                id: description_input
+                mode: "outlined"
+                MDTextFieldHintText:
+                    text: "Description"
+                MDTextFieldMaxLengthText:
+                    max_text_length: 256
+            MDButton:
+                style: "filled"
+                size_hint_x: None
+                width: dp(400)
+                radius: 8
+                on_press: root.create_group()
+                MDButtonIcon:
+                    icon: "account-group"
+                MDButtonText:
+                    id: group_button
+                    text: "Create Group"

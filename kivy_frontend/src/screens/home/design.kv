@@ -5,145 +5,100 @@
         anchor_x: "center"
         anchor_y: "center"
         MDBoxLayout:
-            orientation: "vertical"
-            padding: dp(20)
+            orientation: 'vertical'
+            padding: dp(40)
             size_hint: None, None
-            height: dp(400)
+            height: dp(700)
             width: dp(400)
 
             MDLabel:
-                text: "Home Page!"
+                text: "MyStreet Groups"
                 bold: True
                 halign: "center"
                 size_hint_y: None
-                height: dp(20)
-
-            MDBoxLayout:
-                orientation: 'vertical'
-                spacing: dp(8)
-                MDListItem:
-                    radius: 12
-
-                    MDListItemLeadingIcon:
-                        icon: "map"
-
-                    MDListItemHeadlineText:
-                        text: "Novi Pazar"
-
-                    MDListItemSupportingText:
-                        text: "Samo pazarci"
-
-                    MDListItemTertiaryText:
-                        text: "i tutinci"
-
-                    MDButton:
-                        style: "filled"
-                        on_press:
-                            app.switch_screen("posts")
-                            root.manager.transition.direction = "left"
-
-                        MDButtonIcon:
-                            icon: "login"
-                        MDButtonText:
-                            id: login_button
-                            text: "Request to join"
-                MDListItem:
-                    radius: 12
-
-                    MDListItemLeadingIcon:
-                        icon: "map"
-
-                    MDListItemHeadlineText:
-                        text: "England"
-
-                    MDListItemSupportingText:
-                        text: "Only UK"
-
-                    MDListItemTertiaryText:
-                        text: "please"
-
-                    MDButton:
-                        style: "filled"
-                        on_press:
-                            app.switch_screen("posts")
-                            root.manager.transition.direction = "left"
-
-                        MDButtonIcon:
-                            icon: "login"
-                        MDButtonText:
-                            id: login_button
-                            text: "Request to join"
-
-                MDListItem:
-                    radius: 12
-
-                    MDListItemLeadingIcon:
-                        icon: "map"
-
-                    MDListItemHeadlineText:
-                        text: "Netherlands"
-
-                    MDListItemSupportingText:
-                        text: "Only retards"
-
-                    MDButton:
-                        style: "filled"
-                        on_press:
-                            app.switch_screen("posts")
-                            root.manager.transition.direction = "left"
-
-                        MDButtonIcon:
-                            icon: "login"
-                        MDButtonText:
-                            id: login_button
-                            text: "Request to join"
-
-                MDListItem:
-                    radius: 12
-
-                    MDListItemLeadingIcon:
-                        icon: "map"
-
-                    MDListItemHeadlineText:
-                        text: "Tutin"
-
-                    MDListItemSupportingText:
-                        text: "Samo tutinci"
-
-                    MDListItemTertiaryText:
-                        text: "i pazarci"
-
-                    MDButton:
-                        style: "filled"
-                        on_press:
-                            app.switch_screen("posts")
-                            root.manager.transition.direction = "left"
-
-                        MDButtonIcon:
-                            icon: "login"
-                        MDButtonText:
-                            id: login_button
-                            text: "Request to join"
+                height: dp(50)
+            RecycleView:
+                id: groups_rv
+                viewclass: "GroupItem"
+                data: root.groups_data
+                RecycleBoxLayout:
+                    spacing: dp(25)
+                    default_size: None, dp(170)
+                    default_size_hint: 1, None
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
 
         FloatLayout:
-            # MDIconButton:
-            #     icon: "plus"
-            #     style: "filled"
-            #     radius: [self.height / 2, ]
-            #     size: "56dp", "56dp"
-            #     pos_hint: {"right": 0.95, "top": 0.10}
-            #     on_press:
-            #         app.switch_screen("posts")
-            #         root.manager.transition.direction = "right"
             MDButton:
                 style: "elevated"
                 pos_hint: {"right": 0.95, "y": 0.025}
                 on_press:
-                    app.switch_screen("posts")
+                    app.switch_screen("create_group")
                     root.manager.transition.direction = "left"
-
                 MDButtonIcon:
                     icon: "plus"
-
                 MDButtonText:
                     text: "Create a Group"
+
+# Define a rule for individual group items.
+<GroupItem@BoxLayout>:
+    # These properties are declared so they can be passed from Python.
+    group_name: ""
+    description: ""
+    creator: ""
+    orientation: "horizontal"
+    size_hint_y: None
+    height: dp(80)
+    padding: dp(8)
+    spacing: dp(8)
+    
+    MDCard:
+        padding: dp(10)
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            MDBoxLayout:
+                orientation: 'vertical'
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    spacing: dp(10)
+                    
+                    MDIcon:
+                        icon: "account-group"
+                        size_hint: None, None
+                        size: dp(24), dp(24)
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+
+                    MDLabel:
+                        text: root.group_name
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(24)
+
+
+                MDDivider:
+
+                MDLabel:
+                    text: root.description
+
+                MDLabel:
+                    text: root.creator
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                
+                Widget:
+                
+                MDButton:
+                    on_press:
+                        app.switch_screen("posts")
+
+                    MDButtonIcon:
+                        icon: "plus"
+                    MDButtonText:
+                        text: "Request to Join"
+

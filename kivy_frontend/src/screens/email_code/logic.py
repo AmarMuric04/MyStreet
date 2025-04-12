@@ -3,7 +3,7 @@ from kivy.clock import Clock
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 
-from utils.auth import signup_api, verify_code_api
+from utils.auth import send_code_api, signup_api, verify_code_api
 
 Builder.load_file("kivy_frontend/src/screens/email_code/design.kv")
 
@@ -61,6 +61,18 @@ class EmailCode(MDScreen):
             self.ids.code_input.helper_text = verify_response.get("message", "Verification failed.")
             self.ids.code_input.helper_text_mode = "on_error"
             self.reset_button()
+
+    def on_send_again(self):
+        app = App.get_running_app()
+        signup_data = getattr(app, "signup_data", None)
+        
+        email = signup_data.get("email")
+        
+        response = send_code_api(signup_data.get("email"))
+        if response.get("status") == "success":
+            pass
+        else:
+            pass
 
     def reset_button(self):
         self.ids.verify_button.text = "Verify"

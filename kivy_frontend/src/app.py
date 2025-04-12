@@ -2,6 +2,7 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, SlideTransition
 from kivymd.app import MDApp
 
+from screens.create_group.logic import CreateGroup
 from screens.create_post.logic import CreatePost
 from screens.email_code.logic import EmailCode
 from screens.forgot_password.logic import ForgotPassword
@@ -15,6 +16,7 @@ Window.size = (450, 750)
 
 class MyStreetApp(MDApp):
     def build(self):
+        # clear_token()
         self.sm = ScreenManager(transition=SlideTransition())
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Green"
@@ -46,6 +48,8 @@ class MyStreetApp(MDApp):
                 screen = CreatePost(name='create_post')
             elif screen_name == 'email_code':
                 screen = EmailCode(name='email_code')
+            elif screen_name == 'create_group':
+                screen = CreateGroup(name='create_group')
 
             if screen:
                 self.sm.add_widget(screen)
