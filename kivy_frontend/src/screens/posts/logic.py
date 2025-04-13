@@ -5,6 +5,7 @@ import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ListProperty, StringProperty
+from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.screen import MDScreen
 
 from utils.session import get_token
@@ -212,3 +213,25 @@ class PostsScreen(MDScreen):
                 print(f"Error adding comment: {response.status_code}")
         except Exception as e:
             print(f"Error adding comment: {str(e)}")
+            
+    def open_menu(self, caller):
+        menu_items = [
+            {
+                "text": "Report",
+                "on_release": lambda x="Report": self.menu_callback(x),
+            },
+            {
+                "text": "Delete",
+                "on_release": lambda x="Delete": self.menu_callback(x),
+            },
+        ]
+        self.menu = MDDropdownMenu(
+            caller=caller,
+            items=menu_items,
+            width_mult=4,
+        )
+        self.menu.open()
+
+    def menu_callback(self, text_item):
+        print(f"Selected: {text_item}")
+        self.menu.dismiss()

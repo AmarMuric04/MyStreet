@@ -7,24 +7,38 @@
 
         MDBoxLayout:
             orientation: 'vertical'
-            padding: dp(40)
+            padding: dp(5)
             size_hint: None, None
             height: dp(700)
             width: dp(400)
-
+            
+            MDLabel:
+                text: "You're viewing posts for"
+                font_style: "Body"
+                role: "small"
+                italic: True
+                size_hint_y: None
+                height: dp(8)
             MDBoxLayout:
                 size_hint_y: None
                 height: dp(50)
                 padding: 8
-                MDLabel:
-                    id: title
-                    text: ""
-                    role: "large"
-                    bold: True
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                    font_style: "Headline"
-                    role: "medium"
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    spacing: dp(10)
+                    MDIcon:
+                        icon: "account-group"
+                    MDLabel:
+                        id: title
+                        text: ""
+                        role: "large"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        font_style: "Headline"
+                        role: "medium"
+                        size_hint_y: None
+                        height: dp(20)
                 MDButton:
                     id: join_btn
                     opacity: 0.0
@@ -90,82 +104,162 @@
     size_hint_y: None
     height: self.minimum_height
 
-    MDCard:
-        md_bg_color: 0, 0, 0, 1
-        elevation: 4
-        padding: dp(10)
-        size_hint_y: None
-        height: self.minimum_height
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: dp(20)
 
-        BoxLayout:
-            orientation: "vertical"
+        MDBoxLayout:
+            orientation: 'horizontal'
             spacing: dp(5)
-            size_hint_y: None
-            height: self.minimum_height  
+            MDFloatLayout:
+                size_hint: None, None
+                size: dp(40), dp(40)
+                md_bg_color: 1, 1, 1, 1
+                radius: self.height / 2
+                MDIcon:
+                    icon: "account"
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
 
-            MDLabel:
-                text: "[b]{}[/b][i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
-                markup: True
+            MDBoxLayout:
+                orientation: 'horizontal'
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(35)
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        valign: "middle"
+                        MDLabel:
+                            text: "[b]{}[/b]".format(root.username)
+                            # text: "[b]{}[/b][i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
+                            markup: True
+                            size_hint_y: None
+                            height: dp(20)
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                        
+                        MDLabel:
+                            text: root.title if root.title else "No Title"
+                            bold: True
+                            size_hint_y: None
+                            height: dp(25)
+                            padding: dp(4)
+                            font_style: "Body"
+                            role: "large"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint: None, None
+                    width: dp(32)
+                    height: dp(50)
+
+                    MDIconButton:
+                        id: menu_button
+                        icon: "dots-vertical"
+                        on_release: app.root.ids.screen_manager.get_screen("posts").open_menu(self)
+
+                    Widget:
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: dp(10)
+
+            MDBoxLayout:
+                size: dp(40), dp(40)
+                size_hint: None, None
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: dp(5)
                 size_hint_y: None
-                height: dp(20)
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
-
-            MDLabel:
-                text: root.title if root.title else "No Title"
-                bold: True
-                size_hint_y: None
-                height: dp(25)
-                font_style: "Title"
-                role: "large"
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
-
-            MDLabel:
-                text: root.text if root.text else "No Content"
-                size_hint_y: None
-                text_size: self.width, None
-                height: self.texture_size[1] + dp(10)
-                padding_y: dp(5)
-                font_style: "Body"
-                role: "large"
-                theme_text_color: "Custom"
-                text_color: (200/255.0, 200/255.0, 200/255.0, 1)
-
-            BoxLayout:
-                orientation: "horizontal"
-                size_hint_y: None
-                height: dp(40)
-                spacing: dp(20)
-
-                MDIconButton:
-                    icon: "heart" if root.liked_by_user else "heart-outline"
-                    icon_size: "24sp"
-                    pos_hint: {"center_y": 0.5}
-                    on_release: app.root.ids.screen_manager.get_screen("posts").toggle_like(root)
+                height: self.minimum_height  
 
                 MDLabel:
-                    text: str(root.like_count)
-                    size_hint: None, None
-                    size: dp(40), dp(40)
-                    halign: "center"
-                    valign: "middle"
-                    pos_hint: {"center_y": 0.5}
+                    text: root.text if root.text else "No Content"
+                    size_hint_y: None
+                    text_size: self.width, None
+                    height: self.texture_size[1] + dp(10)
+                    font_style: "Body"
+                    role: "large"
                     theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
+                    text_color: (200/255.0, 200/255.0, 200/255.0, 1)
 
-                MDIconButton:
-                    icon: "comment-outline"
-                    icon_size: "24sp"
-                    pos_hint: {"center_y": 0.5}
-                    on_release: app.root.ids.screen_manager.get_screen("posts").prompt_comment(root.post_id)
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: dp(40)
+                    spacing: dp(8)
 
-                MDLabel:
-                    text: str(root.comment_count)
-                    size_hint: None, None
-                    size: dp(40), dp(40)
-                    halign: "center"
-                    valign: "middle"
-                    pos_hint: {"center_y": 0.5}
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        MDIconButton:
+                            icon: "thumb-up" if root.liked_by_user else "thumb-up-outline"
+                            icon_size: "14sp"
+                            pos_hint: {"center_y": 0.5}
+                            on_release: app.root.ids.screen_manager.get_screen("posts").toggle_like(root)
+
+                        MDLabel:
+                            text: str(root.like_count)
+                            size_hint: None, None
+                            size: dp(20), dp(40)
+                            halign: "center"
+                            valign: "middle"
+                            pos_hint: {"center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        MDIconButton:
+                            icon: "comment-outline"
+                            icon_size: "14sp"
+                            pos_hint: {"center_y": 0.5}
+                            on_release: app.root.ids.screen_manager.get_screen("posts").prompt_comment(root.post_id)
+
+                        MDLabel:
+                            text: str(root.comment_count)
+                            size_hint: None, None
+                            size: dp(20), dp(40)
+                            halign: "center"
+                            valign: "middle"
+                            pos_hint: {"center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        MDIconButton:
+                            icon: "bookmark" if root.liked_by_user else "bookmark-outline"
+                            icon_size: "14sp"
+                            pos_hint: {"center_y": 0.5}
+                            on_release: app.root.ids.screen_manager.get_screen("posts").toggle_like(root)
+
+                        MDLabel:
+                            text: str(root.like_count)
+                            size_hint: None, None
+                            size: dp(20), dp(40)
+                            halign: "center"
+                            valign: "middle"
+                            pos_hint: {"center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        MDIconButton:
+                            icon: "repeat"
+                            icon_size: "14sp"
+                            pos_hint: {"center_y": 0.5}
+                            on_release: app.root.ids.screen_manager.get_screen("posts").toggle_like(root)
+
+                        MDLabel:
+                            text: str(root.like_count)
+                            size_hint: None, None
+                            size: dp(20), dp(40)
+                            halign: "center"
+                            valign: "middle"
+                            pos_hint: {"center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+            
+
+       

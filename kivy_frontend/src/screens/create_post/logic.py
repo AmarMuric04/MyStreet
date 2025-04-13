@@ -54,10 +54,9 @@ class CreatePost(MDScreen):
                 msg = "Post created successfully!"
                 Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
                 app = App.get_running_app()
-                # Assume you want to refresh the posts screen after creating a post.
-                posts_screen = app.root.get_screen("posts")
+                posts_screen = app.root.ids.screen_manager.get_screen("posts")
                 posts_screen.posts_fetched = False
-                Clock.schedule_once(lambda dt: app.switch_screen("posts"), 0)
+                app.root.ids.screen_manager.current = "posts"
             else:
                 msg = f"Error creating post: {response.status_code}"
         except Exception as e:
