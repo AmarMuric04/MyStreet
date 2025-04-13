@@ -16,8 +16,6 @@ class PostsScreen(MDScreen):
     group_id = StringProperty("") 
 
     def on_pre_enter(self):
-        # Print the group_id and fetch group details to update the title label.
-        print("Displaying posts for group:", self.group_id)
         threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
 
     def on_enter(self):
@@ -25,20 +23,16 @@ class PostsScreen(MDScreen):
         threading.Thread(target=self.fetch_posts_thread, daemon=True).start()
 
     def show_loader(self):
-        if "loader" in self.ids:
-            self.ids.loader.active = True
-            self.ids.loader.opacity = 1
+        self.ids.loader.active = True
+        self.ids.loader.opacity = 1
 
     def hide_loader(self):
-        if "loader" in self.ids:
-            self.ids.loader.active = False
-            self.ids.loader.opacity = 0
+        self.ids.loader.active = False
+        self.ids.loader.opacity = 0
 
     def update_post_status(self, msg):
-        print(msg)
-        if "post_button" in self.ids:
-            self.ids.post_button.text = "Submit Post"
-            self.ids.post_button.disabled = False
+        self.ids.post_button.text = "Submit Post"
+        self.ids.post_button.disabled = False
 
     def on_leave(self):
         self.posts_data = []
@@ -97,7 +91,6 @@ class PostsScreen(MDScreen):
                 group = response.json()
                 group_name = group.get("name", "Unknown Group")
                 is_member = group.get("is_member", False)
-                # Update the UI on the main thread.
                 Clock.schedule_once(lambda dt: self.update_group_ui(group_name, is_member), 0)
             else:
                 print(f"Error fetching group info: {response.status_code}")
@@ -105,9 +98,7 @@ class PostsScreen(MDScreen):
             print(f"Error fetching group info: {str(e)}")
 
     def update_group_ui(self, group_name, is_member):
-        # Update the group title.
         self.ids.title.text = group_name
-        # If not a member, show the join button.
         if not is_member:
             self.ids.join_btn.opacity = 1
             self.ids.join_btn.disabled = False
@@ -134,15 +125,15 @@ class PostsScreen(MDScreen):
                 }
             )
             if response.status_code == 200:
-                print("Joined group successfully")
-                # Optionally refresh the group info.
+                self.ids.join_btn.opacity = 0
+                self.ids.create_post_btn.opacity = 1
+                self.ids.create_post_btn.disabled = False
                 threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
             else:
                 print(f"Error joining group: {response.status_code}")
         except Exception as e:
             print(f"Error in join_group_thread: {str(e)}")
         finally:
-            # Re-enable the join button after the request is complete.
             Clock.schedule_once(lambda dt: setattr(self.ids.join_btn, "disabled", False), 0)
 
     def toggle_like(self, post_item):

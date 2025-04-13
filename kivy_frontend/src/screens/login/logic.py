@@ -22,7 +22,7 @@ class LoginScreen(MDScreen):
             self.ids.password_input.text = ""
 
             app = App.get_running_app()
-            app.switch_screen('home')
+            app.root.ids.screen_manager.current = 'home'
         else:
             self.ids.email_input.error = True
             self.ids.email_input.helper_text = "Invalid credentials"

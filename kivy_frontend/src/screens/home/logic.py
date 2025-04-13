@@ -9,21 +9,18 @@ from kivymd.uix.screen import MDScreen
 
 from utils.session import get_token
 
-# Load the KV file for groups
 Builder.load_file("kivy_frontend/src/screens/home/design.kv")
 
-API_GROUPS_URL = "http://localhost:5000/groups"  # Make sure your backend endpoint is correct
+API_GROUPS_URL = "http://localhost:5000/groups" 
 
 class HomeScreen(MDScreen):
-    # This property is bound to the RecycleView's data property.
     groups_data = ListProperty([])
 
     def on_enter(self):
-        # When the screen enters, fetch the groups dynamically.
+        print("Fetching groups")
         self.fetch_groups()
 
     def fetch_groups(self):
-        # Execute the network request in a background thread.
         threading.Thread(target=self.fetch_groups_thread, daemon=True).start()
 
     def fetch_groups_thread(self):
@@ -37,8 +34,6 @@ class HomeScreen(MDScreen):
             )
             if response.status_code == 200:
                 groups = response.json()
-                # Convert the fetched list of groups to the format expected by the RecycleView.
-                # Adjust the key names if your backend returns different names.
                 data = [
                     {
                         "group_name": group.get("name", "No Name"),
@@ -55,7 +50,6 @@ class HomeScreen(MDScreen):
             print(f"Error fetching groups: {str(e)}")
             data = []
 
-        # Update the groups_data property on the main thread.
         Clock.schedule_once(lambda dt: self.update_groups_data(data), 0)
 
     def update_groups_data(self, data):

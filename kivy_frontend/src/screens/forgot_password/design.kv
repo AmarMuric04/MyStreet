@@ -12,7 +12,6 @@
                 text: "[i]MyStreet[/i]"
                 halign: "left"
                 theme_text_color: "Primary"
-                font_style: "Body1"
                 markup: True
             MDBoxLayout:
                 orientation: 'vertical'
@@ -24,25 +23,22 @@
                     text: "[b]Forgot your password?[/b]"
                     halign: "left"
                     theme_text_color: "Primary"
-                    font_style: "H4"
                     markup: True
                 MDLabel:
                     text: "Enter your email to change it!"
                     halign: "left"
                     theme_text_color: "Hint"
-                    font_style: "Body1"
                     markup: True
             MDTextField:
                 id: email_input
                 hint_text: "Enter your email"
                 size_hint_x: 1
-                mode: "rectangle"
             MDBoxLayout:
                 orientation: 'vertical'
                 spacing: dp(20)
                 size_hint_x: None
                 width: dp(400)
-                MDRaisedButton:
+                MDButton:
                     id: proceed_button
                     text: "Proceed"
                     size_hint: (1, None)
@@ -57,5 +53,5 @@
                     halign: "center"
                     theme_text_color: "Primary"
                     on_ref_press: 
-                        app.switch_screen("login")
-                        root.manager.transition.direction = "left"
+                        app.root.ids.screen_manager.current = "login"
+                        app.root.ids.screen_manager.transition.direction = "left"

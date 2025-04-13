@@ -61,8 +61,8 @@
                     size_hint_y: None
                     height: dp(20)
                     on_ref_press: 
-                        app.switch_screen("forgot_password")
-                        root.manager.transition.direction = "right"
+                        app.root.ids.screen_manager.current = "forgot_password"
+                        app.root.screen_manager.transition.direction = "right"
 
             MDButton:
                 style: "filled"
@@ -82,5 +82,5 @@
                 halign: "center"
                 theme_text_color: "Primary"
                 on_ref_press: 
-                    app.switch_screen("signup")
-                    root.manager.transition.direction = "right"
+                    app.root.ids.screen_manager.current = "signup"
+                    app.root.ids.screen_manager.transition.direction = "right"

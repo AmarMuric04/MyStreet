@@ -1,0 +1,54 @@
+#:import LoginScreen screens.login.logic.LoginScreen
+#:import SignupScreen screens.signup.logic.SignupScreen
+#:import HomeScreen screens.home.logic.HomeScreen
+#:import PostsScreen screens.posts.logic.PostsScreen
+#:import ForgotPassword screens.forgot_password.logic.ForgotPassword
+#:import CreatePost screens.create_post.logic.CreatePost
+#:import CreateGroup screens.create_group.logic.CreateGroup
+#:import EmailCode screens.email_code.logic.EmailCode
+
+MDNavigationLayout:
+
+    MDNavigationDrawer:
+        id: nav_drawer
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: "8dp"
+            padding: "8dp"
+
+            MDLabel:
+                text: "Navigation"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            ScrollView:
+                text: 'aaa'
+
+    ScreenManager:
+        id: screen_manager
+
+        LoginScreen:
+            name: "login"
+
+        SignupScreen:
+            name: "signup"
+
+        HomeScreen:
+            name: "home"
+
+        PostsScreen:
+            name: "posts"
+
+        ForgotPassword:
+            name: "forgot_password"
+
+        CreatePost:
+            name: "create_post"
+
+        EmailCode:
+            name: "email_code"
+
+        CreateGroup:
+            name: "create_group"
+

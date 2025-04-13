@@ -1,4 +1,6 @@
 import datetime
+import random
+import smtplib
 
 import bcrypt
 import jwt
@@ -8,6 +10,15 @@ from flask import jsonify, request
 from pymongo import DESCENDING
 
 from .session import save_token
+
+"""
+    TL;DR
+    AUTH - LOGIN, SIGNUP, CODE SEND, CODE VERIFY
+    GROUPS - POST, GET, PUT, DELETE
+    GROUPS/POSTS - POST, GET, PUT, DELETE
+    POSTS COMMENT - POST, PUT, DELETE
+    POSTS - LIKE, COMMENT
+"""
 
 # ------------------ AUTH ROUTES ------------------
 
@@ -60,12 +71,6 @@ def signup():
     ).inserted_id
 
     return jsonify({"user_id": str(user_id)}), 201
-
-
-import random
-import smtplib
-
-from flask import request
 
 
 @app.route("/send-code", methods=["POST"])
@@ -148,167 +153,7 @@ def get_current_user():
         return None, jsonify({"error": "Invalid token", "message": str(e)}), 401
 
 
-# ------------------ POST ROUTES ------------------
-
-
-@app.route("/posts", methods=["POST"])
-def add_post():
-    user, error_response, status = get_current_user()
-    if error_response:
-        return error_response, status
-
-    data = request.get_json()
-    title = data.get("title")
-    text = data.get("text")
-    image = data.get("image")  # optional Cloudinary image URL
-    tags = data.get("tags")
-    anonymous = data.get("anonymous")
-
-    if not title or not text:
-        return jsonify({"error": "Title and text are required"}), 400
-
-    post = {
-        "user_id": user["_id"],
-        "title": title,
-        "text": text,
-        "image": image,
-        "tags": tags if tags else [],
-        "anonymous": anonymous,
-        "likes": [],  # will store user ObjectIds who liked the post
-        "comments": [],  # list of comment subdocuments
-        "created_at": datetime.datetime.utcnow(),
-        "updated_at": datetime.datetime.utcnow(),
-    }
-    result = mongo.db.posts.insert_one(post)
-    return jsonify({"message": "Post created", "post_id": str(result.inserted_id)}), 201
-
-
-@app.route("/posts/<post_id>", methods=["PUT"])
-def edit_post(post_id):
-    user, error_response, status = get_current_user()
-    if error_response:
-        return error_response, status
-
-    data = request.get_json()
-    update_fields = {}
-    for field in ["title", "text", "image", "tags"]:
-        if field in data:
-            update_fields[field] = data[field]
-    if not update_fields:
-        return jsonify({"error": "No valid fields to update"}), 400
-
-    update_fields["updated_at"] = datetime.datetime.utcnow()
-
-    post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
-    if post["user_id"] != user["_id"]:
-        return jsonify({"error": "Not authorized to update this post"}), 403
-
-    mongo.db.posts.update_one({"_id": ObjectId(post_id)}, {"$set": update_fields})
-    return jsonify({"message": "Post updated"}), 200
-
-
-@app.route("/posts/<post_id>", methods=["DELETE"])
-def delete_post(post_id):
-    user, error_response, status = get_current_user()
-    if error_response:
-        return error_response, status
-
-    post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
-    if post["user_id"] != user["_id"]:
-        return jsonify({"error": "Not authorized to delete this post"}), 403
-
-    mongo.db.posts.delete_one({"_id": ObjectId(post_id)})
-    return jsonify({"message": "Post deleted"}), 200
-
-
-@app.route("/posts", methods=["GET"])
-def get_posts():
-    current_user, error_response, status = get_current_user()
-    if error_response:
-        return error_response, status
-
-    current_user_email = current_user.get("email")
-    posts_cursor = mongo.db.posts.find().sort("created_at", DESCENDING)
-    posts = []
-    for post in posts_cursor:
-        # Check whether the post is marked as anonymous
-        if post.get("anonymous", False):
-            post_data = {
-                "post_id": str(post.get("_id")),
-                "user_id": None,  # No user id is displayed for anonymous posts
-                "user_email": "Anonymous",  # Mark as anonymous
-                "username": "Anonymous",  # Mark as anonymous
-                "title": post.get("title"),
-                "text": post.get("text"),
-                "image": post.get("image"),
-                "tags": post.get("tags"),
-                "likes": post.get("likes", []),
-                # No liked_by_user check is performed since user details are hidden
-                "liked_by_user": False,
-                "comments": post.get("comments"),
-                "created_at": (
-                    post.get("created_at").isoformat()
-                    if post.get("created_at")
-                    else None
-                ),
-                "updated_at": (
-                    post.get("updated_at").isoformat()
-                    if post.get("updated_at")
-                    else None
-                ),
-            }
-        else:
-            user_id = post.get("user_id")
-            user_email = None
-            username = None
-
-            if user_id:
-                user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
-                if user:
-                    username = user.get("username")
-                    user_email = user.get("email")
-
-            likes = post.get("likes", [])
-            liked_users = list(
-                mongo.db.users.find({"_id": {"$in": likes}}, {"email": 1})
-            )
-            liked_user_emails = [
-                user["email"] for user in liked_users if "email" in user
-            ]
-            liked_by_user = current_user_email in liked_user_emails
-
-            post_data = {
-                "post_id": str(post.get("_id")),
-                "user_id": str(user_id) if user_id else None,
-                "user_email": user_email,
-                "username": username,
-                "title": post.get("title"),
-                "text": post.get("text"),
-                "image": post.get("image"),
-                "tags": post.get("tags"),
-                "likes": likes,
-                "liked_by_user": liked_by_user,
-                "comments": post.get("comments"),
-                "created_at": (
-                    post.get("created_at").isoformat()
-                    if post.get("created_at")
-                    else None
-                ),
-                "updated_at": (
-                    post.get("updated_at").isoformat()
-                    if post.get("updated_at")
-                    else None
-                ),
-            }
-        posts.append(post_data)
-    return jsonify(posts), 200
-
-
-# ------------------ NEW POSTS ROUTES -----------------
+# ------------------ POSTS ROUTES -----------------
 
 
 @app.route("/groups/<group_id>/posts", methods=["POST"])

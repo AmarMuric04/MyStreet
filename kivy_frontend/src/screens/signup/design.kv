@@ -81,5 +81,5 @@
                 halign: "center"
                 theme_text_color: "Primary"
                 on_ref_press: 
-                    app.switch_screen("login")
-                    root.manager.transition.direction = "left"
+                    app.root.ids.screen_manager.current = "login"
+                    app.root.ids.screen_manager.transition.direction = "left"

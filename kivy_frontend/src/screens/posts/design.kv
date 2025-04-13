@@ -61,9 +61,9 @@
                 style: "elevated"
                 pos_hint: {"right": 0.95, "y": 0.025}
                 on_press:
-                    app.root.get_screen("create_post").group_id = root.group_id
-                    app.switch_screen("create_post")
-                    root.manager.transition.direction = "right"
+                    app.root.ids.screen_manager.get_screen("create_post").group_id = root.group_id
+                    app.root.ids.screen_manager.transition.direction = "right"
+                    app.root.ids.screen_manager.current = "create_post"
 
                 MDButtonIcon:
                     icon: "plus"
@@ -142,7 +142,7 @@
                     icon: "heart" if root.liked_by_user else "heart-outline"
                     icon_size: "24sp"
                     pos_hint: {"center_y": 0.5}
-                    on_release: app.root.get_screen("posts").toggle_like(root)
+                    on_release: app.root.ids.screen_manager.get_screen("posts").toggle_like(root)
 
                 MDLabel:
                     text: str(root.like_count)
@@ -158,7 +158,7 @@
                     icon: "comment-outline"
                     icon_size: "24sp"
                     pos_hint: {"center_y": 0.5}
-                    on_release: app.root.get_screen("posts").prompt_comment(root.post_id)
+                    on_release: app.root.ids.screen_manager.get_screen("posts").prompt_comment(root.post_id)
 
                 MDLabel:
                     text: str(root.comment_count)

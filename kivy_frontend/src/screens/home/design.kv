@@ -34,16 +34,15 @@
                 style: "elevated"
                 pos_hint: {"right": 0.95, "y": 0.025}
                 on_press:
-                    app.switch_screen("create_group")
+                    app.root.ids.screen_manager.current = "create_group"
                     root.manager.transition.direction = "left"
                 MDButtonIcon:
                     icon: "plus"
                 MDButtonText:
                     text: "Create a Group"
 
-# Define a rule for individual group items.
+
 <GroupItem@BoxLayout>:
-    # These properties are declared so they can be passed from Python.
     group_name: ""
     description: ""
     creator: ""
@@ -96,8 +95,8 @@
                 
                 MDButton:
                     on_press:
-                        app.root.get_screen("posts").group_id = root.group_id
-                        app.switch_screen("posts")
+                        app.root.ids.screen_manager.get_screen("posts").group_id = root.group_id
+                        app.root.ids.screen_manager.current = "posts"
 
                     MDButtonIcon:
                         icon: "eye"

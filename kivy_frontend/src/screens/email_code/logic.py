@@ -50,7 +50,7 @@ class EmailCode(MDScreen):
             )
             if signup_response.get("status") == "success":
                 app.signup_data = None
-                app.switch_screen("login")
+                app.root.ids.screen_manager.current = "login"
             else:
                 self.ids.code_input.error = True
                 self.ids.code_input.helper_text = signup_response.get("message", "Signup failed.")

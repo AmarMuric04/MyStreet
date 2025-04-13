@@ -30,7 +30,7 @@ class SignupScreen(MDScreen):
             self.ids.email_input.text = ""
             self.ids.password_input.text = ""
             self.ids.username_input.text = ""
-            app.switch_screen("email_code")
+            app.root.ids.screen_manager.current = "email_code"
         else:
             self.ids.email_input.error = True
             self.ids.email_input.helper_text = response.get("message", "Signup failed.")
