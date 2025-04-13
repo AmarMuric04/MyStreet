@@ -568,6 +568,8 @@ def get_group(group_id):
     user_id = str(user["_id"])
     is_member = any(user_id == str(member) for member in group.get("members", []))
 
+    print(user_id, group.get("members"), is_member)
+
     group["_id"] = str(group["_id"])
     group["creator"] = str(group["creator"])
     group["members"] = [str(member) for member in group.get("members", [])]
@@ -577,7 +579,7 @@ def get_group(group_id):
     group["updated_at"] = (
         group.get("updated_at").isoformat() if group.get("updated_at") else None
     )
-    group["is_member"] = str(is_member)
+    group["is_member"] = is_member
     return jsonify(group), 200
 
 

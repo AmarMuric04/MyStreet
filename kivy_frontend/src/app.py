@@ -27,7 +27,7 @@ Window.size = (450, 750)
 
 class MyStreetApp(MDApp):
     def build(self):
-        # clear_token()  # Uncomment if needed
+        clear_token()  # Uncomment if needed
         self.sm = ScreenManager(transition=SlideTransition())
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Green"

@@ -106,19 +106,20 @@ class PostsScreen(MDScreen):
 
     def update_group_ui(self, group_name, is_member):
         # Update the group title.
-        if "title" in self.ids:
-            self.ids.title.text = group_name
+        self.ids.title.text = group_name
         # If not a member, show the join button.
-        if "join_btn" in self.ids:
-            if not is_member:
-                self.ids.join_btn.opacity = 1
-                self.ids.join_btn.disabled = False
-            else:
-                self.ids.join_btn.opacity = 0
-                self.ids.join_btn.disabled = True
-
+        if not is_member:
+            self.ids.join_btn.opacity = 1
+            self.ids.join_btn.disabled = False
+            self.ids.create_post_btn.opacity = 0
+            self.ids.create_post_btn.disabled = True
+        else:
+            self.ids.join_btn.opacity = 0
+            self.ids.join_btn.disabled = True
+            self.ids.create_post_btn.opacity = 1
+            self.ids.create_post_btn.disabled = False
+            
     def join_group(self):
-        # Disable the join button to avoid multiple clicks.
         self.ids.join_btn.disabled = True
         threading.Thread(target=self.join_group_thread, daemon=True).start()
 
