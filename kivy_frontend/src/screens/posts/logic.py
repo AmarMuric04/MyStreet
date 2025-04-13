@@ -1,4 +1,3 @@
-import datetime
 import json
 import threading
 
@@ -6,34 +5,24 @@ import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ListProperty, StringProperty
-from kivymd.uix.button import MDButton
-from kivymd.uix.dialog import MDDialog
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.textfield import MDTextField
 
 from utils.session import get_token
 
 Builder.load_file("kivy_frontend/src/screens/posts/design.kv")
 
-API_URL = "http://localhost:5000/posts"
-
 class PostsScreen(MDScreen):
     posts_data = ListProperty([])
-    group_id = StringProperty("")
+    group_id = StringProperty("") 
 
-    def __init__(self, **kwargs):
-        super(PostsScreen, self).__init__(**kwargs)
-        self.dialog = None
-        self.current_post_id = None
+    def on_pre_enter(self):
+        # Print the group_id and fetch group details to update the title label.
+        print("Displaying posts for group:", self.group_id)
+        threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
 
     def on_enter(self):
         self.show_loader()
-        threading.Thread(target=self.fetch_posts_thread).start()
-
-    def on_pre_enter(self):
-        # Use self.group_id to fetch and display group details.
-        print("Displaying details for group:", self.group_id)
-        # Add your fetching logic here.
+        threading.Thread(target=self.fetch_posts_thread, daemon=True).start()
 
     def show_loader(self):
         if "loader" in self.ids:
@@ -47,17 +36,19 @@ class PostsScreen(MDScreen):
 
     def update_post_status(self, msg):
         print(msg)
-        self.ids.post_button.text = "Submit Post"
-        self.ids.post_button.disabled = False
+        if "post_button" in self.ids:
+            self.ids.post_button.text = "Submit Post"
+            self.ids.post_button.disabled = False
 
     def on_leave(self):
         self.posts_data = []
         self.hide_loader()
-        
+
     def fetch_posts_thread(self):
         try:
+            url = f"http://localhost:5000/groups/{self.group_id}/posts"
             response = requests.get(
-                API_URL,
+                url,
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {get_token()}"
@@ -68,8 +59,8 @@ class PostsScreen(MDScreen):
                 data = [
                     {
                         "post_id": str(post.get("post_id")),
-                        "username": post.get("username", "No Username"),
-                        "user_email": post.get("user_email", "No Email"),
+                        "username": f"@{post['username']}" if post.get("username") else "Posted anonymously",
+                        "user_email": f" · {post['user_email']}" if post.get("user_email") else "",
                         "title": post.get("title", "No Title"),
                         "text": post.get("text", "No Content"),
                         "like_count": len(post.get("likes", [])),
@@ -85,17 +76,77 @@ class PostsScreen(MDScreen):
             data = []
             print(f"Error: {str(e)}")
 
-        # Update posts_data in the main thread and hide loader.
         Clock.schedule_once(lambda dt: self.update_posts_data(data), 0)
 
     def update_posts_data(self, data):
         self.posts_data = data
         self.hide_loader()
 
+
+    def fetch_group_info_thread(self):
+        try:
+            url = f"http://localhost:5000/groups/{self.group_id}"
+            response = requests.get(
+                url,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {get_token()}"
+                }
+            )
+            if response.status_code == 200:
+                group = response.json()
+                group_name = group.get("name", "Unknown Group")
+                is_member = group.get("is_member", False)
+                # Update the UI on the main thread.
+                Clock.schedule_once(lambda dt: self.update_group_ui(group_name, is_member), 0)
+            else:
+                print(f"Error fetching group info: {response.status_code}")
+        except Exception as e:
+            print(f"Error fetching group info: {str(e)}")
+
+    def update_group_ui(self, group_name, is_member):
+        # Update the group title.
+        if "title" in self.ids:
+            self.ids.title.text = group_name
+        # If not a member, show the join button.
+        if "join_btn" in self.ids:
+            if not is_member:
+                self.ids.join_btn.opacity = 1
+                self.ids.join_btn.disabled = False
+            else:
+                self.ids.join_btn.opacity = 0
+                self.ids.join_btn.disabled = True
+
+    def join_group(self):
+        # Disable the join button to avoid multiple clicks.
+        self.ids.join_btn.disabled = True
+        threading.Thread(target=self.join_group_thread, daemon=True).start()
+
+    def join_group_thread(self):
+        try:
+            url = f"http://localhost:5000/groups/{self.group_id}/join"
+            response = requests.post(
+                url,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {get_token()}"
+                }
+            )
+            if response.status_code == 200:
+                print("Joined group successfully")
+                # Optionally refresh the group info.
+                threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
+            else:
+                print(f"Error joining group: {response.status_code}")
+        except Exception as e:
+            print(f"Error in join_group_thread: {str(e)}")
+        finally:
+            # Re-enable the join button after the request is complete.
+            Clock.schedule_once(lambda dt: setattr(self.ids.join_btn, "disabled", False), 0)
+
     def toggle_like(self, post_item):
         previous_like_status = post_item.liked_by_user
         previous_like_count = post_item.like_count
-
         if post_item.liked_by_user:
             post_item.like_count -= 1
             post_item.liked_by_user = False
@@ -112,7 +163,7 @@ class PostsScreen(MDScreen):
     def toggle_like_thread(self, post_item, previous_like_status, previous_like_count):
         try:
             response = requests.post(
-                f"{API_URL}/{post_item.post_id}/like",
+                f"http://localhost:5000/posts/{post_item.post_id}/like",
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {get_token()}"
@@ -130,7 +181,9 @@ class PostsScreen(MDScreen):
         self.dialog = MDDialog(
             title="Add Comment",
             type="custom",
-            content_cls=MDTextField(hint_text="Enter comment text", multiline=True),
+            content_cls=Builder.load_string(
+                'MDTextField:\n    hint_text: "Enter comment text"\n    multiline: True'
+            ),
             buttons=[
                 MDButton(text="Submit", on_release=self.submit_comment),
                 MDButton(text="Cancel", on_release=lambda x: self.dialog.dismiss())
@@ -154,7 +207,7 @@ class PostsScreen(MDScreen):
     def submit_comment_thread(self, post_id, comment_text):
         try:
             response = requests.post(
-                f"{API_URL}/{post_id}/comment",
+                f"http://localhost:5000/posts/{post_id}/comment",
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {get_token()}"

@@ -5,15 +5,17 @@ import requests
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.lang import Builder
+from kivy.properties import StringProperty
 from kivymd.uix.screen import MDScreen
 
 from utils.session import get_token
 
 Builder.load_file("kivy_frontend/src/screens/create_post/design.kv")
 
-API_URL = "http://localhost:5000/posts"
-
 class CreatePost(MDScreen):
+    # Add a group_id property that must be set before this screen is shown.
+    group_id = StringProperty("")
+
     def create_post(self):
         title = self.ids.title_input.text.strip()
         text = self.ids.text_input.text.strip()
@@ -38,8 +40,10 @@ class CreatePost(MDScreen):
 
     def create_post_thread(self, post_data):
         try:
+            # Build the URL for posting to the specific group using group_id.
+            url = f"http://localhost:5000/groups/{self.group_id}/posts"
             response = requests.post(
-                API_URL,
+                url,
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {get_token()}"
@@ -50,6 +54,7 @@ class CreatePost(MDScreen):
                 msg = "Post created successfully!"
                 Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
                 app = App.get_running_app()
+                # Assume you want to refresh the posts screen after creating a post.
                 posts_screen = app.root.get_screen("posts")
                 posts_screen.posts_fetched = False
                 Clock.schedule_once(lambda dt: app.switch_screen("posts"), 0)

@@ -23,7 +23,7 @@
 -   JTW Session lasts 30 days
 -   Updated UI for Login - Signup & Posts Pages
 
-# 0.0.5 (13 Apr 2025)
+# 0.0.5 (12 Apr 2025)
 
 -   Add Email Verification through sending a code in mail
 -   Home Pages show groups & users can choose which group they want to join
@@ -35,6 +35,15 @@
 -   Add Create A Post Page
 -   Add Create A Group Page
 -   Enhanced Post Look (Bold, italic & general typography fixes)
+
+# 0.0.6 (13 Apr 2025)
+
+-   Posts aren't global anymore
+-   Groups now have their own posts
+-   Users can create posts in a specific group
+-   Add joining groups
+-   Add Admins
+-   Add security checks in groups when interacting with posts
 
 # To be added in the future
 

@@ -312,12 +312,11 @@ def get_posts():
 
 
 @app.route("/groups/<group_id>/posts", methods=["POST"])
-def create_post_in_group():
+def create_post_in_group(group_id):
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status
 
-    # Validate group existence.
     try:
         group_obj_id = ObjectId(group_id)
     except Exception:
@@ -333,8 +332,6 @@ def create_post_in_group():
     image = data.get("image")
     tags = data.get("tags", [])
     anonymous = data.get("anonymous", False)
-
-    print(anonymous)
 
     if not title or not text:
         return jsonify({"error": "Title and text are required"}), 400
@@ -363,7 +360,7 @@ def create_post_in_group():
 
 
 @app.route("/groups/<group_id>/posts", methods=["GET"])
-def get_posts_in_group():
+def get_posts_in_group(group_id):
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status
@@ -382,52 +379,42 @@ def get_posts_in_group():
     )
     posts = []
     for post in posts_cursor:
+        base_post = {
+            "post_id": str(post["_id"]),
+            "title": post.get("title"),
+            "text": post.get("text"),
+            "image": post.get("image"),
+            "tags": post.get("tags"),
+            "likes": post.get("likes"),
+            "comments": post.get("comments"),
+            "created_at": (
+                post.get("created_at").isoformat() if post.get("created_at") else None
+            ),
+            "updated_at": (
+                post.get("updated_at").isoformat() if post.get("updated_at") else None
+            ),
+        }
+
         if post.get("anonymous", False):
-            posts.append(
-                {
-                    "post_id": str(post["_id"]),
-                    "user": "Anonymous",
-                    "title": post.get("title"),
-                    "text": post.get("text"),
-                    "image": post.get("image"),
-                    "tags": post.get("tags"),
-                    "likes": post.get("likes"),
-                    "comments": post.get("comments"),
-                    "created_at": (
-                        post.get("created_at").isoformat()
-                        if post.get("created_at")
-                        else None
-                    ),
-                    "updated_at": (
-                        post.get("updated_at").isoformat()
-                        if post.get("updated_at")
-                        else None
-                    ),
-                }
-            )
+            base_post["user"] = "Anonymous"
         else:
-            posts.append(
-                {
-                    "post_id": str(post["_id"]),
-                    "user_id": str(post["user_id"]),
-                    "title": post.get("title"),
-                    "text": post.get("text"),
-                    "image": post.get("image"),
-                    "tags": post.get("tags"),
-                    "likes": post.get("likes"),
-                    "comments": post.get("comments"),
-                    "created_at": (
-                        post.get("created_at").isoformat()
-                        if post.get("created_at")
-                        else None
-                    ),
-                    "updated_at": (
-                        post.get("updated_at").isoformat()
-                        if post.get("updated_at")
-                        else None
-                    ),
-                }
-            )
+            try:
+                user_id = post["user_id"]
+                if not isinstance(user_id, ObjectId):
+                    user_id = ObjectId(user_id)
+                user_doc = mongo.db.users.find_one({"_id": user_id})
+                if user_doc:
+                    base_post["username"] = user_doc.get("username")
+                    base_post["user_email"] = user_doc.get("email")
+                else:
+                    base_post["username"] = "Unknown"
+                    base_post["user_email"] = ""
+            except Exception as e:
+                base_post["username"] = "Unknown"
+                base_post["user_email"] = ""
+
+        posts.append(base_post)
+
     return jsonify(posts), 200
 
 
@@ -542,7 +529,6 @@ def delete_post_in_group(group_id, post_id):
 
 @app.route("/groups", methods=["POST"])
 def create_group():
-    # Ensure the user is authenticated
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status
@@ -558,7 +544,8 @@ def create_group():
         "name": name,
         "description": description,
         "creator": user["_id"],
-        "members": [user["_id"]],  # Initialize with creator as first member
+        "members": [user["_id"]],
+        "admins": [user["_id"]],
         "created_at": datetime.datetime.utcnow(),
         "updated_at": datetime.datetime.utcnow(),
     }
@@ -578,6 +565,8 @@ def get_group(group_id):
     group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
     if not group:
         return jsonify({"error": "Group not found"}), 404
+    user_id = str(user["_id"])
+    is_member = any(user_id == str(member) for member in group.get("members", []))
 
     group["_id"] = str(group["_id"])
     group["creator"] = str(group["creator"])
@@ -588,18 +577,19 @@ def get_group(group_id):
     group["updated_at"] = (
         group.get("updated_at").isoformat() if group.get("updated_at") else None
     )
+    group["is_member"] = str(is_member)
     return jsonify(group), 200
 
 
 @app.route("/groups", methods=["GET"])
 def list_groups():
-    # Lists all groups available.
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status
 
     groups_cursor = mongo.db.groups.find().sort("created_at", -1)
     groups = []
+
     for group in groups_cursor:
         groups.append(
             {
@@ -621,6 +611,31 @@ def list_groups():
             }
         )
     return jsonify(groups), 200
+
+
+@app.route("/groups/<group_id>/join", methods=["POST"])
+def join_group(group_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+    try:
+        group_obj_id = ObjectId(group_id)
+    except Exception:
+        return jsonify({"error": "Invalid group_id format"}), 400
+
+    group = mongo.db.groups.find_one({"_id": group_obj_id})
+    if not group:
+        return jsonify({"error": "Group not found"}), 404
+
+    user_id = str(user["_id"])
+    if any(user_id == str(member) for member in group.get("members", [])):
+        return jsonify({"message": "User already a member"}), 200
+
+    result = mongo.db.groups.update_one(
+        {"_id": group_obj_id}, {"$push": {"members": user["_id"]}}
+    )
+
+    return jsonify({"message": "Joined group successfully"}), 200
 
 
 @app.route("/groups/<group_id>", methods=["PUT"])

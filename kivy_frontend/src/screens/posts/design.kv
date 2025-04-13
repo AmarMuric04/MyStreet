@@ -12,16 +12,27 @@
             height: dp(700)
             width: dp(400)
 
-            MDLabel:
-                text: "MyStreet Posts"
-                role: "large"
-                bold: True
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
+            MDBoxLayout:
                 size_hint_y: None
-                font_style: "Headline"
-                role: "medium"
                 height: dp(50)
+                padding: 8
+                MDLabel:
+                    id: title
+                    text: ""
+                    role: "large"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    font_style: "Headline"
+                    role: "medium"
+                MDButton:
+                    id: join_btn
+                    opacity: 0.0
+                    on_press: root.join_group()
+                    MDButtonIcon:
+                        icon: "plus"
+                    MDButtonText:
+                        text: "Join"
             RecycleView:
                 id: posts_rv
                 viewclass: "PostItem"
@@ -48,6 +59,7 @@
                 style: "elevated"
                 pos_hint: {"right": 0.95, "y": 0.025}
                 on_press:
+                    app.root.get_screen("create_post").group_id = root.group_id
                     app.switch_screen("create_post")
                     root.manager.transition.direction = "right"
 
@@ -90,7 +102,7 @@
             height: self.minimum_height  
 
             MDLabel:
-                text: "[b]@{}[/b][i][color=aaaaaa] • {}[/color][/i]".format(root.username, root.user_email)
+                text: "[b]{}[/b][i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
                 markup: True
                 size_hint_y: None
                 height: dp(20)

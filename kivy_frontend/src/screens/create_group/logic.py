@@ -51,10 +51,6 @@ class CreateGroup(MDScreen):
                 # Clear input fields on success.
                 Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
                 app = App.get_running_app()
-                # Assuming your app has a "groups" screen that refreshes the list.
-                # groups_screen = app.root.get_screen("home")
-                # groups_screen.groups_fetched = False
-                # Switch to the groups screen to trigger a refresh of groups.
                 Clock.schedule_once(lambda dt: app.switch_screen("home"), 0)
             else:
                 msg = f"Error creating group: {response.status_code}"
