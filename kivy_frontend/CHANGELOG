@@ -45,16 +45,19 @@
 -   Add Admins
 -   Add security checks in groups when interacting with posts
 
+# 0.0.7 (15 Apr 2025)
+
+-   Add Preview of the post the user created before actually posting it
+-   Add Non Logged in users can view up to 5 latest posts per group
+-   Add Logic for creators of groups to choose between a private and public group
+
 # To be added in the future
 
 -   Add OAuth
 -   Allow Images in posts (possibly more than 1 per post)
--   A Preview of the post the user created before actually posting it
 -   Fix Commenting logic, Add Deleting comments
 -   A "Soft Delete", where a user marks the post as removed, and then a moderator can fully delete it
 -   Add Editing posts & comments
 -   Reporting users & only allow admins to view the reports
--   Non Logged in users can view up to 5 latest posts per group
--   Add Group Admins
 -   Notification system (Most likely through email, to dodge using sockets)
 -   Desktop responsiveness (Currently only responsive for a mobile device)

@@ -38,8 +38,9 @@ class HomeScreen(MDScreen):
                     {
                         "group_name": group.get("name", "No Name"),
                         "description": group.get("description", "No Description"),
-                        "creator": group.get("creator", "Unknown Creator"),
-                        "group_id": group.get("group_id", "No Id")
+                        "creator": f"Created by [b]@{group.get('creator', 'Unknown Creator')}[/b]",
+                        "group_id": group.get("group_id", "No Id"),
+                        "allow_preview": group.get("allow_preview", True)
                     }
                     for group in groups
                 ]
@@ -54,3 +55,30 @@ class HomeScreen(MDScreen):
 
     def update_groups_data(self, data):
         self.groups_data = data
+        
+    def request_to_join(self, group_id):
+        try:
+            token = get_token()
+            response = requests.post(
+                f"http://localhost:5000/groups/{group_id}/request-to-join",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {token}"
+                }
+            )
+
+            if response.status_code == 200:
+                pass
+            else:
+                data = response.json()
+                error_message = data.get("error", f"Status code {response.status_code}")
+
+        except Exception as e:
+            print(f"Error sending join request: {e}")
+            
+    def handle_group_press(self, group_id, allow_preview):
+        if allow_preview:
+            self.manager.get_screen("posts").group_id = group_id
+            self.manager.current = "posts"
+        else:
+            self.request_to_join(group_id)

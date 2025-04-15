@@ -176,8 +176,10 @@
                 MDLabel:
                     text: root.text if root.text else "No Content"
                     size_hint_y: None
-                    text_size: self.width, None
-                    height: self.texture_size[1] + dp(10)
+                    height: self.texture_size[1]
+                    shorten: True
+                    shorten_from: 'right'
+                    max_lines: 3
                     font_style: "Body"
                     role: "large"
                     theme_text_color: "Custom"

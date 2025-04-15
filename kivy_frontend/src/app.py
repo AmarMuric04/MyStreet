@@ -16,7 +16,7 @@ class MyStreetApp(MDApp):
 
     def on_start(self):
         screen_manager = self.root.ids.screen_manager
-        screen_manager.current = "home" if get_token() else "login"
+        screen_manager.current = "home"
 
 if __name__ == "__main__":
     MyStreetApp().run()

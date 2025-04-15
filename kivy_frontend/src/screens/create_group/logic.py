@@ -27,10 +27,12 @@ class CreateGroup(MDScreen):
         # Update button state to reflect processing.
         self.ids.group_button.text = "Submitting Group..."
         self.ids.group_button.disabled = True
-
+        allow_preview = self.ids.allow_preview_checkbox.active
+        
         group_data = {
             "name": name,
-            "description": description
+            "description": description,
+            "allow_preview": allow_preview
         }
         
         # Start a thread for the network request (daemon thread to not block app exit).
@@ -51,7 +53,7 @@ class CreateGroup(MDScreen):
                 # Clear input fields on success.
                 Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
                 app = App.get_running_app()
-                Clock.schedule_once(lambda dt: app.switch_screen("home"), 0)
+                Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "home"), 0)
             else:
                 msg = f"Error creating group: {response.status_code}"
         except Exception as e:

@@ -29,6 +29,29 @@
                     text: "Description"
                 MDTextFieldMaxLengthText:
                     max_text_length: 256
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                spacing: dp(10)
+
+                MDCheckbox:
+                    id: allow_preview_checkbox
+                    size_hint: None, None
+                    size: dp(30), dp(30)
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: None
+                    width: dp(145)
+                    MDLabel:
+                        text: "Allow Previews"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(18)
+                    MDIcon:
+                        icon: "information"
             MDButton:
                 style: "filled"
                 size_hint_x: None

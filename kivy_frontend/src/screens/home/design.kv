@@ -6,7 +6,7 @@
         anchor_y: "center"
         MDBoxLayout:
             orientation: 'vertical'
-            padding: dp(40)
+            padding: dp(5)
             size_hint: None, None
             height: dp(700)
             width: dp(400)
@@ -47,6 +47,7 @@
     description: ""
     creator: ""
     group_id: ""
+    allow_preview: True
     orientation: "horizontal"
     size_hint_y: None
     height: dp(80)
@@ -85,9 +86,16 @@
 
                 MDLabel:
                     text: root.description
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    shorten: True
+                    shorten_from: 'right'
+                    max_lines: 2
+                    theme_text_color: "Custom"
 
                 MDLabel:
                     text: root.creator
+                    markup: True
 
             MDBoxLayout:
                 orientation: 'horizontal'
@@ -96,11 +104,10 @@
                 
                 MDButton:
                     on_press:
-                        app.root.ids.screen_manager.get_screen("posts").group_id = root.group_id
-                        app.root.ids.screen_manager.current = "posts"
+                        app.root.ids.screen_manager.get_screen("home").handle_group_press(root.group_id, root.allow_preview)
 
                     MDButtonIcon:
-                        icon: "eye"
+                        icon: "eye" if root.allow_preview else "plus"
                     MDButtonText:
-                        text: "View"
+                        text: "View" if root.allow_preview else "Request"
 
