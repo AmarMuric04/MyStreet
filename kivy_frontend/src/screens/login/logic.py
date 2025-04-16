@@ -22,6 +22,7 @@ class LoginScreen(MDScreen):
             self.ids.password_input.text = ""
 
             app = App.get_running_app()
+            app.update_navigation_drawer()
             app.root.ids.screen_manager.current = 'home'
         else:
             self.ids.email_input.error = True

@@ -141,7 +141,6 @@ class CreatePost(MDScreen):
         like_box = MDBoxLayout(orientation='horizontal')
         like_button = MDIconButton(
             icon="thumb-up-outline",
-            icon_size="14sp",
             pos_hint={"center_y": 0.5},
             on_release=lambda x: print("Toggle like")  # Replace with your like toggle method
         )
@@ -163,7 +162,6 @@ class CreatePost(MDScreen):
         comment_box = MDBoxLayout(orientation='horizontal')
         comment_button = MDIconButton(
             icon="comment-outline",
-            icon_size="14sp",
             pos_hint={"center_y": 0.5},
             on_release=lambda x: print("Toggle comment")  # Replace with your comment method
         )
@@ -185,7 +183,6 @@ class CreatePost(MDScreen):
         bookmark_box = MDBoxLayout(orientation='horizontal')
         bookmark_button = MDIconButton(
             icon="bookmark-outline",
-            icon_size="14sp",
             pos_hint={"center_y": 0.5},
             on_release=lambda x: print("Toggle bookmark")  # Replace with your bookmark method
         )
@@ -207,7 +204,6 @@ class CreatePost(MDScreen):
         repost_box = MDBoxLayout(orientation='horizontal')
         repost_button = MDIconButton(
             icon="repeat",
-            icon_size="14sp",
             pos_hint={"center_y": 0.5},
             on_release=lambda x: print("Toggle repost")  # Replace with your repost method
         )

@@ -1,13 +1,26 @@
 #:import dp kivy.metrics.dp
 
 <PostsScreen>:
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": 1}
+            size_hint_y: None
+            height: dp(50)
+            padding: dp(10)
+            MDLabel:
+                text: "MyStreet"
+                bold: True
+            
+            MDIconButton:
+                icon: "hamburger"
+                on_release: app.root.ids.nav_drawer.set_state("toggle")
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
 
         MDBoxLayout:
             orientation: 'vertical'
-            padding: dp(5)
+            padding: ('5dp', '40dp', '5dp', '5dp')
             size_hint: None, None
             height: dp(700)
             width: dp(400)
@@ -99,6 +112,7 @@
     title: ""
     text: ""
     user_email: ""
+    is_logged_in: ""
     liked_by_user: False  
     orientation: "vertical"
     size_hint_y: None

@@ -153,6 +153,23 @@ def get_current_user():
         return None, jsonify({"error": "Invalid token", "message": str(e)}), 401
 
 
+@app.route("/current_user", methods=["GET"])
+def current_user():
+    user, error_response, status_code = get_current_user()
+    if error_response:
+        return error_response, status_code
+    # For security, only return what is necessary.
+
+    print(user)
+
+    return (
+        jsonify(
+            {"user": {"username": user.get("username"), "email": user.get("email")}}
+        ),
+        200,
+    )
+
+
 # ------------------ POSTS ROUTES -----------------
 
 

@@ -5,6 +5,7 @@ import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ListProperty, StringProperty
+from kivymd.app import MDApp
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.screen import MDScreen
 
@@ -51,6 +52,7 @@ class PostsScreen(MDScreen):
             )
             if response.status_code == 200:
                 posts = response.json()
+
                 data = [
                     {
                         "post_id": str(post.get("post_id")),
@@ -60,7 +62,7 @@ class PostsScreen(MDScreen):
                         "text": post.get("text", "No Content"),
                         "like_count": len(post.get("likes", [])),
                         "liked_by_user": post.get("liked_by_user", False),
-                        "comment_count": len(post.get("comments", []))
+                        "comment_count": len(post.get("comments", [])),
                     }
                     for post in posts
                 ]
@@ -100,16 +102,18 @@ class PostsScreen(MDScreen):
 
     def update_group_ui(self, group_name, is_member):
         self.ids.title.text = group_name
-        if not is_member:
+        app = MDApp.get_running_app()
+        user_data = app.user_data
+        if not is_member and user_data:
             self.ids.join_btn.opacity = 1
             self.ids.join_btn.disabled = False
-            self.ids.create_post_btn.opacity = 0
             self.ids.create_post_btn.disabled = True
-        else:
+            self.ids.create_post_btn.opacity = 0
+        elif user_data and is_member:
             self.ids.join_btn.opacity = 0
             self.ids.join_btn.disabled = True
-            self.ids.create_post_btn.opacity = 1
             self.ids.create_post_btn.disabled = False
+            self.ids.create_post_btn.opacity = 1
             
     def join_group(self):
         self.ids.join_btn.disabled = True
@@ -138,6 +142,11 @@ class PostsScreen(MDScreen):
             Clock.schedule_once(lambda dt: setattr(self.ids.join_btn, "disabled", False), 0)
 
     def toggle_like(self, post_item):
+        app = MDApp.get_running_app()
+        user_data = app.user_data
+        
+        if not user_data: 
+            return
         previous_like_status = post_item.liked_by_user
         previous_like_count = post_item.like_count
         if post_item.liked_by_user:

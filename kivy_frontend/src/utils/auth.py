@@ -1,5 +1,7 @@
 import requests
 
+from utils.session import get_token
+
 
 def login_api(email, password):
     """
@@ -113,3 +115,23 @@ def verify_code_api(email, code):
             return {"status": "error", "message": error_message}
     except Exception as e:
         return {"status": "error", "message": f"Request failed: {e}"}
+
+def get_logged_in_user():
+    token = get_token()
+    if not token:
+        print("No token found; user is not logged in.")
+        return None
+
+    headers = {"Authorization": f"Bearer {token}"}
+    try:
+        response = requests.get("http://localhost:5000/current_user", headers=headers)
+        if response.status_code == 200:
+            user_data = response.json().get("user")
+            print("User data fetched:", user_data)
+            return user_data
+        else:
+            print("Error from backend:", response.json())
+            return None
+    except Exception as e:
+        print("An error occurred while fetching user data:", e)
+        return None

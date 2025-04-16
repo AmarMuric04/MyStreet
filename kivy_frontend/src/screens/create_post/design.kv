@@ -1,4 +1,17 @@
 <CreatePost>:
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": 1}
+            size_hint_y: None
+            height: dp(50)
+            padding: dp(10)
+            MDLabel:
+                text: "MyStreet"
+                bold: True
+            
+            MDIconButton:
+                icon: "hamburger"
+                on_release: app.root.ids.nav_drawer.set_state("toggle")
     AnchorLayout:
         MDBoxLayout:
             orientation: "vertical"

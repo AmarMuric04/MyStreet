@@ -1,3 +1,4 @@
+#:import dp kivy.metrics.dp
 #:import LoginScreen screens.login.logic.LoginScreen
 #:import SignupScreen screens.signup.logic.SignupScreen
 #:import HomeScreen screens.home.logic.HomeScreen
@@ -9,33 +10,17 @@
 
 MDNavigationLayout:
 
-    MDNavigationDrawer:
-        id: nav_drawer
-
-        BoxLayout:
-            orientation: "vertical"
-            spacing: "8dp"
-            padding: "8dp"
-
-            MDLabel:
-                text: "Navigation"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            ScrollView:
-                text: 'aaa'
-
     ScreenManager:
         id: screen_manager
+
+        HomeScreen:
+            name: "home" 
 
         LoginScreen:
             name: "login"
 
         SignupScreen:
             name: "signup"
-
-        HomeScreen:
-            name: "home"
 
         PostsScreen:
             name: "posts"
@@ -52,3 +37,9 @@ MDNavigationLayout:
         CreateGroup:
             name: "create_group"
 
+    MDNavigationDrawer:
+        id: nav_drawer
+        radius: 0, dp(16), dp(16), 0
+
+        MDNavigationDrawerMenu:
+            id: nav_drawer_menu
