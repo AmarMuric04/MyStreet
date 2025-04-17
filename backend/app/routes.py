@@ -560,7 +560,24 @@ def get_group(group_id):
 
 @app.route("/groups", methods=["GET"])
 def list_groups():
-    groups_cursor = mongo.db.groups.find().sort("created_at", -1)
+    name_query = request.args.get("name")
+    creator_query = request.args.get("creator")
+
+    query = {}
+
+    # Filter by group name (case-insensitive)
+    if name_query:
+        query["name"] = {"$regex": name_query, "$options": "i"}
+
+    # Filter by creator username
+    if creator_query:
+        creator = mongo.db.users.find_one({"username": creator_query})
+        if creator:
+            query["creator"] = str(creator["_id"])
+        else:
+            return jsonify([]), 200  # No such creator, return empty list
+
+    groups_cursor = mongo.db.groups.find(query).sort("created_at", -1)
     groups = []
 
     for group in groups_cursor:
@@ -573,7 +590,7 @@ def list_groups():
                 "group_id": str(group.get("_id")),
                 "name": group.get("name"),
                 "description": group.get("description"),
-                "creator": creator_username,  # Use username here
+                "creator": creator_username,
                 "allow_preview": group.get("allow_preview", True),
                 "members": [str(member) for member in group.get("members", [])],
                 "created_at": (

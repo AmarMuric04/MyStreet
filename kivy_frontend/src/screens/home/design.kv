@@ -39,6 +39,7 @@
                     id: search_for_groups
                     size_hint_x: 1
                     mode: "outlined"
+                    on_text: root.on_search_text(self, self.text)
                     MDTextFieldHintText:
                         text: "Search for a group"
                     MDTextFieldMaxLengthText:
@@ -53,12 +54,12 @@
                     height: dp(120) 
 
                     RecycleView:
-                        id: groups_rv
-                        viewclass: "GroupItem"
+                        id: my_groups_rv
+                        viewclass: "MyGroupItem"
                         bar_width: dp(0)
                         do_scroll_x: True
                         do_scroll_y: False
-                        data: root.groups_data
+                        data: root.my_groups_data
 
                         RecycleBoxLayout:
                             orientation: 'horizontal'
@@ -70,18 +71,34 @@
                             size_hint_x: None
                             width: self.minimum_width 
 
-            RecycleView:
-                id: posts_rv
-                viewclass: "PostItem"
-                data: root.posts_data
-                RecycleBoxLayout:
-                    spacing: dp(25)
-                    pos_hint: {'center_x': 0.5,'center_y': 0.8}
-                    default_size: None, dp(170)
-                    default_size_hint: 1, None
-                    size_hint_y: None
-                    height: self.minimum_height
-                    orientation: "vertical"
+            FloatLayout:
+                RecycleView:
+                    id: posts_rv
+                    viewclass: "PostItem"
+                    data: root.posts_data
+                    size_hint: 1, 1
+                    pos_hint: {"x": 0, "y": 0}
+                    RecycleBoxLayout:
+                        spacing: dp(25)
+                        default_size: None, dp(170)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: "vertical"
+
+                RecycleView:
+                    id: groups_rv
+                    viewclass: "GroupItem"
+                    data: root.groups_data
+                    size_hint: 1, 1
+                    pos_hint: {"x": 0, "y": 0}
+                    RecycleBoxLayout:
+                        spacing: dp(25)
+                        default_size: None, dp(170)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: "vertical"
 
 
         FloatLayout:
@@ -99,6 +116,81 @@
 
 
 <GroupItem@BoxLayout>:
+    group_name: ""
+    description: ""
+    creator: ""
+    group_id: ""
+    allow_preview: True
+    is_logged_in: None
+    orientation: "horizontal"
+    size_hint_y: None
+    height: dp(80)
+    padding: dp(8)
+    spacing: dp(8)
+
+    MDCard:
+        padding: dp(10)
+        radius: 5
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            MDBoxLayout:
+                orientation: 'vertical'
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    spacing: dp(10)
+
+                    MDIcon:
+                        icon: "account-group"
+                        size_hint: None, None
+                        size: dp(24), dp(24)
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+
+                    MDLabel:
+                        text: root.group_name
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(24)
+
+
+                MDDivider:
+
+                MDLabel:
+                    text: root.description
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    shorten: True
+                    shorten_from: 'right'
+                    max_lines: 2
+                    theme_text_color: "Custom"
+
+                MDLabel:
+                    text: root.creator
+                    markup: True
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+
+                Widget:
+
+                MDButton:
+                    on_press:
+                        app.root.ids.screen_manager.get_screen("home").handle_group_press(root.group_id, root.allow_preview)
+
+                    on_press: app.root.ids.screen_manager.get_screen("home").handle_group_press(root.group_id, root.allow_preview) if root.is_logged_in or root.allow_preview else app.goto_screen("login")
+                
+                    MDButtonIcon:
+                        icon: "eye" if root.allow_preview else "plus"
+                        icon: "eye" if root.is_logged_in and root.allow_preview else "plus" if root.is_logged_in and not root.allow_preview else "eye-outline" if not root.is_logged_in and root.allow_preview else "login"
+                    MDButtonText:
+                        text: "View" if root.allow_preview else "Request"
+
+                        text: "View" if root.is_logged_in and root.allow_preview else "Request" if root.is_logged_in and not root.allow_preview else "Preview" if not root.is_logged_in and root.allow_preview else "Log in"
+
+<MyGroupItem@BoxLayout>:
     group_name: ""
     description: ""
     creator: ""
