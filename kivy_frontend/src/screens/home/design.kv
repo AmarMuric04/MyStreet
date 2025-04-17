@@ -1,4 +1,5 @@
 #:import dp kivy.metrics.dp
+#:import PostItem components.post_item.logic.PostItem
 
 <HomeScreen>:
     FloatLayout:
@@ -69,8 +70,20 @@
                             size_hint_x: None
                             width: self.minimum_width 
 
-            Widget:
-        
+            RecycleView:
+                id: posts_rv
+                viewclass: "PostItem"
+                data: root.posts_data
+                RecycleBoxLayout:
+                    spacing: dp(25)
+                    pos_hint: {'center_x': 0.5,'center_y': 0.8}
+                    default_size: None, dp(170)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: "vertical"
+
+
         FloatLayout:
             MDButton:
                 id: create_group_btn
@@ -108,6 +121,9 @@
             size_hint: None, None
             size: dp(50), dp(50)
             pos_hint: {'center_x': 0.5,'top': 1}
+            on_press: 
+                app.root.ids.screen_manager.get_screen("posts").group_id = root.group_id
+                app.root.ids.screen_manager.current = "posts"
         MDLabel:
             text: root.group_name
             halign: "center"

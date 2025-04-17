@@ -7,9 +7,10 @@ import jwt
 from app import app, mongo
 from bson import ObjectId
 from flask import jsonify, request
+from jwt import ExpiredSignatureError, InvalidTokenError
 from pymongo import DESCENDING
 
-from .session import save_token
+from .session import get_token, save_token
 
 """
     TL;DR
@@ -138,6 +139,9 @@ def verify_code():
     return {"status": "success", "message": "Code verified successfully"}, 200
 
 
+# ------------------ PERSONAL ROUTES ------------------
+
+
 def get_current_user():
     token = request.headers.get("Authorization").split()[1]
     print(token)
@@ -155,19 +159,124 @@ def get_current_user():
 
 @app.route("/current_user", methods=["GET"])
 def current_user():
-    user, error_response, status_code = get_current_user()
-    if error_response:
-        return error_response, status_code
-    # For security, only return what is necessary.
+    # 1) Grab the token from the session file
+    token = get_token()
+    if not token:
+        return jsonify({"error": "Not authenticated"}), 401
 
-    print(user)
+    # 2) Try to decode it and handle expiration/invalid cases
+    try:
+        payload = jwt.decode(
+            token,
+            app.config["SECRET_KEY"],
+            algorithms=["HS256"],
+            # optional: leeway=datetime.timedelta(seconds=30)
+        )
+    except ExpiredSignatureError:
+        # Token expired → clear local copy and force re-login
+        clear_token()
+        return jsonify({"error": "Session expired"}), 401
+    except InvalidTokenError:
+        # Any other decode failure → clear and reject
+        clear_token()
+        return jsonify({"error": "Invalid token"}), 401
 
+    # 3) At this point the token is valid; you can pull user info
+    #    from your payload or fetch fresh from the DB
+    email = payload.get("email")
+    user = mongo.db.users.find_one({"email": email})
+    if not user:
+        # In case the user was deleted or similar
+        clear_token()
+        return jsonify({"error": "User not found"}), 401
+
+    # 4) Return only the safe fields
     return (
         jsonify(
             {"user": {"username": user.get("username"), "email": user.get("email")}}
         ),
         200,
     )
+
+
+@app.route("/users/me/groups", methods=["GET"])
+def get_my_groups():
+    # Authenticate the user
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    user_obj_id = user["_id"]
+
+    # Find groups where this user is in the members array, sorted newest first
+    groups_cursor = mongo.db.groups.find({"members": user_obj_id}).sort(
+        "created_at", -1
+    )
+
+    groups = []
+    for group in groups_cursor:
+        groups.append(
+            {
+                "group_id": str(group["_id"]),
+                "name": group.get("name"),
+                "description": group.get("description"),
+                "created_at": group.get("created_at"),
+                "member_count": len(group.get("members", [])),
+                "allow_preview": group.get("allow_preview", False),
+            }
+        )
+
+    return jsonify(groups), 200
+
+
+@app.route("/users/me/groups/posts", methods=["GET"])
+def get_my_groups_posts():
+    # 1) Authenticate
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    user_obj_id = user["_id"]
+
+    # 2) Find all group IDs the user belongs to
+    group_cursor = mongo.db.groups.find({"members": user_obj_id}, {"_id": 1})
+    group_ids = [g["_id"] for g in group_cursor]
+    if not group_ids:
+        # User isn't in any groups → empty list
+        return jsonify([]), 200
+
+    # 3) Fetch all posts in those groups, newest first
+    posts_cursor = mongo.db.posts.find({"group_id": {"$in": group_ids}}).sort(
+        "created_at", -1
+    )
+
+    # 4) Build response list
+    posts = []
+    for post in posts_cursor:
+        # Lookup author only if not anonymous
+        if not post.get("anonymous"):
+            user_info = mongo.db.users.find_one({"_id": post["user_id"]})
+        else:
+            user_info = None
+
+        # Determine if current user has liked this post
+        liked_by_user = user_obj_id in post.get("likes", [])
+
+        posts.append(
+            {
+                "group_id": str(post["group_id"]),
+                "post_id": str(post["_id"]),
+                "username": user_info["username"] if user_info else None,
+                "user_email": user_info["email"] if user_info else None,
+                "title": post.get("title", "No Title"),
+                "text": post.get("text", "No Content"),
+                "likes": post.get("likes", []),
+                "liked_by_user": liked_by_user,
+                "comment_count": len(post.get("comments", [])),
+            }
+        )
+
+    return jsonify(posts), 200
 
 
 # ------------------ POSTS ROUTES -----------------
@@ -234,6 +343,7 @@ def get_posts_in_group(group_id):
         return jsonify({"error": "Group not found"}), 404
 
     user, error_response, status = get_current_user()
+    user_obj_id = user["_id"]
 
     # If user doesn't exist and preview is not allowed
     if error_response and not group.get("allow_preview", False):
@@ -250,6 +360,8 @@ def get_posts_in_group(group_id):
 
     posts = []
     for post in posts_cursor:
+        liked_by_user = user_obj_id in post.get("likes", [])
+
         user_info = (
             mongo.db.users.find_one({"_id": post["user_id"]})
             if not post.get("anonymous")
@@ -262,6 +374,7 @@ def get_posts_in_group(group_id):
             "username": user_info["username"] if user_info else None,
             "user_email": user_info["email"] if user_info else None,
             "likes": post.get("likes", []),
+            "liked_by_user": liked_by_user,
             "comments": post.get("comments", []),
         }
         posts.append(post_data)

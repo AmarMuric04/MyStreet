@@ -12,17 +12,59 @@ from utils.session import get_token
 
 Builder.load_file("kivy_frontend/src/screens/home/design.kv")
 
-API_GROUPS_URL = "http://localhost:5000/groups" 
+API_GROUPS_URL = "http://localhost:5000/users/me/groups" 
 
 class HomeScreen(MDScreen):
     groups_data = ListProperty([])
-
+    posts_data = ListProperty([])
+    
     def on_enter(self):
         print("Fetching groups")
         
         self.fetch_groups()
         Clock.schedule_once(self.check_login_and_show_button)
+        threading.Thread(target=self.fetch_posts_thread, daemon=True).start()
 
+    def fetch_posts_thread(self):
+            try:
+                url = f"http://localhost:5000/users/me/groups/posts"
+                response = requests.get(
+                    url,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {get_token()}"
+                    }
+                )
+                if response.status_code == 200:
+                    posts = response.json()
+                    
+                    print(posts)
+
+                    data = [
+                        {
+                            "post_id": str(post.get("post_id")),
+                            "username": f"@{post['username']}" if post.get("username") else "Posted anonymously",
+                            "user_email": f" · {post['user_email']}" if post.get("user_email") else "",
+                            "title": post.get("title", "No Title"),
+                            "text": post.get("text", "No Content"),
+                            "like_count": len(post.get("likes", [])),
+                            "liked_by_user": post.get("liked_by_user", False),
+                            "comment_count": len(post.get("comments", [])),
+                        }
+                        for post in posts
+                    ]
+                else:
+                    data = []
+                    print(f"Error fetching posts: {response.status_code}")
+            except Exception as e:
+                data = []
+                print(f"Error: {str(e)}")
+
+            Clock.schedule_once(lambda dt: self.update_posts_data(data), 0)
+
+    def update_posts_data(self, data):
+        self.posts_data = data
+        # self.hide_loader()
 
     def check_login_and_show_button(self, dt):
         app = MDApp.get_running_app()
