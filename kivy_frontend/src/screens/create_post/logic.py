@@ -6,7 +6,7 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.metrics import dp
-from kivy.properties import StringProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -31,16 +31,16 @@ Builder.load_file("kivy_frontend/src/screens/create_post/design.kv")
 class CreatePost(MDScreen):
     group_id = StringProperty("")
     current_dialog = None  # store the dialog instance
-
+    editing_post = ObjectProperty(None, allownone=True)
+    
     def create_post(self):
         title = self.ids.title_input.text.strip()
         text = self.ids.text_input.text.strip()
-        print(title, text)
         if not title or not text:
             print("Error: Title and text are required.")
             return
 
-        self.ids.post_button.text = "Submitting Post..."
+        self.ids.post_button.text = "Submitting..."
         self.ids.post_button.disabled = True
 
         anonymous = self.ids.anonymous_checkbox.active
@@ -50,10 +50,39 @@ class CreatePost(MDScreen):
             "text": text,
             "image": None,
             "tags": [],
-            "anonymous": anonymous  
+            "anonymous": anonymous
         }
-        threading.Thread(target=self.create_post_thread, args=(post_data,), daemon=True).start()
 
+        if self.editing_post:
+            threading.Thread(target=self.update_post_thread, args=(post_data,), daemon=True).start()
+        else:
+            threading.Thread(target=self.create_post_thread, args=(post_data,), daemon=True).start()
+            
+    def update_post_thread(self, post_data):
+        try:
+            url = f"http://localhost:5000/groups/{self.group_id}/posts/{self.editing_post.post_id}"
+            response = requests.put(
+                url,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {get_token()}"
+                },
+                data=json.dumps(post_data)
+            )
+            if response.status_code == 200:
+                msg = "Post updated successfully!"
+                Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
+                app = App.get_running_app()
+                posts_screen = app.root.ids.screen_manager.get_screen("posts")
+                posts_screen.posts_fetched = False
+                Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "posts"), 0)
+            else:
+                msg = f"Error updating post: {response.status_code}"
+        except Exception as e:
+            msg = f"Error: {str(e)}"
+
+        Clock.schedule_once(lambda dt: self.update_post_status(msg), 0)
+            
     def create_post_thread(self, post_data):
         try:
             # Build the URL for posting to the specific group using group_id.
@@ -79,6 +108,16 @@ class CreatePost(MDScreen):
             msg = f"Error: {str(e)}"
 
         Clock.schedule_once(lambda dt: self.update_post_status(msg), 0)
+
+    def on_pre_enter(self):
+        if self.editing_post:
+            self.ids.title_input.text = self.editing_post.title
+            self.ids.text_input.text = self.editing_post.text
+            self.ids.anonymous_checkbox.active = self.editing_post.anonymous
+            self.ids.post_button.text = "Update Post"
+        else:
+            self.clear_inputs()
+            self.ids.post_button.text = "Create Post"
 
     def update_post_status(self, msg):
         print(msg)

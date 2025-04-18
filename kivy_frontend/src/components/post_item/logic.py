@@ -127,7 +127,15 @@ class PostItem(MDBoxLayout):
         self.menu.dismiss()
         if action == "Delete":
             self.delete_post(post.group_id, post.post_id)
+        elif action == "Edit":
+            app = MDApp.get_running_app()
+            create_post_screen = app.root.ids.screen_manager.get_screen("create_post")
+            create_post_screen.editing_post = post
+            create_post_screen.group_id = post.group_id
+            app.root.ids.screen_manager.current = "create_post"
 
+ 
+         
     def delete_post(self, group_id, post_id):
         """
         Calls DELETE /groups/<group_id>/posts/<post_id>

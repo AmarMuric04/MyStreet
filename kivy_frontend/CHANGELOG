@@ -58,6 +58,7 @@
 -   Rebuilt Home Page to show posts like Instagram
 -   Add Searching for groups in the Home Page
 -   Fixed Authorization to create a group or a post
+-   Add Editing a post
 
 # To be added in the future
 
@@ -65,7 +66,7 @@
 
 -   Allow Images in posts (possibly more than 1 per post)
 -   Fix Commenting logic
--   Add Editing posts & comments
+-   Add Editing comments
 -   Reporting users & only allow admins to view the reports
 
 -   Desktop responsiveness (Currently only responsive for a mobile device)

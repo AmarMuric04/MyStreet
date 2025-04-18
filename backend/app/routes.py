@@ -374,6 +374,7 @@ def get_posts_in_group(group_id):
             "post_id": str(post["_id"]),
             "title": post.get("title"),
             "text": post.get("text"),
+            "anonymous": post.get("anonymous"),
             "username": user_info["username"] if user_info else None,
             "user_email": user_info["email"] if user_info else None,
             "likes": post.get("likes", []),
@@ -446,7 +447,7 @@ def update_post_in_group(group_id, post_id):
 
     data = request.get_json()
     update_fields = {}
-    for field in ["title", "text", "image", "tags"]:
+    for field in ["title", "text", "anonymous", "image", "tags"]:
         if field in data:
             update_fields[field] = data[field]
     if not update_fields:
