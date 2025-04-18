@@ -52,16 +52,20 @@
 -   Add Logic for creators of groups to choose between a private and public group
 -   Add Notification system, through Email
 
+# 0.0.8 (19 Apr 2025)
+
+-   Add Deleting comments
+-   Rebuilt Home Page to show posts like Instagram
+-   Add Searching for groups in the Home Page
+-   Fixed Authorization to create a group or a post
+
 # To be added in the future
 
 -   Add OAuth
 
 -   Allow Images in posts (possibly more than 1 per post)
--   Fix Commenting logic, Add Deleting comments
+-   Fix Commenting logic
 -   Add Editing posts & comments
 -   Reporting users & only allow admins to view the reports
-
--   Search in home page for groups
--   Fix authorization for creating groups and posts
 
 -   Desktop responsiveness (Currently only responsive for a mobile device)

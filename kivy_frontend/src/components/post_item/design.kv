@@ -9,6 +9,7 @@
     is_logged_in: ""
     liked_by_user: False  
     orientation: "vertical"
+    created_by_current_user: False
     size_hint_y: None
     height: self.minimum_height
 
@@ -65,7 +66,7 @@
                     MDIconButton:
                         id: menu_button
                         icon: "dots-vertical"
-                        on_release: root.open_menu(self)
+                        on_release: root.open_menu(self, root)
 
                     Widget:
         MDBoxLayout:

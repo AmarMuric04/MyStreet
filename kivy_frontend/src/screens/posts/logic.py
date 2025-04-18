@@ -63,6 +63,8 @@ class PostsScreen(MDScreen):
                         "like_count": len(post.get("likes", [])),
                         "liked_by_user": post.get("liked_by_user", False),
                         "comment_count": len(post.get("comments", [])),
+                        "created_by_current_user": post.get("created_by_current_user", False),
+                        "group_id": post.get("group_id", None)
                     }
                     for post in posts
                 ]

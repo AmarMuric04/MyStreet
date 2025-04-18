@@ -343,7 +343,7 @@ def get_posts_in_group(group_id):
         return jsonify({"error": "Group not found"}), 404
 
     user, error_response, status = get_current_user()
-    user_obj_id = user["_id"]
+    user_obj_id = user["_id"] if user else None
 
     # If user doesn't exist and preview is not allowed
     if error_response and not group.get("allow_preview", False):
@@ -360,7 +360,10 @@ def get_posts_in_group(group_id):
 
     posts = []
     for post in posts_cursor:
-        liked_by_user = user_obj_id in post.get("likes", [])
+        liked_by_user = user_obj_id in post.get("likes", []) if user_obj_id else False
+        created_by_current_user = (
+            user_obj_id == post.get("user_id") if user_obj_id else False
+        )
 
         user_info = (
             mongo.db.users.find_one({"_id": post["user_id"]})
@@ -375,7 +378,9 @@ def get_posts_in_group(group_id):
             "user_email": user_info["email"] if user_info else None,
             "likes": post.get("likes", []),
             "liked_by_user": liked_by_user,
+            "created_by_current_user": created_by_current_user,
             "comments": post.get("comments", []),
+            "group_id": str(post.get("group_id")) if post.get("group_id") else None,
         }
         posts.append(post_data)
 
