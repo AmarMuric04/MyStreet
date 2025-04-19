@@ -34,10 +34,10 @@ from utils.session import get_token
 Builder.load_file("kivy_frontend/src/components/post_item/design.kv")
 
 class PostItem(MDBoxLayout):
+    current_dialog = None
     def toggle_like(self, post_item):
         app = MDApp.get_running_app()
         user_data = app.user_data
-        
         if not user_data: 
             return
         previous_like_status = post_item.liked_by_user
@@ -78,56 +78,63 @@ class PostItem(MDBoxLayout):
 
     def prompt_comment(self, post_id):
         self.current_post_id = post_id
-        dialog =MDDialog(
-            # ----------------------------Icon-----------------------------
-            MDDialogIcon(
-                icon="comment",
-            ),
-            # -----------------------Headline text-------------------------
-            MDDialogHeadlineText(
-                text="Post comment?",
-            ),
-            # -----------------------Supporting text-----------------------
+
+        # 1. Create and store a reference to the input field
+        self.comment_input = MDTextField(
+            MDTextFieldHintText(text="Enter your comment"),
+            MDTextFieldMaxLengthText(max_text_length=256),
+            mode="outlined"
+        )
+
+        # 2. Create the dialog
+        dialog = MDDialog(
+            MDDialogIcon(icon="comment"),
+            MDDialogHeadlineText(text="Post comment?"),
             MDDialogSupportingText(
                 text="This will reset your app preferences back to their "
-                "default settings. The following accounts will also "
-                "be signed out:",
+                    "default settings. The following accounts will also "
+                    "be signed out:"
             ),
-            # -----------------------Custom content------------------------
             MDDialogContentContainer(
                 MDDivider(),
-                MDTextField(MDTextFieldHintText(text="Enter your comment"), MDTextFieldMaxLengthText(max_text_length=256),id="title_input",mode="outlined"),
+                self.comment_input,
                 MDDivider(),
                 orientation="vertical",
             ),
-            # ---------------------Button container------------------------
             MDDialogButtonContainer(
                 Widget(),
                 MDButton(
-                    MDButtonText(text="Cancel", on_release=self.close_dialog),
+                    MDButtonText(text="Cancel"),
                     style="text",
+                    on_release=lambda x: self.close_dialog()
                 ),
                 MDButton(
-                    MDButtonText(text="Comment", on_release=self.submit_comment),
+                    MDButtonText(text="Comment"),
                     style="text",
+                    on_release=lambda x: self.submit_and_post_dialog(x, self.comment_input.text)
                 ),
                 spacing="8dp",
             ),
-            # -------------------------------------------------------------
-        ).open()
+        )
+
+        dialog.open()
         self.current_dialog = dialog
-    def submit_comment(self, instance):
-        comment_field = self.dialog.content_cls
-        comment_text = comment_field.text.strip()
-        if not comment_text:
+        
+    def submit_and_post_dialog(self, instance, comment_text):
+        self.submit_comment(instance, comment_text)
+        self.close_dialog()
+        
+    def submit_comment(self, instance, comment):
+        print(comment)
+        if not comment:
             print("Error: Comment text is required.")
             return
         threading.Thread(
             target=self.submit_comment_thread,
-            args=(self.current_post_id, comment_text),
+            args=(self.current_post_id, comment),
             daemon=True
         ).start()
-        self.dialog.dismiss()
+        self.current_dialog.dismiss()
 
     def submit_comment_thread(self, post_id, comment_text):
         try:
@@ -140,7 +147,9 @@ class PostItem(MDBoxLayout):
                 data=json.dumps({"comment": comment_text})
             )
             if response.status_code == 201:
-                threading.Thread(target=self.fetch_posts_thread, daemon=True).start()
+                app = MDApp.get_running_app()
+                
+                threading.Thread(target=app.root.ids.screen_manager.get_screen("posts").fetch_posts_thread, daemon=True).start()
             else:
                 print(f"Error adding comment: {response.status_code}")
         except Exception as e:
