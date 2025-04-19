@@ -72,36 +72,7 @@
                             width: self.minimum_width 
 
             FloatLayout:
-                RecycleView:
-                    id: posts_rv
-                    viewclass: "PostItem"
-                    data: root.posts_data
-                    size_hint: 1, 1
-                    pos_hint: {"x": 0, "y": 0}
-                    disabled: False
-                    RecycleBoxLayout:
-                        spacing: dp(25)
-                        default_size: None, dp(170)
-                        default_size_hint: 1, None
-                        size_hint_y: None
-                        height: self.minimum_height
-                        orientation: "vertical"
-
-                RecycleView:
-                    id: groups_rv
-                    viewclass: "GroupItem"
-                    data: root.groups_data
-                    size_hint: 1, 1
-                    pos_hint: {"x": 0, "y": 0}
-                    disabled: True
-                    RecycleBoxLayout:
-                        spacing: dp(25)
-                        default_size: None, dp(170)
-                        default_size_hint: 1, None
-                        size_hint_y: None
-                        height: self.minimum_height
-                        orientation: "vertical"
-
+                id: main_container
 
         FloatLayout:
             MDButton:

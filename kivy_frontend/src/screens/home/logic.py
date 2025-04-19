@@ -1,10 +1,13 @@
 import json
-import threading
+from threading import Lock, Thread
 
 import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import ListProperty
+from kivy.metrics import dp
+from kivy.properties import BooleanProperty, ListProperty
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.recycleview import RecycleView
 from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 
@@ -20,80 +23,135 @@ class HomeScreen(MDScreen):
     my_groups_data = ListProperty([])
     groups_data = ListProperty([])
     posts_data = ListProperty([])
-    
+    showing_posts = BooleanProperty(True)
     cached_posts_data = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Debounce event for fetching public groups
         self._groups_search_event = None
+        self._latest_search_value = ""
+        self._fetch_lock = Lock()
+
+    def switch_to_view(self, view_type):
+        self.ids.main_container.clear_widgets()
+
+        if view_type == "posts":
+            self.ids.main_container.add_widget(self.create_posts_rv())
+        elif view_type == "groups":
+            self.ids.main_container.add_widget(self.create_groups_rv())
+
+    def create_posts_rv(self):
+        rv = RecycleView()
+        rv.viewclass = "PostItem"
+        rv.data = self.posts_data
+        rv.size_hint = (1, 1)
+        rv.pos_hint = {"x": 0, "y": 0}
+
+        layout = RecycleBoxLayout(
+            default_size=(None, dp(170)),
+            default_size_hint=(1, None),
+            size_hint_y=None,
+            spacing=dp(25),
+            height=dp(170),
+            orientation='vertical'
+        )
+        layout.bind(minimum_height=layout.setter("height"))
+        rv.add_widget(layout)
+        return rv
+
+    def create_groups_rv(self):
+        rv = RecycleView()
+        rv.viewclass = "GroupItem"
+        rv.data = self.groups_data
+        rv.size_hint = (1, 1)
+        rv.pos_hint = {"x": 0, "y": 0}
+
+        layout = RecycleBoxLayout(
+            default_size=(None, dp(170)),
+            default_size_hint=(1, None),
+            size_hint_y=None,
+            spacing=dp(25),
+            height=dp(170),
+            orientation='vertical'
+        )
+        layout.bind(minimum_height=layout.setter("height"))
+        rv.add_widget(layout)
+        return rv
 
     def on_enter(self):
         print("Fetching groups")
         self.fetch_my_groups()
         # Initial full fetch
         self._schedule_debounced_groups_fetch(0)
-        threading.Thread(target=self.fetch_posts_thread, daemon=True).start() 
+        Thread(target=self.fetch_posts_thread, daemon=True).start() 
         Clock.schedule_once(self.check_login_and_show_button)
 
     def on_search_text(self, instance, value):
         self.posts_data = []
-        
+        self._latest_search_value = value
+
         if value == "":
-            self.posts_data = self.cached_posts_data
+            if self._groups_search_event:
+                self._groups_search_event.cancel()
             self.groups_data = []
+            self.posts_data = self.cached_posts_data
+            self.switch_to_view("posts")
             return
-            
-        # Cancel any pending fetch
+
         if self._groups_search_event:
             self._groups_search_event.cancel()
-        # Schedule a fresh one after 0.5s
+
         self._groups_search_event = Clock.schedule_once(
-            lambda dt: self._schedule_debounced_groups_fetch(), 0.5
+            lambda dt: self._schedule_debounced_groups_fetch(value), 0.5
         )
+    def _schedule_debounced_groups_fetch(self, value):
+        Thread(target=self.fetch_groups_thread, args=(value,), daemon=True).start()
 
-    def _schedule_debounced_groups_fetch(self, dt=0):
-        threading.Thread(target=self.fetch_groups_thread, daemon=True).start()
+    def fetch_groups_thread(self, search_input):
+        with self._fetch_lock:
+            try:
+                search_input = search_input.strip()
+                params = {}
+                if search_input:
+                    params["name"] = search_input
 
-    def fetch_groups_thread(self):
-        try:
-            search_input = self.ids.search_for_groups.text.strip()
-            params = {}
-            if search_input:
-                params["name"] = search_input
+                response = requests.get(
+                    PUBLIC_GROUPS_URL,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {get_token()}",
+                    },
+                    params=params,
+                )
 
-            response = requests.get(
-                PUBLIC_GROUPS_URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {get_token()}",
-                },
-                params=params,
-            )
-
-            if response.status_code == 200:
-                groups = response.json()
-                app = MDApp.get_running_app()
-                is_logged_in = app.user_data
-                data = [
-                    {
-                        "group_name": group.get("name", "No Name"),
-                        "description": group.get("description", "No Description"),
-                        "creator": f"Created by [b]@{group.get('creator', 'Unknown Creator')}[/b]",
-                        "group_id": group.get("group_id", "No Id"),
-                        "allow_preview": group.get("allow_preview", True),
-                        "is_logged_in": is_logged_in,
-                    }
-                    for group in groups
-                ]
-            else:
-                print(f"Error fetching groups: {response.status_code}")
+                if response.status_code == 200:
+                    groups = response.json()
+                    app = MDApp.get_running_app()
+                    is_logged_in = app.user_data
+                    data = [
+                        {
+                            "group_name": group.get("name", "No Name"),
+                            "description": group.get("description", "No Description"),
+                            "creator": f"Created by [b]@{group.get('creator', 'Unknown Creator')}[/b]",
+                            "group_id": group.get("group_id", "No Id"),
+                            "allow_preview": group.get("allow_preview", True),
+                            "is_logged_in": is_logged_in,
+                        }
+                        for group in groups
+                    ]
+                else:
+                    print(f"Error fetching groups: {response.status_code}")
+                    data = []
+            except Exception as e:
+                print(f"Error fetching groups: {e}")
                 data = []
-        except Exception as e:
-            print(f"Error fetching groups: {e}")
-            data = []
 
-        Clock.schedule_once(lambda dt: self.update_groups_data(data), 0)
+        # Only update if current search input matches the latest one
+        if search_input == self._latest_search_value and search_input != "":
+            Clock.schedule_once(lambda dt: (
+                self.update_groups_data(data),
+                self.switch_to_view("groups")
+            ), 0)
 
     def update_groups_data(self, data):
         self.groups_data = data
@@ -102,7 +160,7 @@ class HomeScreen(MDScreen):
     # ——— My Groups Fetch (unchanged) ——————————————————————————————
     #
     def fetch_my_groups(self):
-        threading.Thread(target=self.fetch_my_groups_thread, daemon=True).start()
+        Thread(target=self.fetch_my_groups_thread, daemon=True).start()
 
     def fetch_my_groups_thread(self):
         try:
@@ -155,7 +213,6 @@ class HomeScreen(MDScreen):
             )
             if response.status_code == 200:
                 posts = response.json()
-                print(posts)
                 data = [
                     {
                         "post_id": str(post.get("post_id")),
@@ -188,6 +245,7 @@ class HomeScreen(MDScreen):
     def update_posts_data(self, data):
         self.posts_data = data
         self.cached_posts_data = data
+        self.switch_to_view("posts")
 
     #
     # ——— UI Helpers ——————————————————————————————————————————————

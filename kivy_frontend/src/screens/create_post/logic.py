@@ -22,6 +22,7 @@ from kivymd.uix.dialog import (
 from kivymd.uix.divider import MDDivider
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
 
 from utils.session import get_token
 
@@ -76,6 +77,14 @@ class CreatePost(MDScreen):
                 posts_screen = app.root.ids.screen_manager.get_screen("posts")
                 posts_screen.posts_fetched = False
                 Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "posts"), 0)
+                MDSnackbar(
+                    MDSnackbarText(
+                        text="Post updated successfully!",
+                    ),
+                    y=dp(24),
+                    pos_hint={"center_x": 0.5},
+                    size_hint_x=0.5,
+                ).open()
             else:
                 msg = f"Error updating post: {response.status_code}"
         except Exception as e:
@@ -102,6 +111,14 @@ class CreatePost(MDScreen):
                 posts_screen = app.root.ids.screen_manager.get_screen("posts")
                 posts_screen.posts_fetched = False
                 Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "posts"), 0)
+                MDSnackbar(
+                    MDSnackbarText(
+                        text="Post added successfully!",
+                    ),
+                    y=dp(24),
+                    pos_hint={"center_x": 0.5},
+                    size_hint_x=0.5,
+                ).open()
             else:
                 msg = f"Error creating post: {response.status_code}"
         except Exception as e:
@@ -119,6 +136,10 @@ class CreatePost(MDScreen):
             self.clear_inputs()
             self.ids.post_button.text = "Create Post"
 
+
+    def on_leave(self):
+        self.editing_post = None
+        
     def update_post_status(self, msg):
         print(msg)
         self.ids.post_button.text = "Submit Post"

@@ -4,11 +4,30 @@ import threading
 import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
+from kivy.metrics import dp
 from kivy.network.urlrequest import UrlRequest
+from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDButton, MDButtonText, MDIconButton
+from kivymd.uix.dialog import (
+    MDDialog,
+    MDDialogButtonContainer,
+    MDDialogContentContainer,
+    MDDialogHeadlineText,
+    MDDialogIcon,
+    MDDialogSupportingText,
+)
+from kivymd.uix.divider import MDDivider
+from kivymd.uix.label import MDLabel
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
+from kivymd.uix.textfield import (
+    MDTextField,
+    MDTextFieldHintText,
+    MDTextFieldMaxLengthText,
+)
 
 from utils.session import get_token
 
@@ -52,21 +71,51 @@ class PostItem(MDBoxLayout):
             post_item.like_count = previous_like_count
             print(f"Error toggling like: {str(e)}")
 
+    def close_dialog(self, *args):
+        if self.current_dialog:
+            self.current_dialog.dismiss()
+            self.current_dialog = None
+
     def prompt_comment(self, post_id):
         self.current_post_id = post_id
-        self.dialog = MDDialog(
-            title="Add Comment",
-            type="custom",
-            content_cls=Builder.load_string(
-                'MDTextField:\n    hint_text: "Enter comment text"\n    multiline: True'
+        dialog =MDDialog(
+            # ----------------------------Icon-----------------------------
+            MDDialogIcon(
+                icon="comment",
             ),
-            buttons=[
-                MDButton(text="Submit", on_release=self.submit_comment),
-                MDButton(text="Cancel", on_release=lambda x: self.dialog.dismiss())
-            ]
-        )
-        self.dialog.open()
-
+            # -----------------------Headline text-------------------------
+            MDDialogHeadlineText(
+                text="Post comment?",
+            ),
+            # -----------------------Supporting text-----------------------
+            MDDialogSupportingText(
+                text="This will reset your app preferences back to their "
+                "default settings. The following accounts will also "
+                "be signed out:",
+            ),
+            # -----------------------Custom content------------------------
+            MDDialogContentContainer(
+                MDDivider(),
+                MDTextField(MDTextFieldHintText(text="Enter your comment"), MDTextFieldMaxLengthText(max_text_length=256),id="title_input",mode="outlined"),
+                MDDivider(),
+                orientation="vertical",
+            ),
+            # ---------------------Button container------------------------
+            MDDialogButtonContainer(
+                Widget(),
+                MDButton(
+                    MDButtonText(text="Cancel", on_release=self.close_dialog),
+                    style="text",
+                ),
+                MDButton(
+                    MDButtonText(text="Comment", on_release=self.submit_comment),
+                    style="text",
+                ),
+                spacing="8dp",
+            ),
+            # -------------------------------------------------------------
+        ).open()
+        self.current_dialog = dialog
     def submit_comment(self, instance):
         comment_field = self.dialog.content_cls
         comment_text = comment_field.text.strip()
@@ -158,8 +207,23 @@ class PostItem(MDBoxLayout):
         # e.g. remove the widget, show toast, refresh list, etc.
         self.parent.remove_widget(self)
         print("Ok!")
-        # Snackbar(text="Post deleted").open()
+        MDSnackbar(
+            MDSnackbarText(
+                text="Post deleted successfully!",
+            ),
+            y=dp(24),
+            pos_hint={"center_x": 0.5},
+            size_hint_x=0.5,
+        ).open()
+
 
     def on_delete_error(self, request, error):
         print("Error")
-        # Snackbar(text=f"Could not delete post: {error}").open()
+        MDSnackbar(
+            MDSnackbarText(
+                text="Post couldn't be deleted.",
+            ),
+            y=dp(24),
+            pos_hint={"center_x": 0.5},
+            size_hint_x=0.5,
+        ).open()
