@@ -1,0 +1,45 @@
+
+#:import CommentItem components.comment_item.logic.CommentItem
+
+<Comments>:
+    AnchorLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint: None, None
+            padding: ('5dp', '2dp', '5dp', '0dp')
+            spacing: dp(32)
+            height: dp(700)
+            width: dp(400)
+
+            MDIconButton:
+                icon: 'chevron-left'
+                on_release: app.root.ids.screen_manager.goto_screen("home")
+
+            ScrollView:
+                RecycleView:
+                    id: comments_rv
+                    viewclass: "CommentItem"
+                    bar_width: dp(4)
+                    do_scroll_x: False
+                    RecycleBoxLayout:
+                        default_size: None, dp(80)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: 'vertical'
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_y: None
+                height: dp(64)
+
+                MDTextField:
+                    id: comment_input
+                    hint_text: "Write a comment..."
+                    mode: "outlined"
+                    multiline: False
+
+                MDButton:
+                    on_release: root.submit_comment()
+                    MDButtonIcon:
+                        icon: "send"

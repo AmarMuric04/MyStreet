@@ -18,7 +18,7 @@ Window.size = (450, 750)
 class MyStreetApp(MDApp):
     def build(self):
         # clear_token()
-        self.root = Builder.load_file("kivy_frontend/src/app.kv")
+        self.root = Builder.load_file("frontend/src/app.kv")
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Green"
         self.user_data = None

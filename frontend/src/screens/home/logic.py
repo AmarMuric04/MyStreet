@@ -3,6 +3,7 @@ from threading import Lock, Thread
 
 import requests
 from kivy.clock import Clock
+from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import BooleanProperty, ListProperty
@@ -11,9 +12,12 @@ from kivy.uix.recycleview import RecycleView
 from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 
+from components.post_item.logic import PostItem
+
+Factory.register('PostItem', cls=PostItem)
 from utils.session import get_token
 
-Builder.load_file("kivy_frontend/src/screens/home/design.kv")
+Builder.load_file("frontend/src/screens/home/design.kv")
 
 API_GROUPS_URL = "http://localhost:5000/users/me/groups"
 PUBLIC_GROUPS_URL = "http://localhost:5000/groups"
@@ -23,7 +27,6 @@ class HomeScreen(MDScreen):
     my_groups_data = ListProperty([])
     groups_data = ListProperty([])
     posts_data = ListProperty([])
-    showing_posts = BooleanProperty(True)
     cached_posts_data = []
 
     def __init__(self, **kwargs):
@@ -31,52 +34,6 @@ class HomeScreen(MDScreen):
         self._groups_search_event = None
         self._latest_search_value = ""
         self._fetch_lock = Lock()
-
-    def switch_to_view(self, view_type):
-        self.ids.main_container.clear_widgets()
-
-        if view_type == "posts":
-            self.ids.main_container.add_widget(self.create_posts_rv())
-        elif view_type == "groups":
-            self.ids.main_container.add_widget(self.create_groups_rv())
-
-    def create_posts_rv(self):
-        rv = RecycleView()
-        rv.viewclass = "PostItem"
-        rv.data = self.posts_data
-        rv.size_hint = (1, 1)
-        rv.pos_hint = {"x": 0, "y": 0}
-
-        layout = RecycleBoxLayout(
-            default_size=(None, dp(170)),
-            default_size_hint=(1, None),
-            size_hint_y=None,
-            spacing=dp(25),
-            height=dp(170),
-            orientation='vertical'
-        )
-        layout.bind(minimum_height=layout.setter("height"))
-        rv.add_widget(layout)
-        return rv
-
-    def create_groups_rv(self):
-        rv = RecycleView()
-        rv.viewclass = "GroupItem"
-        rv.data = self.groups_data
-        rv.size_hint = (1, 1)
-        rv.pos_hint = {"x": 0, "y": 0}
-
-        layout = RecycleBoxLayout(
-            default_size=(None, dp(170)),
-            default_size_hint=(1, None),
-            size_hint_y=None,
-            spacing=dp(25),
-            height=dp(170),
-            orientation='vertical'
-        )
-        layout.bind(minimum_height=layout.setter("height"))
-        rv.add_widget(layout)
-        return rv
 
     def on_enter(self):
         print("Fetching groups")
@@ -94,8 +51,8 @@ class HomeScreen(MDScreen):
             if self._groups_search_event:
                 self._groups_search_event.cancel()
             self.groups_data = []
+            self.ids.groups_view.size_hint = (1, 0)
             self.posts_data = self.cached_posts_data
-            self.switch_to_view("posts")
             return
 
         if self._groups_search_event:
@@ -149,16 +106,13 @@ class HomeScreen(MDScreen):
         # Only update if current search input matches the latest one
         if search_input == self._latest_search_value and search_input != "":
             Clock.schedule_once(lambda dt: (
-                self.update_groups_data(data),
-                self.switch_to_view("groups")
+                self.update_groups_data(data)
             ), 0)
 
     def update_groups_data(self, data):
         self.groups_data = data
+        self.ids.groups_view.size_hint = (1, 1)
 
-    #
-    # ——— My Groups Fetch (unchanged) ——————————————————————————————
-    #
     def fetch_my_groups(self):
         Thread(target=self.fetch_my_groups_thread, daemon=True).start()
 
@@ -197,6 +151,7 @@ class HomeScreen(MDScreen):
 
     def update_my_groups_data(self, data):
         self.my_groups_data = data
+        
 
     #
     # ——— Posts Fetch (unchanged) ————————————————————————————————
@@ -227,7 +182,7 @@ class HomeScreen(MDScreen):
                         "like_count": len(post.get("likes", [])),
                         "liked_by_user": post.get("liked_by_user", False),
                         "anonymous": post.get("anonymous", False),
-                        "comment_count": len(post.get("comments", [])),
+                        "comment_count": post.get("comment_count", []),
                         "created_by_current_user": post.get("created_by_current_user", False),
                         "group_id": post.get("group_id", None)
                     }
@@ -245,7 +200,6 @@ class HomeScreen(MDScreen):
     def update_posts_data(self, data):
         self.posts_data = data
         self.cached_posts_data = data
-        self.switch_to_view("posts")
 
     #
     # ——— UI Helpers ——————————————————————————————————————————————

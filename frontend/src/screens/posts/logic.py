@@ -11,7 +11,7 @@ from kivymd.uix.screen import MDScreen
 
 from utils.session import get_token
 
-Builder.load_file("kivy_frontend/src/screens/posts/design.kv")
+Builder.load_file("frontend/src/screens/posts/design.kv")
 
 class PostsScreen(MDScreen):
     posts_data = ListProperty([])
@@ -63,7 +63,7 @@ class PostsScreen(MDScreen):
                         "like_count": len(post.get("likes", [])),
                         "liked_by_user": post.get("liked_by_user", False),
                         "anonymous": post.get("anonymous", False),
-                        "comment_count": len(post.get("comments", [])),
+                        "comment_count": post.get("comment_count", []),
                         "created_by_current_user": post.get("created_by_current_user", False),
                         "group_id": post.get("group_id", None)
                     }

@@ -242,7 +242,6 @@ def get_my_groups_posts():
     group_cursor = mongo.db.groups.find({"members": user_obj_id}, {"_id": 1})
     group_ids = [g["_id"] for g in group_cursor]
     if not group_ids:
-        # User isn't in any groups → empty list
         return jsonify([]), 200
 
     # 3) Fetch all posts in those groups, newest first
@@ -253,14 +252,15 @@ def get_my_groups_posts():
     # 4) Build response list
     posts = []
     for post in posts_cursor:
-        # Lookup author only if not anonymous
         if not post.get("anonymous"):
             user_info = mongo.db.users.find_one({"_id": post["user_id"]})
         else:
             user_info = None
 
-        # Determine if current user has liked this post
         liked_by_user = user_obj_id in post.get("likes", [])
+
+        # 🔥 Fetch comment count from comments collection
+        comment_count = mongo.db.comments.count_documents({"post_id": post["_id"]})
 
         posts.append(
             {
@@ -272,7 +272,7 @@ def get_my_groups_posts():
                 "text": post.get("text", "No Content"),
                 "likes": post.get("likes", []),
                 "liked_by_user": liked_by_user,
-                "comment_count": len(post.get("comments", [])),
+                "comment_count": comment_count,
             }
         )
 
@@ -345,7 +345,6 @@ def get_posts_in_group(group_id):
     user, error_response, status = get_current_user()
     user_obj_id = user["_id"] if user else None
 
-    # If user doesn't exist and preview is not allowed
     if error_response and not group.get("allow_preview", False):
         posts_cursor = (
             mongo.db.posts.find({"group_id": group_obj_id})
@@ -353,13 +352,27 @@ def get_posts_in_group(group_id):
             .limit(5)
         )
     else:
-        # User exists or preview allowed
         posts_cursor = mongo.db.posts.find({"group_id": group_obj_id}).sort(
             "created_at", -1
         )
 
     posts = []
     for post in posts_cursor:
+        post_id = post["_id"]
+
+        # Fetch comments from the comments collection
+        comments_cursor = mongo.db.comments.find({"post_id": post_id}).sort("created_at", 1)
+        comments = []
+        for comment in comments_cursor:
+            user_info = mongo.db.users.find_one({"_id": comment["user_id"]})
+            comments.append({
+                "comment_id": str(comment["_id"]),
+                "message": comment["message"],
+                "username": user_info["username"] if user_info else "Unknown",
+                "user_id": str(comment["user_id"]),
+                "created_at": comment.get("created_at"),
+            })
+
         liked_by_user = user_obj_id in post.get("likes", []) if user_obj_id else False
         created_by_current_user = (
             user_obj_id == post.get("user_id") if user_obj_id else False
@@ -370,6 +383,7 @@ def get_posts_in_group(group_id):
             if not post.get("anonymous")
             else None
         )
+
         post_data = {
             "post_id": str(post["_id"]),
             "title": post.get("title"),
@@ -380,7 +394,7 @@ def get_posts_in_group(group_id):
             "likes": post.get("likes", []),
             "liked_by_user": liked_by_user,
             "created_by_current_user": created_by_current_user,
-            "comments": post.get("comments", []),
+            "comments": comments,
             "group_id": str(post.get("group_id")) if post.get("group_id") else None,
         }
         posts.append(post_data)
@@ -799,6 +813,29 @@ def toggle_like(post_id):
 # ------------------ COMMENT ROUTES ------------------
 
 
+@app.route("/posts/<post_id>/comments", methods=["GET"])
+def get_post_comments(post_id):
+    try:
+        comments = mongo.db.comments.find({"post_id": ObjectId(post_id)})
+        formatted = []
+        for c in comments:
+            formatted.append(
+                {
+                    "id": str(c["_id"]),
+                    "username": c.get("username", "Anonymous"),
+                    "message": c.get("message", ""),
+                    "likes": c.get("likes", 0),
+                    "date": c.get("created_at", datetime.datetime.utcnow()).strftime(
+                        "%Y-%m-%d %H:%M"
+                    ),
+                }
+            )
+        return jsonify(formatted), 200
+    except Exception as e:
+        print("Error fetching comments:", e)
+        return jsonify({"error": "Could not fetch comments"}), 500
+
+
 @app.route("/posts/<post_id>/comment", methods=["POST"])
 def add_comment(post_id):
     user, error_response, status = get_current_user()
@@ -806,23 +843,40 @@ def add_comment(post_id):
         return error_response, status
 
     data = request.get_json()
-    comment_text = data.get("comment")
-    if not comment_text:
+    message = data.get("message")
+    if not message:
         return jsonify({"error": "Comment text is required"}), 400
 
     comment = {
-        "_id": ObjectId(),  # generate a unique ObjectId for the comment
+        "_id": ObjectId(),
+        "post_id": ObjectId(post_id),
         "user_id": user["_id"],
-        "comment": comment_text,
+        "username": user.get("username", "Anonymous"),
+        "message": message,
+        "likes": 0,
         "created_at": datetime.datetime.utcnow(),
         "updated_at": datetime.datetime.utcnow(),
     }
-    result = mongo.db.posts.update_one(
-        {"_id": ObjectId(post_id)}, {"$push": {"comments": comment}}
-    )
-    if result.matched_count == 0:
-        return jsonify({"error": "Post not found"}), 404
+
+    mongo.db.comments.insert_one(comment)
     return jsonify({"message": "Comment added", "comment_id": str(comment["_id"])}), 201
+
+
+@app.route("/posts/<post_id>/comment/<comment_id>/like", methods=["POST"])
+def like_comment(post_id, comment_id):
+    user, error_response, status = get_current_user()
+    if error_response:
+        return error_response, status
+
+    result = mongo.db.comments.update_one(
+        {"_id": ObjectId(comment_id), "post_id": ObjectId(post_id)},
+        {"$inc": {"likes": 1}},
+    )
+
+    if result.matched_count == 0:
+        return jsonify({"error": "Comment not found"}), 404
+
+    return jsonify({"message": "Comment liked"}), 200
 
 
 @app.route("/posts/<post_id>/comment/<comment_id>", methods=["PUT"])
@@ -836,32 +890,17 @@ def edit_comment(post_id, comment_id):
     if not new_text:
         return jsonify({"error": "New comment text is required"}), 400
 
-    post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
-
-    # Check if the comment exists and belongs to the user.
-    comments = post.get("comments", [])
-    comment_found = None
-    for c in comments:
-        if str(c["_id"]) == comment_id:
-            comment_found = c
-            break
-
-    if not comment_found:
+    comment = mongo.db.comments.find_one(
+        {"_id": ObjectId(comment_id), "post_id": ObjectId(post_id)}
+    )
+    if not comment:
         return jsonify({"error": "Comment not found"}), 404
-    if comment_found["user_id"] != user["_id"]:
+    if comment["user_id"] != user["_id"]:
         return jsonify({"error": "Not authorized to edit this comment"}), 403
 
-    # Update the specific comment using the positional operator
-    mongo.db.posts.update_one(
-        {"_id": ObjectId(post_id), "comments._id": ObjectId(comment_id)},
-        {
-            "$set": {
-                "comments.$.comment": new_text,
-                "comments.$.updated_at": datetime.datetime.utcnow(),
-            }
-        },
+    mongo.db.comments.update_one(
+        {"_id": ObjectId(comment_id)},
+        {"$set": {"comment": new_text, "updated_at": datetime.datetime.utcnow()}},
     )
     return jsonify({"message": "Comment updated"}), 200
 
@@ -872,25 +911,13 @@ def delete_comment(post_id, comment_id):
     if error_response:
         return error_response, status
 
-    post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
-
-    # Find the comment and verify ownership.
-    comments = post.get("comments", [])
-    comment_found = None
-    for c in comments:
-        if str(c["_id"]) == comment_id:
-            comment_found = c
-            break
-
-    if not comment_found:
+    comment = mongo.db.comments.find_one(
+        {"_id": ObjectId(comment_id), "post_id": ObjectId(post_id)}
+    )
+    if not comment:
         return jsonify({"error": "Comment not found"}), 404
-    if comment_found["user_id"] != user["_id"]:
+    if comment["user_id"] != user["_id"]:
         return jsonify({"error": "Not authorized to delete this comment"}), 403
 
-    mongo.db.posts.update_one(
-        {"_id": ObjectId(post_id)},
-        {"$pull": {"comments": {"_id": ObjectId(comment_id)}}},
-    )
+    mongo.db.comments.delete_one({"_id": ObjectId(comment_id)})
     return jsonify({"message": "Comment deleted"}), 200

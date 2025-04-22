@@ -5,7 +5,7 @@ from kivymd.uix.screen import MDScreen
 
 from utils.auth import send_code_api, signup_api, verify_code_api
 
-Builder.load_file("kivy_frontend/src/screens/email_code/design.kv")
+Builder.load_file("frontend/src/screens/email_code/design.kv")
 
 class EmailCode(MDScreen):
     def on_enter(self):

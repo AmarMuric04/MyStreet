@@ -7,7 +7,7 @@
             pos_hint: {"top": 1}
             size_hint_y: None
             height: dp(50)
-            padding: ('20dp', '0dp', '20dp', '0dp')
+            padding: ('30dp', '0dp', '30dp', '0dp')
             MDLabel:
                 text: "MyStreet"
                 bold: True
@@ -72,7 +72,34 @@
                             width: self.minimum_width 
 
             FloatLayout:
-                id: main_container
+                RecycleView:
+                    viewclass: 'PostItem'
+                    size_hint: 1, 1
+                    pos_hint: {"x": 0, "y": 0}
+                    data: root.posts_data
+
+                    RecycleBoxLayout:
+                        default_size: None, dp(170)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(25)
+                        orientation: 'vertical'
+                        
+                RecycleView:
+                    id: groups_view
+                    viewclass: 'GroupItem'
+                    size_hint: 1, 0
+                    pos_hint: {"x": 0, "y": 0}
+                    data: root.groups_data
+
+                    RecycleBoxLayout:
+                        default_size: None, dp(170)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(25)
+                        orientation: 'vertical'
 
         FloatLayout:
             MDButton:

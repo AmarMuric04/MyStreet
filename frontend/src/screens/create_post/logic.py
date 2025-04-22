@@ -26,7 +26,7 @@ from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
 
 from utils.session import get_token
 
-Builder.load_file("kivy_frontend/src/screens/create_post/design.kv")
+Builder.load_file("frontend/src/screens/create_post/design.kv")
 
 
 class CreatePost(MDScreen):

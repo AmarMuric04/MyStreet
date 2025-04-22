@@ -5,7 +5,7 @@ from kivymd.uix.screen import MDScreen
 
 from utils.auth import send_code_api
 
-Builder.load_file("kivy_frontend/src/screens/signup/design.kv")
+Builder.load_file("frontend/src/screens/signup/design.kv")
 
 
 class SignupScreen(MDScreen):

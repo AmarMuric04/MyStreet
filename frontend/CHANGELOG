@@ -61,12 +61,16 @@
 -   Add Editing a post
 -   Fixed Commenting logic
 
+# 0.0.9 (22 Apr 2025)
+
+-   Add Editing comments
+-   Add View comments
+-   Add Images in posts
+
 # To be added in the future
 
 -   Add OAuth
 
--   Allow Images in posts (possibly more than 1 per post)
--   Add Editing comments
 -   Reporting users & only allow admins to view the reports
 
 -   Desktop responsiveness (Currently only responsive for a mobile device)

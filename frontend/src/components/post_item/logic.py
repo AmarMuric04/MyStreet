@@ -2,10 +2,12 @@ import json
 import threading
 
 import requests
-from kivy.clock import Clock
+from kivy.clock import Clock, mainthread
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.network.urlrequest import UrlRequest
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.recycleview import RecycleView
 from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -31,7 +33,7 @@ from kivymd.uix.textfield import (
 
 from utils.session import get_token
 
-Builder.load_file("kivy_frontend/src/components/post_item/design.kv")
+Builder.load_file("frontend/src/components/post_item/design.kv")
 
 class PostItem(MDBoxLayout):
     current_dialog = None
@@ -71,90 +73,6 @@ class PostItem(MDBoxLayout):
             post_item.like_count = previous_like_count
             print(f"Error toggling like: {str(e)}")
 
-    def close_dialog(self, *args):
-        if self.current_dialog:
-            self.current_dialog.dismiss()
-            self.current_dialog = None
-
-    def prompt_comment(self, post_id):
-        self.current_post_id = post_id
-
-        # 1. Create and store a reference to the input field
-        self.comment_input = MDTextField(
-            MDTextFieldHintText(text="Enter your comment"),
-            MDTextFieldMaxLengthText(max_text_length=256),
-            mode="outlined"
-        )
-
-        # 2. Create the dialog
-        dialog = MDDialog(
-            MDDialogIcon(icon="comment"),
-            MDDialogHeadlineText(text="Post comment?"),
-            MDDialogSupportingText(
-                text="This will reset your app preferences back to their "
-                    "default settings. The following accounts will also "
-                    "be signed out:"
-            ),
-            MDDialogContentContainer(
-                MDDivider(),
-                self.comment_input,
-                MDDivider(),
-                orientation="vertical",
-            ),
-            MDDialogButtonContainer(
-                Widget(),
-                MDButton(
-                    MDButtonText(text="Cancel"),
-                    style="text",
-                    on_release=lambda x: self.close_dialog()
-                ),
-                MDButton(
-                    MDButtonText(text="Comment"),
-                    style="text",
-                    on_release=lambda x: self.submit_and_post_dialog(x, self.comment_input.text)
-                ),
-                spacing="8dp",
-            ),
-        )
-
-        dialog.open()
-        self.current_dialog = dialog
-        
-    def submit_and_post_dialog(self, instance, comment_text):
-        self.submit_comment(instance, comment_text)
-        self.close_dialog()
-        
-    def submit_comment(self, instance, comment):
-        print(comment)
-        if not comment:
-            print("Error: Comment text is required.")
-            return
-        threading.Thread(
-            target=self.submit_comment_thread,
-            args=(self.current_post_id, comment),
-            daemon=True
-        ).start()
-        self.current_dialog.dismiss()
-
-    def submit_comment_thread(self, post_id, comment_text):
-        try:
-            response = requests.post(
-                f"http://localhost:5000/posts/{post_id}/comment",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {get_token()}"
-                },
-                data=json.dumps({"comment": comment_text})
-            )
-            if response.status_code == 201:
-                app = MDApp.get_running_app()
-                
-                threading.Thread(target=app.root.ids.screen_manager.get_screen("posts").fetch_posts_thread, daemon=True).start()
-            else:
-                print(f"Error adding comment: {response.status_code}")
-        except Exception as e:
-            print(f"Error adding comment: {str(e)}")
-            
     def open_menu(self, caller, post):
         menu_items = [
             {
@@ -192,7 +110,11 @@ class PostItem(MDBoxLayout):
             create_post_screen.group_id = post.group_id
             app.root.ids.screen_manager.current = "create_post"
 
- 
+    def view_comments(self, post):
+        app = MDApp.get_running_app()
+        comments_screen = app.root.ids.screen_manager.get_screen("comments")
+        comments_screen.post_id = post
+        app.root.ids.screen_manager.current = "comments"
          
     def delete_post(self, group_id, post_id):
         """

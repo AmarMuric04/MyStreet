@@ -9,7 +9,7 @@ from kivymd.uix.screen import MDScreen
 
 from utils.session import get_token
 
-Builder.load_file("kivy_frontend/src/screens/create_group/design.kv")
+Builder.load_file("frontend/src/screens/create_group/design.kv")
 
 API_URL = "http://localhost:5000/groups"  
 

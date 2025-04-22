@@ -125,7 +125,7 @@
                             icon: "comment-outline"
                             icon_size: "14sp"
                             pos_hint: {"center_y": 0.5}
-                            on_release: root.prompt_comment(root.post_id)
+                            on_release: root.view_comments(root.post_id)
 
                         MDLabel:
                             text: str(root.comment_count)
