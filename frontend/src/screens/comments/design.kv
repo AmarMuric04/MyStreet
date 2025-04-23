@@ -13,7 +13,7 @@
 
             MDIconButton:
                 icon: 'chevron-left'
-                on_release: app.root.ids.screen_manager.goto_screen("home")
+                on_release: app.root.ids.screen_manager.current = "home"
 
             ScrollView:
                 RecycleView:
@@ -22,7 +22,7 @@
                     bar_width: dp(4)
                     do_scroll_x: False
                     RecycleBoxLayout:
-                        default_size: None, dp(80)
+                        default_size: None, dp(95)
                         default_size_hint: 1, None
                         size_hint_y: None
                         height: self.minimum_height

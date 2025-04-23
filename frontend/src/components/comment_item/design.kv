@@ -3,49 +3,68 @@
     username: ""
     date: ""
     likes: 0
+    is_current_user: False
     orientation: 'horizontal'
-    MDFloatLayout:
-        size_hint: None, None
-        size: dp(40), dp(40)
-        md_bg_color: 1, 1, 1, 1
-        radius: self.height / 2
-        MDIcon:
-            icon: "account"
-            pos_hint: {'center_x': 0.5,'center_y': 0.5}
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint_x: None
+        width: dp(40)
+        MDFloatLayout:
+            size_hint: None, None
+            size: dp(40), dp(40)
+            md_bg_color: 1, 1, 1, 1
+            radius: self.height / 2
+            MDIcon:
+                icon: "account"
+                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+        MDBoxLayout:
 
     MDBoxLayout:
         orientation: 'horizontal'
         spacing: dp(10)
         MDBoxLayout:
             orientation: 'vertical'
-            size_hint_y: None
-            height: dp(35)
+            valign: "middle"
+            padding: ('10dp', '0dp', '0dp', '0dp')
+            MDLabel:
+                text: "[b]{}[/b]".format(root.username)
+                # text: "[b]{}[/b][i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
+                markup: True
+                size_hint_y: None
+                height: dp(20)
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+            
+            MDLabel:
+                text: root.message if root.message else "No Message"
+                size_hint_y: None
+                height: dp(25)
+                font_style: "Body"
+                role: "large"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+            
             MDBoxLayout:
-                orientation: 'vertical'
-                valign: "middle"
+                orientation: 'horizontal'
+                size_hint: None, None
+                size: dp(200), dp(16)
+
                 MDLabel:
-                    text: "[b]{}[/b]".format(root.username)
-                    # text: "[b]{}[/b][i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
-                    markup: True
-                    size_hint_y: None
-                    height: dp(20)
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                
-                MDLabel:
-                    text: root.message if root.message else "No Message"
-                    size_hint_y: None
-                    height: dp(25)
-                    padding: dp(4)
                     font_style: "Body"
-                    role: "large"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
+                    role: "small"
+                    text: "Edit comment" if root.is_current_user else ""
+
+                MDIcon:
+                    font_size: "6sp"
+                    icon: "delete" if root.is_current_user else ""
+
+                
+                Widget:
+            MDBoxLayout:
         MDBoxLayout:
             orientation: 'vertical'
-            size_hint: None, None
+            size_hint_x: None
             width: dp(32)
-            height: dp(50)
 
             MDIconButton:
                 id: like
@@ -60,3 +79,5 @@
                 width: dp(24)
                 text: str(root.likes)
                 halign: 'center'
+            MDBoxLayout:
+                

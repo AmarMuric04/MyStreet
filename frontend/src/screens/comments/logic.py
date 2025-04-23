@@ -49,7 +49,7 @@ class Comments(MDScreen):
 
     def fetch_and_display_comments(self, post_id):
         try:
-            response = requests.get(f"http://localhost:5000/posts/{post_id}/comments")
+            response = requests.get(f"http://localhost:5000/posts/{post_id}/comments", headers={"Authorization": f"Bearer {get_token()}"})
             if response.status_code == 200:
                 comments_data = response.json()
                 self.update_comments_view(comments_data)
@@ -62,5 +62,5 @@ class Comments(MDScreen):
     @mainthread
     def update_comments_view(self, comments):
         self.ids.comments_rv.data = [
-            {"message": c["message"], "username": c["username"]} for c in comments
+            {"message": c["message"], "username": c["username"], "is_current_user": c["is_current_user"]} for c in comments
         ]

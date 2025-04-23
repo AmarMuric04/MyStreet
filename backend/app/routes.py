@@ -143,8 +143,10 @@ def verify_code():
 
 
 def get_current_user():
-    token = request.headers.get("Authorization").split()[1]
-    print(token)
+    try:
+        token = request.headers.get("Authorization").split()[1]
+    except:
+        token = ""
     if not token:
         return None, jsonify({"error": "Token is missing"}), 401
     try:
@@ -358,21 +360,13 @@ def get_posts_in_group(group_id):
 
     posts = []
     for post in posts_cursor:
-        post_id = post["_id"]
-
         # Fetch comments from the comments collection
-        comments_cursor = mongo.db.comments.find({"post_id": post_id}).sort("created_at", 1)
-        comments = []
-        for comment in comments_cursor:
-            user_info = mongo.db.users.find_one({"_id": comment["user_id"]})
-            comments.append({
-                "comment_id": str(comment["_id"]),
-                "message": comment["message"],
-                "username": user_info["username"] if user_info else "Unknown",
-                "user_id": str(comment["user_id"]),
-                "created_at": comment.get("created_at"),
-            })
+        comments_cursor = mongo.db.comments.find({"post_id": post["_id"]}).sort(
+            "created_at", 1
+        )
+        comment_count = mongo.db.comments.count_documents({"post_id": post["_id"]})
 
+        comments = []
         liked_by_user = user_obj_id in post.get("likes", []) if user_obj_id else False
         created_by_current_user = (
             user_obj_id == post.get("user_id") if user_obj_id else False
@@ -394,7 +388,7 @@ def get_posts_in_group(group_id):
             "likes": post.get("likes", []),
             "liked_by_user": liked_by_user,
             "created_by_current_user": created_by_current_user,
-            "comments": comments,
+            "comment_count": comment_count,
             "group_id": str(post.get("group_id")) if post.get("group_id") else None,
         }
         posts.append(post_data)
@@ -816,9 +810,20 @@ def toggle_like(post_id):
 @app.route("/posts/<post_id>/comments", methods=["GET"])
 def get_post_comments(post_id):
     try:
+        # 1) Try to authenticate
+        user, error_response, status = get_current_user()
+        current_user_id = user["_id"] if user else None
+
+        # 2) Query all comments for the post
         comments = mongo.db.comments.find({"post_id": ObjectId(post_id)})
         formatted = []
+
         for c in comments:
+            # 3) Determine if comment was made by current user
+            is_current_user = (
+                current_user_id == c.get("user_id") if current_user_id else False
+            )
+
             formatted.append(
                 {
                     "id": str(c["_id"]),
@@ -828,9 +833,11 @@ def get_post_comments(post_id):
                     "date": c.get("created_at", datetime.datetime.utcnow()).strftime(
                         "%Y-%m-%d %H:%M"
                     ),
+                    "is_current_user": is_current_user,
                 }
             )
         return jsonify(formatted), 200
+
     except Exception as e:
         print("Error fetching comments:", e)
         return jsonify({"error": "Could not fetch comments"}), 500
@@ -839,8 +846,6 @@ def get_post_comments(post_id):
 @app.route("/posts/<post_id>/comment", methods=["POST"])
 def add_comment(post_id):
     user, error_response, status = get_current_user()
-    if error_response:
-        return error_response, status
 
     data = request.get_json()
     message = data.get("message")
