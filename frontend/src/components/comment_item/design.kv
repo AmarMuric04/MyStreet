@@ -37,4 +37,18 @@
             size_hint_y: None
             height: self.texture_size[1]
             text_size: self.width, None
-            font_size: 16
+            font_style: "Body"
+            role: "medium"
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(40)
+            MDLabel:
+                text: "Edit comment"
+                font_style: "Body"
+                role: "small"
+            MDLabel:
+                text: "Delete comment"
+                font_style: "Body"
+                role: "small"
+            Widget:

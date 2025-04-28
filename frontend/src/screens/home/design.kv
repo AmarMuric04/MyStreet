@@ -79,13 +79,12 @@
                     data: root.posts_data
 
                     RecycleBoxLayout:
-                        default_size: None, dp(170)
+                        id: scroll_box
+                        orientation: 'vertical'
                         default_size_hint: 1, None
                         size_hint_y: None
                         height: self.minimum_height
                         spacing: dp(25)
-                        orientation: 'vertical'
-                        
                 RecycleView:
                     id: groups_view
                     viewclass: 'GroupItem'

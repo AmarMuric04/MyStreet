@@ -13,15 +13,21 @@
     anonymous: False
     size_hint_y: None
     height: self.minimum_height
+    spacing: dp(10)
     image_url: ''
 
     MDBoxLayout:
         orientation: 'vertical'
         spacing: dp(20)
+        size_hint_y: None
+        height: self.minimum_height  
 
         MDBoxLayout:
             orientation: 'horizontal'
             spacing: dp(5)
+            size_hint_y: None
+            height: self.minimum_height  
+
             MDFloatLayout:
                 size_hint: None, None
                 size: dp(40), dp(40)
@@ -33,10 +39,13 @@
 
             MDBoxLayout:
                 orientation: 'horizontal'
+                size_hint_y: None
+                height: self.minimum_height  
+
                 MDBoxLayout:
                     orientation: 'vertical'
                     size_hint_y: None
-                    height: dp(35)
+                    height: self.minimum_height
                     MDBoxLayout:
                         orientation: 'vertical'
                         valign: "middle"
@@ -50,11 +59,13 @@
                             text_color: 1, 1, 1, 1
                         
                         MDLabel:
+                            id: title
                             text: root.title if root.title else "No Title"
                             bold: True
-                            size_hint_y: None
-                            height: dp(25)
                             padding: dp(4)
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            text_size: self.width, None
                             font_style: "Body"
                             role: "large"
                             theme_text_color: "Custom"
@@ -74,6 +85,8 @@
         MDBoxLayout:
             orientation: 'horizontal'
             spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height  
 
             MDBoxLayout:
                 size: dp(40), dp(40)
@@ -88,13 +101,16 @@
                     text: root.text if root.text else "No Content"
                     size_hint_y: None
                     height: self.texture_size[1]
-                    shorten: True
-                    shorten_from: 'right'
-                    max_lines: 3
+                    text_size: self.width, None
                     font_style: "Body"
                     role: "large"
                     theme_text_color: "Custom"
                     text_color: (200/255.0, 200/255.0, 200/255.0, 1)
+                AsyncImage:
+                    size_hint: None, None
+                    size: (dp(200), dp(150)) if root.image_url else (0, 0)
+                    opacity: 1 if root.image_url else 0
+                    source: root.image_url if root.image_url else ""
 
                 MDBoxLayout:
                     orientation: "horizontal"
@@ -173,8 +189,3 @@
                             pos_hint: {"center_y": 0.5}
                             theme_text_color: "Custom"
                             text_color: 1, 1, 1, 1
-            AsyncImage:
-                size_hint: None, None
-                size: (dp(200), dp(150)) if root.image_url else (0, 0)
-                opacity: 1 if root.image_url else 0
-                source: root.image_url if root.image_url else ""
