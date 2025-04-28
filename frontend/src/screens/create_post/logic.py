@@ -1,13 +1,16 @@
 import json
+import os
 import threading
 
 import requests
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.widget import Widget
+from kivy.utils import platform
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDButton, MDButtonText, MDIconButton
@@ -20,6 +23,7 @@ from kivymd.uix.dialog import (
     MDDialogSupportingText,
 )
 from kivymd.uix.divider import MDDivider
+from kivymd.uix.filemanager import MDFileManager
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
@@ -30,9 +34,53 @@ Builder.load_file("frontend/src/screens/create_post/design.kv")
 
 
 class CreatePost(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.file_manager = MDFileManager(
+            select_path=self.select_path,
+            exit_manager=self.exit_manager,
+            preview=True,
+        )
+        self.selected_image_path = None
     group_id = StringProperty("")
-    current_dialog = None  # store the dialog instance
+    current_dialog = None 
     editing_post = ObjectProperty(None, allownone=True)
+    
+    def open_file_manager(self):
+        start_path = "/"
+        if platform == "win":
+            start_path = "C:/"
+        elif platform == "android":
+            from android.storage import primary_external_storage_path
+            start_path = primary_external_storage_path()
+
+        self.file_manager.show(start_path)
+
+    def select_path(self, path):
+        self.exit_manager()
+        self.selected_image_path = path
+        self.ids.selected_image_label.text = os.path.basename(path)
+
+    def exit_manager(self, *args):
+        self.file_manager.close()
+    
+    import requests
+
+    def upload_to_cloudinary(self, image_path):
+        cloud_name = "dccik7g13"
+        upload_preset = "somy3n3f"
+
+        url = f"https://api.cloudinary.com/v1_1/{cloud_name}/image/upload"
+        data = {"upload_preset": upload_preset}
+        with open(image_path, "rb") as file_data:
+            files = {"file": file_data}
+            response = requests.post(url, data=data, files=files)
+
+        if response.status_code == 200:
+            return response.json()["secure_url"]
+        else:
+            print(f"Cloudinary upload failed: {response.text}")
+            return None
     
     def create_post(self):
         title = self.ids.title_input.text.strip()
@@ -46,10 +94,14 @@ class CreatePost(MDScreen):
 
         anonymous = self.ids.anonymous_checkbox.active
 
+        image_url = None
+        if self.selected_image_path:
+            image_url = self.upload_to_cloudinary(self.selected_image_path)
+
         post_data = {
             "title": title,
             "text": text,
-            "image": None,
+            "image": image_url, 
             "tags": [],
             "anonymous": anonymous
         }
@@ -58,7 +110,7 @@ class CreatePost(MDScreen):
             threading.Thread(target=self.update_post_thread, args=(post_data,), daemon=True).start()
         else:
             threading.Thread(target=self.create_post_thread, args=(post_data,), daemon=True).start()
-            
+
     def update_post_thread(self, post_data):
         try:
             url = f"http://localhost:5000/groups/{self.group_id}/posts/{self.editing_post.post_id}"

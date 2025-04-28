@@ -6,6 +6,7 @@ from kivy.clock import Clock, mainthread
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.network.urlrequest import UrlRequest
+from kivy.properties import StringProperty
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.widget import Widget
@@ -37,6 +38,8 @@ Builder.load_file("frontend/src/components/post_item/design.kv")
 
 class PostItem(MDBoxLayout):
     current_dialog = None
+    image_url = StringProperty(allownone=True)
+    
     def toggle_like(self, post_item):
         app = MDApp.get_running_app()
         user_data = app.user_data

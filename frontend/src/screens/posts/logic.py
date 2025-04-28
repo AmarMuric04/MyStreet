@@ -65,7 +65,8 @@ class PostsScreen(MDScreen):
                         "anonymous": post.get("anonymous", False),
                         "comment_count": post.get("comment_count", 0),
                         "created_by_current_user": post.get("created_by_current_user", False),
-                        "group_id": post.get("group_id", None)
+                        "group_id": post.get("group_id", None),
+                        "image_url": post.get("image", "")
                     }
                     for post in posts
                 ]
@@ -80,6 +81,7 @@ class PostsScreen(MDScreen):
 
     def update_posts_data(self, data):
         self.posts_data = data
+        print(self.posts_data)
         self.hide_loader()
 
     def fetch_group_info_thread(self):
@@ -132,9 +134,8 @@ class PostsScreen(MDScreen):
                 }
             )
             if response.status_code == 200:
-                self.ids.join_btn.opacity = 0
-                self.ids.create_post_btn.opacity = 1
-                self.ids.create_post_btn.disabled = False
+                # All UI updates must go inside Clock.schedule_once
+                Clock.schedule_once(lambda dt: self.on_join_success(), 0)
                 threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
             else:
                 print(f"Error joining group: {response.status_code}")
@@ -142,3 +143,7 @@ class PostsScreen(MDScreen):
             print(f"Error in join_group_thread: {str(e)}")
         finally:
             Clock.schedule_once(lambda dt: setattr(self.ids.join_btn, "disabled", False), 0)
+    def on_join_success(self):
+        self.ids.join_btn.opacity = 0
+        self.ids.create_post_btn.opacity = 1
+        self.ids.create_post_btn.disabled = False

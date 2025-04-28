@@ -59,6 +59,23 @@
             #     multiline: True
             #     size_hint: 1, None
             #     height: dp(80)
+            AnchorLayout:
+                MDButton:
+                    style: "outlined"
+                    size_hint_x: None
+                    width: dp(400)
+                    radius: 8
+                    on_release: root.open_file_manager()
+                    MDButtonText:
+                        text: "Select Image"
+            MDLabel:
+                id: selected_image_label
+                text: "No file selected"
+                halign: "center"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                size_hint_y: None
+                height: dp(30)
             MDBoxLayout:
                 size_hint_y: None
                 height: dp(40)

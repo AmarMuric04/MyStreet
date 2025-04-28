@@ -275,6 +275,7 @@ def get_my_groups_posts():
                 "likes": post.get("likes", []),
                 "liked_by_user": liked_by_user,
                 "comment_count": comment_count,
+                "image": post.get("image"),
             }
         )
 
@@ -390,6 +391,7 @@ def get_posts_in_group(group_id):
             "created_by_current_user": created_by_current_user,
             "comment_count": comment_count,
             "group_id": str(post.get("group_id")) if post.get("group_id") else None,
+            "image": post.get("image"),
         }
         posts.append(post_data)
 

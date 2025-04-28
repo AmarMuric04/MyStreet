@@ -34,6 +34,9 @@ class HomeScreen(MDScreen):
         self._groups_search_event = None
         self._latest_search_value = ""
         self._fetch_lock = Lock()
+    
+    def on_leave(self):
+        self.ids.search_for_groups.text = ""
 
     def on_enter(self):
         print("Fetching groups")
@@ -137,6 +140,7 @@ class HomeScreen(MDScreen):
                         "group_id": group.get("group_id", "No Id"),
                         "allow_preview": group.get("allow_preview", True),
                         "is_logged_in": is_logged_in,
+                        
                     }
                     for group in groups
                 ]
@@ -184,7 +188,9 @@ class HomeScreen(MDScreen):
                         "anonymous": post.get("anonymous", False),
                         "comment_count": post.get("comment_count", 0),
                         "created_by_current_user": post.get("created_by_current_user", False),
-                        "group_id": post.get("group_id", None)
+                        "group_id": post.get("group_id", None),
+                        "image_url": post.get("image", "")  
+                        
                     }
                     for post in posts
                 ]

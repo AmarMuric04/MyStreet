@@ -15,18 +15,8 @@
                 icon: 'chevron-left'
                 on_release: app.root.ids.screen_manager.current = "home"
 
-            ScrollView:
-                RecycleView:
-                    id: comments_rv
-                    viewclass: "CommentItem"
-                    bar_width: dp(4)
-                    do_scroll_x: False
-                    RecycleBoxLayout:
-                        default_size: None, dp(95)
-                        default_size_hint: 1, None
-                        size_hint_y: None
-                        height: self.minimum_height
-                        orientation: 'vertical'
+            ConsoleRV:
+                id: console_rv
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -34,12 +24,33 @@
                 height: dp(64)
 
                 MDTextField:
-                    id: comment_input
-                    hint_text: "Write a comment..."
                     mode: "outlined"
-                    multiline: False
+                    size_hint_x: .5
+                    id: comment_input
 
+                    MDTextFieldHintText:
+                        text: "Helper text"
+                        mode: "persistent"
+
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 128
                 MDButton:
                     on_release: root.submit_comment()
+                    size_hint: .2, None
+                    height: dp(60)
+                    elevation: 0
+                    radius: [4, 4, 4, 4]
+
                     MDButtonIcon:
                         icon: "send"
+                        pos_hint: {'center_x': 0.5,'center_y': 0.5}
+
+<ConsoleRV@RecycleView>:
+    viewclass: 'CommentItem'
+    RecycleBoxLayout:
+        id: scroll_box
+        orientation: 'vertical'
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        spacing: dp(25)

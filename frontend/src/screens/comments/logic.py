@@ -3,7 +3,10 @@ import threading
 
 import requests
 from kivy.clock import mainthread
+from kivy.graphics import Color, Ellipse
 from kivy.lang import Builder
+from kivy.uix.widget import Widget
+from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
 from kivymd.uix.textfield import MDTextField
@@ -14,7 +17,11 @@ Builder.load_file("frontend/src/screens/comments/design.kv")
 
 
 class Comments(MDScreen):
-    def on_enter(self, *args):
+    def build(self):
+        return Builder.load_string(kv)
+    
+    def on_enter(self):
+        print("Getting comments")
         self.fetch_and_display_comments(self.post_id)
 
     def submit_comment(self):
@@ -61,6 +68,6 @@ class Comments(MDScreen):
 
     @mainthread
     def update_comments_view(self, comments):
-        self.ids.comments_rv.data = [
+        self.ids.console_rv.data = [
             {"message": c["message"], "username": c["username"], "is_current_user": c["is_current_user"]} for c in comments
         ]

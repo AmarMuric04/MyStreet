@@ -13,6 +13,7 @@
     anonymous: False
     size_hint_y: None
     height: self.minimum_height
+    image_url: ''
 
     MDBoxLayout:
         orientation: 'vertical'
@@ -172,6 +173,8 @@
                             pos_hint: {"center_y": 0.5}
                             theme_text_color: "Custom"
                             text_color: 1, 1, 1, 1
-            
-
-       
+            AsyncImage:
+                size_hint: None, None
+                size: (dp(200), dp(150)) if root.image_url else (0, 0)
+                opacity: 1 if root.image_url else 0
+                source: root.image_url if root.image_url else ""
