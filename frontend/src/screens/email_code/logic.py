@@ -8,10 +8,12 @@ from kivy.lang import Builder
 from kivy.logger import Logger
 from kivymd.uix.screen import MDScreen
 
+# Cross-platform toast/notification handling
 try:
     if platform.system() == 'Android':
         from kivymd.toast import toast
     else:
+        # Use KivyMD Snackbar for desktop platforms
         from kivymd.uix.snackbar import Snackbar
         def toast(message):
             try:
@@ -19,7 +21,7 @@ try:
                     text=message,
                     snackbar_x="10dp",
                     snackbar_y="10dp",
-                    size_hint_x=(1.0 - 20/400)  
+                    size_hint_x=(1.0 - 20/400)  # Responsive width
                 )
                 snackbar.open()
             except Exception as e:
@@ -32,6 +34,7 @@ except ImportError:
 
 from utils.auth import send_code_api, signup_api, verify_code_api
 
+# Load the design file with error handling
 try:
     Builder.load_file("frontend/src/screens/email_code/design.kv")
 except FileNotFoundError:
@@ -45,7 +48,8 @@ class EmailCode(MDScreen):
         self.verification_in_progress = False
         self.resend_in_progress = False
         self.resend_cooldown = False
-        self.cooldown_time = 30  
+        self.cooldown_time = 30  # 30 seconds cooldown for resend
+        self.attempt = 1
     
     def on_enter(self):
         """Called when screen is entered"""
@@ -62,6 +66,7 @@ class EmailCode(MDScreen):
                 self.update_email_label("your email")
                 toast("Warning: No signup data found. Please restart signup process.")
                 
+            # Clear any previous states
             self.clear_errors()
             self.set_verify_loading_state(False)
             self.verification_in_progress = False
@@ -82,18 +87,23 @@ class EmailCode(MDScreen):
     
     def proceed(self):
         """Handle verify button press"""
+        # Prevent multiple simultaneous verification attempts
         if self.verification_in_progress:
             return
             
+        # Clear previous error states
         self.clear_errors()
         
+        # Get and validate code input
         code = self.get_code_input()
         if not self.validate_code(code):
             return
             
+        # Set loading state
         self.set_verify_loading_state(True)
         self.verification_in_progress = True
         
+        # Use threading to prevent UI blocking
         threading.Thread(target=self.perform_verification, args=(code,), daemon=True).start()
     
     def get_code_input(self):
@@ -111,6 +121,7 @@ class EmailCode(MDScreen):
             self.set_input_error("Please enter the verification code")
             return False
         
+        # Check if code is numeric and appropriate length (usually 4-8 digits)
         if not code.isdigit():
             self.set_input_error("Verification code should contain only numbers")
             return False
@@ -136,9 +147,13 @@ class EmailCode(MDScreen):
                 Clock.schedule_once(lambda dt: self.handle_verification_error("Email not found in signup data"), 0)
                 return
             
-            verify_response = verify_code_api(email, code)
+            # Step 1: Verify the code
+            verify_response = verify_code_api(email, code, self.attempt)
+            
+            self.attempt = self.attempt + 1
             
             if verify_response and verify_response.get("status") == "success":
+                # Step 2: Complete signup if verification successful
                 signup_response = signup_api(
                     email,
                     signup_data.get("password"),
@@ -152,7 +167,8 @@ class EmailCode(MDScreen):
                 
         except Exception as e:
             Logger.error(f"EmailCode: Verification error: {e}")
-            Clock.schedule_once(lambda dt: self.handle_verification_error(f"Connection error: {str(e)}"), 0)
+            
+            # Clock.schedule_once(lambda dt: self.handle_verification_error(f"Connection error: {str(e)}"), 0)
     
     def handle_signup_response(self, signup_response):
         """Handle final signup response on main thread"""
@@ -177,6 +193,7 @@ class EmailCode(MDScreen):
     def on_signup_complete(self):
         """Handle successful signup completion"""
         try:
+            # Clear signup data
             app = App.get_running_app()
                 
             
@@ -184,16 +201,20 @@ class EmailCode(MDScreen):
             if app:
                 app.signup_data = None
             
+            # Clear input and errors
             self.clear_code_input()
             self.clear_errors()
             
+            # Show success message
             app = App.get_running_app()
             app.show_snackbar("Account created successfully! Please log in.")
             
+            # Navigate to login screen
             if app and hasattr(app, 'root') and hasattr(app.root, 'ids'):
                 screen_manager = app.root.ids.get('screen_manager')
                 if screen_manager:
                     screen_manager.current = 'login'
+                    # Optional: set transition direction
                     if hasattr(screen_manager, 'transition'):
                         screen_manager.transition.direction = 'right'
                 else:
@@ -206,6 +227,7 @@ class EmailCode(MDScreen):
     
     def on_send_again(self):
         """Handle resend code button press"""
+        # Prevent multiple simultaneous resend attempts
         if self.resend_in_progress or self.resend_cooldown:
             if self.resend_cooldown:
                 toast("Please wait before requesting another code")
@@ -222,6 +244,7 @@ class EmailCode(MDScreen):
             self.resend_in_progress = True
             self.set_resend_loading_state(True)
             
+            # Use threading for resend
             email = signup_data.get("email")
             threading.Thread(target=self.perform_resend, args=(email,), daemon=True).start()
             
@@ -300,6 +323,7 @@ class EmailCode(MDScreen):
     def set_verify_loading_state(self, loading):
         """Set loading state for verify button"""
         try:
+            # Handle MDButtonText structure
             button_text = self.ids.verify_button
             if hasattr(button_text, 'text'):
                 if loading:
@@ -307,6 +331,7 @@ class EmailCode(MDScreen):
                 else:
                     button_text.text = "Verify"
             
+            # Find and disable/enable the actual button
             if hasattr(button_text, 'parent'):
                 button = button_text.parent
                 if hasattr(button, 'disabled'):
@@ -314,11 +339,14 @@ class EmailCode(MDScreen):
                     
         except (KeyError, AttributeError) as e:
             Logger.error(f"EmailCode: Error setting verify button state: {e}")
+            # Fallback: try to find button by walking the widget tree
             self.set_button_state_fallback(loading, "verify")
     
     def set_resend_loading_state(self, loading):
         """Set loading state for resend button"""
         try:
+            # This will depend on your KV structure for the resend button
+            # Adjust the ID name as needed
             if 'resend_button' in self.ids:
                 button = self.ids.resend_button
                 if hasattr(button, 'disabled'):
@@ -346,6 +374,7 @@ class EmailCode(MDScreen):
     def on_leave(self):
         """Called when screen is left"""
         super().on_leave()
+        # Reset any ongoing operations
         self.verification_in_progress = False
         self.resend_in_progress = False
         self.set_verify_loading_state(False)

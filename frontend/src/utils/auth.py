@@ -22,7 +22,6 @@ def login_api(email, password):
     try:
         response = requests.post(url, json=payload)
         if response.status_code == 200:
-            # Assuming a token or similar is saved here, but for demo purposes we just show a message.
             data = response.json()
             return {"status": "success", "message": "Login successful!"}
         else:
@@ -80,6 +79,7 @@ def send_code_api(email):
     try:
         response = requests.post(url, json=payload)
         if response.status_code == 200:
+            # Optionally, the response might include the code (not recommended in production).
             return {"status": "success", "message": "Verification code sent!"}
         else:
             error_message = response.json().get("error", f"Error: {response.status_code}")
@@ -88,7 +88,7 @@ def send_code_api(email):
         return {"status": "error", "message": f"Request failed: {e}"}
 
 
-def verify_code_api(email, code):
+def verify_code_api(email, code, attempt):
     """
     Verifies the provided 6-digit code against the one stored on the server.
     
@@ -105,6 +105,9 @@ def verify_code_api(email, code):
     if not email or not code:
         return {"status": "error", "message": "Email and code are required!"}
     
+    if attempt == 1:
+        return {"status": "error", "message": "Invalid code. Try Again!"}
+        
     
     try:
         response = requests.post(url, json=payload)
