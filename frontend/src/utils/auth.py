@@ -80,7 +80,6 @@ def send_code_api(email):
     try:
         response = requests.post(url, json=payload)
         if response.status_code == 200:
-            # Optionally, the response might include the code (not recommended in production).
             return {"status": "success", "message": "Verification code sent!"}
         else:
             error_message = response.json().get("error", f"Error: {response.status_code}")
@@ -106,6 +105,7 @@ def verify_code_api(email, code):
     if not email or not code:
         return {"status": "error", "message": "Email and code are required!"}
     
+    
     try:
         response = requests.post(url, json=payload)
         if response.status_code == 200:
@@ -128,6 +128,7 @@ def get_logged_in_user():
         if response.status_code == 200:
             user_data = response.json().get("user")
             print("User data fetched:", user_data)
+            user_data['bio'] = ""
             return user_data
         else:
             print("Error from backend:", response.json())

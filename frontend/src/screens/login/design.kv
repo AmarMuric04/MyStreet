@@ -1,98 +1,102 @@
 <LoginScreen>:
-    FloatLayout:
+    Header:
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        
         MDBoxLayout:
-            pos_hint: {"top": 1}
-            size_hint_y: None
-            height: dp(50)
-            padding: dp(10)
+            orientation: 'vertical'
+            spacing: dp(20)
+            size_hint: None, None
+            width: dp(400)
+            height: dp(700)
+
             MDLabel:
-                text: "MyStreet"
-                bold: True
-            
-            MDIconButton:
-                icon: "hamburger"
-                on_release: app.root.ids.nav_drawer.set_state("toggle")
+                text: "[b]Welcome back![/b]"
+                halign: "center"
+                theme_text_color: "Primary"
+                markup: True
+                font_style: "Display"
+                role: "medium"
 
-
-        AnchorLayout:
-            anchor_x: 'center'
-            anchor_y: 'center'
-            
             MDBoxLayout:
                 orientation: 'vertical'
-                spacing: dp(20)
-                size_hint: None, None
+                spacing: dp(32)
+                size_hint_x: None
                 width: dp(400)
-                height: dp(700)
-                padding: ('5dp', '150dp', '5dp', '5dp')
-
-                MDBoxLayout:
-                    orientation: 'vertical'
-                    spacing: dp(20)
-                    size_hint_x: None
-                    width: dp(400)
-
-                    MDLabel:
-                        text: "[b]Welcome back![/b]"
-                        halign: "left"
-                        theme_text_color: "Primary"
-                        markup: True
-                        font_style: "Headline"
-                        role: "medium"
-
-                    MDLabel:
-                        text: "Enter your email & password to continue"
-                        halign: "left"
-                        padding: dp(4)
-                        markup: True
-                        font_style: "Body"
-                        role: "medium"
-
-                    MDTextField:
-                        id: email_input
-                        mode: "outlined"
-                        MDTextFieldHintText:
-                            text: "Email"
-                        MDTextFieldMaxLengthText:
-                            max_text_length: 64
-
-                    MDTextField:
-                        id: password_input
-                        mode: "outlined"
-                        password: True
-                        MDTextFieldHintText:
-                            text: "Password"
-                        MDTextFieldMaxLengthText:
-                            max_text_length: 20
-
-                    MDLabel:
-                        text: "[ref=forgot_password][u][b]Forgot password[/b][/u][/ref]"
-                        markup: True
-                        halign: "right"
-                        size_hint_y: None
-                        height: dp(20)
-                        on_ref_press: 
-                            app.root.ids.screen_manager.current = "forgot_password"
-                            app.root.screen_manager.transition.direction = "right"
-
-                MDButton:
-                    style: "filled"
-                    size_hint_x: 1
-                    radius: 8
-                    on_press: root.login_helper()
-                    on_disabled:
-                        self.md_bg_color = ([0.5, 0.5, 0.5, 1] if self.disabled else self.theme_cls.primary_color)
-                    MDButtonIcon:
-                        icon: "login"
-                    MDButtonText:
-                        id: login_button
-                        text: "Log in"
 
                 MDLabel:
-                    text: "Don't have an account? [ref=signup][color=00FF00][u][b]Sign up[/b][/u][/ref]"
-                    markup: True
-                    halign: "center"
+                    text: "[b]Access your account![/b]"
+                    halign: "left"
                     theme_text_color: "Primary"
+                    markup: True
+                    font_style: "Headline"
+                    role: "medium"
+
+                MDLabel:
+                    text: "Enter your email & password to continue"
+                    halign: "left"
+                    padding: dp(4)
+                    markup: True
+                    font_style: "Body"
+                    role: "medium"
+
+                MDTextField:
+                    id: email_input
+                    mode: "outlined"
+                    MDTextFieldHintText:
+                        text: "Email"
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 64
+                    MDTextFieldLeadingIcon:
+                        icon: "email"
+                    MDTextFieldHelperText:
+                        text: "Your email"
+                        mode: "persistent"
+
+                MDTextField:
+                    id: password_input
+                    mode: "outlined"
+                    password: True
+                    MDTextFieldHintText:
+                        text: "Password"
+                    MDTextFieldMaxLengthText:
+                        max_text_length: 20
+                    MDTextFieldLeadingIcon:
+                        icon: "lock"
+                    MDTextFieldHelperText:
+                        text: "Your password"
+                        mode: "persistent"
+
+                MDLabel:
+                    text: "[ref=forgot_password][u][b]Forgot password[/b][/u][/ref]"
+                    markup: True
+                    halign: "right"
+                    size_hint_y: None
+                    height: dp(20)
                     on_ref_press: 
-                        app.root.ids.screen_manager.current = "signup"
-                        app.root.ids.screen_manager.transition.direction = "right"
+                        app.root.ids.screen_manager.current = "forgot_password"
+                        app.root.screen_manager.transition.direction = "right"
+
+            MDButton:
+                style: "elevated"
+                size_hint_x: 1
+                radius: 8
+                on_press: root.login_helper()
+                on_disabled:
+                    self.md_bg_color = ([0.5, 0.5, 0.5, 1] if self.disabled else self.theme_cls.primary_color)
+                MDButtonIcon:
+                    icon: "login"
+                MDButtonText:
+                    id: login_button
+                    text: "Log in"
+
+            MDLabel:
+                text: "Don't have an account? [ref=signup][u][b]Sign up[/b][/u][/ref]"
+                markup: True
+                halign: "center"
+                theme_text_color: "Primary"
+                on_ref_press: 
+                    app.root.ids.screen_manager.current = "signup"
+                    app.root.ids.screen_manager.transition.direction = "right"

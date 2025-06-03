@@ -1,0 +1,367 @@
+<HelpCenterScreen>:
+    Header:
+
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Help center"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "8dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "16dp"
+                adaptive_height: True
+                padding: ["16dp", "16dp", "16dp", "16dp"]
+                
+                    
+                MDTextField:
+                    mode: "outlined"
+                    size_hint_y: None
+                    MDTextFieldHintText:
+                        text: "Search for help..."
+                    MDTextFieldLeadingIcon:
+                        icon: "magnify"
+                
+                MDLabel:
+                    text: "Quick Actions"
+                    theme_text_color: "Primary"
+                    font_style: "Body"
+                    role: "small"
+                    size_hint_y: None
+                    height: "32dp"
+                
+                MDGridLayout:
+                    cols: 2
+                    spacing: "12dp"
+                    size_hint_y: None
+                    height: "40dp"
+                    
+                    MDCard:
+                        style: "elevated"
+                        padding: "16dp"
+                        on_release: lambda x: None
+                        
+                        MDBoxLayout:
+                            spacing: "8dp"
+                            
+                            MDIcon:
+                                icon: "message-text"
+                                theme_icon_color: "Primary"
+                                size_hint_y: None
+                                height: "32dp"
+                                halign: "center"
+                            
+                            MDLabel:
+                                text: "Contact Support"
+                                font_style: "Body"
+                                theme_text_color: "Primary"
+                                halign: "center"
+                                size_hint_y: None
+                                height: "20dp"
+                    
+                    MDCard:
+                        style: "elevated"
+                        padding: "16dp"
+                        on_release: lambda x: None
+                        
+                        MDBoxLayout:
+                            spacing: "8dp"
+                            
+                            MDIcon:
+                                icon: "frequently-asked-questions"
+                                theme_icon_color: "Primary"
+                                size_hint_y: None
+                                height: "32dp"
+                                halign: "center"
+                            
+                            MDLabel:
+                                text: "View FAQ"
+                                font_style: "Body"
+                                theme_text_color: "Primary"
+                                halign: "center"
+                                size_hint_y: None
+                                height: "20dp"
+                
+                MDLabel:
+                    text: "Frequently Asked Questions"
+                    theme_text_color: "Primary"
+                    font_style: "Body"
+                    role: "small"
+                    size_hint_y: None
+                    height: "32dp"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "8dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "24dp"
+                            
+                            MDIcon:
+                                icon: "help-circle"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "How do I reset my password?"
+                                bold: True
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "medium"
+                        
+                        MDLabel:
+                            text: "You can reset your password by going to Settings > Security > Change Password. You'll need to enter your current password and then create a new one."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "8dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "24dp"
+                            
+                            MDIcon:
+                                icon: "help-circle"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "Is my data secure?"
+                                bold: True
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "medium"
+                        
+                        MDLabel:
+                            text: "Yes, we use industry-standard encryption to protect your data. All information is stored locally on your device and we don't share your personal information with third parties."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "8dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "24dp"
+                            
+                            MDIcon:
+                                icon: "help-circle"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "How do I contact support?"
+                                bold: True
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "medium"
+                        
+                        MDLabel:
+                            text: "You can reach our support team via email at support@example.com or use the 'Contact Support' button above. We typically respond within 24 hours."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                MDLabel:
+                    text: "Browse by Category"
+                    theme_text_color: "Primary"
+                    font_style: "Body"
+                    role: "small"
+                    size_hint_y: None
+                    height: "32dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: 
+                        app.root.ids.screen_manager.current = "profile"
+
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "account"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "Account & Profile"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Manage your account settings and profile information"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                        
+                        MDIcon:
+                            icon: "chevron-right"
+                            theme_icon_color: "Secondary"
+                            size_hint_x: None
+                            width: "24dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: 
+                        app.root.ids.screen_manager.current = "privacy_security"
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "shield-check"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "Privacy & Security"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Learn about data protection and security features"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                        
+                        MDIcon:
+                            icon: "chevron-right"
+                            theme_icon_color: "Secondary"
+                            size_hint_x: None
+                            width: "24dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: 
+                        app.root.ids.screen_manager.current = "settings"
+
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "cog"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "App Settings"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Customize your app experience and preferences"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                        
+                        MDIcon:
+                            icon: "chevron-right"
+                            theme_icon_color: "Secondary"
+                            size_hint_x: None
+                            width: "24dp"

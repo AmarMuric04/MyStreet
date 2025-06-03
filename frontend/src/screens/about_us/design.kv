@@ -1,0 +1,406 @@
+
+<AboutUsScreen>:
+    Header:
+    
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                
+                size_hint: None, None
+                size: dp(50), dp(50)
+
+            MDLabel:
+                text: "About us"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "8dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "20dp"
+                adaptive_height: True
+                padding: ["20dp", "20dp", "20dp", "20dp"]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "32dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+
+                            MDIcon:
+                                icon: "heart"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                           
+                            MDLabel:
+                                text: "Our Story"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                                
+                        MDLabel:
+                            text: "We're passionate about creating technology that makes a difference in people's lives. Our mission is to build secure, user-friendly applications that prioritize privacy and functionality."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            role: "large"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            halign: "center"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "target"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            MDLabel:
+                                text: "Our Mission"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDLabel:
+                            text: "To empower users with secure, intuitive technology solutions that respect privacy while delivering exceptional user experiences. We believe that great software should be both powerful and accessible to everyone."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            role: "large"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                MDLabel:
+                    text: "Our Values"
+                    theme_text_color: "Primary"
+                    font_style: "Body"
+                    role: "small"
+                    size_hint_y: None
+                    height: "32dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDIcon:
+                            icon: "shield-check"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "40dp"
+                            size_hint_y: None
+                            height: "40dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "8dp"
+                            adaptive_height: True
+                            
+                            MDLabel:
+                                text: "Privacy First"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Your data belongs to you. We implement privacy by design and never compromise on data protection."
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                text_size: self.width, None
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDIcon:
+                            icon: "lightbulb"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "40dp"
+                            size_hint_y: None
+                            height: "40dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "8dp"
+                            adaptive_height: True
+                            
+                            MDLabel:
+                                text: "Innovation"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "We continuously explore new technologies and approaches to solve real-world problems effectively."
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                text_size: self.width, None
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDIcon:
+                            icon: "star"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "40dp"
+                            size_hint_y: None
+                            height: "40dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "8dp"
+                            adaptive_height: True
+                            
+                            MDLabel:
+                                text: "Quality"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "We maintain the highest standards in everything we build, from code quality to user experience."
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                text_size: self.width, None
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "account-group"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Our Team"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "small"
+                        
+                        MDLabel:
+                            text: "We're a diverse team of designers, developers, and security experts united by our passion for creating exceptional digital experiences. Founded in 2020, we've grown from a small startup to a trusted technology partner."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            role: "large"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                MDCard:
+                    style: "filled"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Want to Learn More?"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "large"
+                            bold: True
+                            size_hint_y: None
+                            height: "28dp"
+                            halign: "center"
+                        
+                        MDLabel:
+                            text: "We'd love to connect with you and answer any questions you might have about our company or products."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            halign: "center"
+                        
+                        MDButton:
+                            style: "outlined"
+                            size_hint_y: None
+                            height: "48dp"
+                            pos_hint: {"center_x": 0.5}
+                            on_release: 
+                                app.root.ids.screen_manager.current = "contact_us"
+                                app.root.ids.screen_manager.transition.direction = "right"
+                                
+                            MDButtonText:
+                                text: "Get in Touch"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: lambda x: None
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "shield-check"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "Privacy & Security"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Learn about data protection and security features"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                        
+                        MDIcon:
+                            icon: "chevron-right"
+                            theme_icon_color: "Secondary"
+                            size_hint_x: None
+                            width: "24dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: lambda x: None
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "cog"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "App Settings"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Customize your app experience and preferences"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                        
+                        MDIcon:
+                            icon: "chevron-right"
+                            theme_icon_color: "Secondary"
+                            size_hint_x: None
+                            width: "24dp"

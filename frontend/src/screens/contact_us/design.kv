@@ -1,0 +1,278 @@
+<ContactUsScreen>:
+    Header: 
+    
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Contact us"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "8dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "20dp"
+                adaptive_height: True
+                padding: ["20dp", "20dp", "20dp", "20dp"]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+
+                            MDIcon:
+                                icon: "email"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Get in Touch"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDLabel:
+                            text: "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            role: "large"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            halign: "center"
+                
+                MDLabel:
+                    text: "Contact Methods"
+                    theme_text_color: "Primary"
+                    font_style: "Body"
+                    role: "small"
+                    size_hint_y: None
+                    height: "32dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: lambda x: None
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "email-outline"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "Email Support"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "support@example.com"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: lambda x: None
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "phone-outline"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "Phone Support"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "+1 (555) 123-4567"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: "80dp"
+                    on_release: lambda x: None
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: "16dp"
+                        
+                        MDIcon:
+                            icon: "chat-outline"
+                            theme_icon_color: "Primary"
+                            size_hint_x: None
+                            width: "32dp"
+                        
+                        MDBoxLayout:
+                            orientation: "vertical"
+                            spacing: "4dp"
+                            
+                            MDLabel:
+                                text: "Live Chat"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                            
+                            MDLabel:
+                                text: "Available 24/7"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "20dp"
+                
+                MDLabel:
+                    text: "Send us a Message"
+                    theme_text_color: "Primary"
+                    font_style: "Body"
+                    role: "small"
+                    size_hint_y: None
+                    height: "32dp"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDTextField:
+                            size_hint_y: None
+                            height: "56dp"
+                            MDTextFieldHintText:
+                                text: "Your Name"
+                            MDTextFieldLeadingIcon:
+                                icon: "account"
+                        
+                        MDTextField:
+                            size_hint_y: None
+                            height: "56dp"
+                            MDTextFieldHintText:
+                                text: "Email Address"
+                            MDTextFieldLeadingIcon:
+                                icon: "email"
+                        
+                        MDTextField:
+                            size_hint_y: None
+                            height: "56dp"
+                            MDTextFieldHintText:
+                                text: "Subject"
+                            MDTextFieldLeadingIcon:
+                                icon: "tag"
+
+                        MDTextField:
+                            multiline: True
+                            size_hint_y: None
+                            height: "120dp"
+                            MDTextFieldHintText:
+                                text: "Your Message"
+                            MDTextFieldLeadingIcon:
+                                icon: "message-text"
+                        
+                        MDButton:
+                            style: "filled"
+                            size_hint_y: None
+                            height: "48dp"
+                            MDButtonText:
+                                text: "Send Message"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Office Hours"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "small"
+                            size_hint_y: None
+                            height: "28dp"
+                        
+                        MDLabel:
+                            text: "Monday - Friday: 9:00 AM - 6:00 PM\\nSaturday: 10:00 AM - 4:00 PM\\nSunday: Closed\\n\\nAll times are in EST (Eastern Standard Time)"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+

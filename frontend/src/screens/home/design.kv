@@ -2,48 +2,58 @@
 #:import PostItem components.post_item.logic.PostItem
 
 <HomeScreen>:
-    FloatLayout:
-        MDBoxLayout:
-            pos_hint: {"top": 1}
-            size_hint_y: None
-            height: dp(50)
-            padding: ('30dp', '0dp', '30dp', '0dp')
-            MDLabel:
-                text: "MyStreet"
-                bold: True
-                size_hint_y: None
-                height: dp(50)
-            
-            MDIconButton:
-                icon: "hamburger"
-                on_release: app.root.ids.nav_drawer.set_state("toggle")
-                size_hint: None, None
-                size: dp(50), dp(50)
+    Header:
 
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
+        AnchorLayout:
+            MDCircularProgressIndicator:
+                opacity: 1 if root.is_searching_groups or root.is_loading_posts and len(root.posts_data) == 0 else 0
+                size_hint: None, None
+                size: dp(48), dp(48)
+                active: True if root.is_searching_groups or root.is_loading_posts and len(root.posts_data) == 0 else 0
+            MDLabel:
+                halign: "center"
+                text: "" if (len(root.my_groups_data) > 0 or root.is_searching_groups or root.is_loading_posts) else "You are not a part of any groups!"
+
+            MDLabel:
+                halign: "center"
+                text: "" if len(root.my_groups_data) == 0 or ((len(root.my_groups_data) > 0 and len(root.posts_data) > 0) or root.is_searching_groups or root.is_loading_posts) else "No posts in the groups ur a part of..."
+                
         MDBoxLayout:
             orientation: 'vertical'
-            padding: ('5dp', '0dp', '5dp', '5dp')
+            padding: ('5dp', '10dp', '5dp', '5dp')
             size_hint: None, None
             height: dp(700)
             width: dp(400)
+            
 
             MDBoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
-                height: dp(225)
+                height: dp(245) if len(root.my_groups_data) > 0 else dp(125)
                 spacing: dp(25)
+
                 MDTextField:
                     id: search_for_groups
                     size_hint_x: 1
                     mode: "outlined"
                     on_text: root.on_search_text(self, self.text)
+
+                    MDTextFieldLeadingIcon:
+                        icon: "magnify"
+
                     MDTextFieldHintText:
                         text: "Search for a group"
-                    MDTextFieldMaxLengthText:
-                        max_text_length: 64
+                
+                MDLabel:
+                    text: "My Groups" if len(root.my_groups_data) > 0 else ""
+                    font_style: "Body"
+                    role: "medium"
+                    bold: True
+                    size_hint_y: None
+                    height: dp(0)
                     
                 ScrollView:
                     scroll_type: ['content']
@@ -51,7 +61,7 @@
                     do_scroll_x: True
                     do_scroll_y: False
                     size_hint_y: None
-                    height: dp(120) 
+                    height: dp(120) if len(root.my_groups_data) > 0 else dp(0)
 
                     RecycleView:
                         id: my_groups_rv
@@ -64,10 +74,10 @@
                         RecycleBoxLayout:
                             orientation: 'horizontal'
                             spacing: dp(12) 
-                            default_size: None, dp(65)
+                            default_size: None, dp(55)
                             default_size_hint: None, None
                             size_hint_y: None
-                            height: dp(65)
+                            height: dp(50)
                             size_hint_x: None
                             width: self.minimum_width 
 
@@ -144,13 +154,9 @@
                         icon: "account-group"
                         size_hint: None, None
                         size: dp(24), dp(24)
-                        theme_text_color: "Custom"
-                        text_color: 1, 1, 1, 1
 
                     MDLabel:
                         text: root.group_name
-                        theme_text_color: "Custom"
-                        text_color: 1, 1, 1, 1
                         size_hint_y: None
                         height: dp(24)
 
@@ -177,10 +183,9 @@
 
                 MDButton:
                     on_press:
-                        app.root.ids.screen_manager.get_screen("home").handle_group_press(root.group_id, root.allow_preview)
-
-                    on_press: app.root.ids.screen_manager.get_screen("home").handle_group_press(root.group_id, root.allow_preview) if root.is_logged_in or root.allow_preview else app.goto_screen("login")
-                
+                        app.root.ids.screen_manager.get_screen("posts").group_id = root.group_id
+                        app.root.ids.screen_manager.current = "posts"
+                        
                     MDButtonIcon:
                         icon: "eye" if root.allow_preview else "plus"
                         icon: "eye" if root.is_logged_in and root.allow_preview else "plus" if root.is_logged_in and not root.allow_preview else "eye-outline" if not root.is_logged_in and root.allow_preview else "login"
@@ -198,10 +203,9 @@
     is_logged_in: None
     orientation: "horizontal"
     size_hint: None, None
-    height: dp(65)
+    height: dp(55)
     width: dp(60)
     padding: dp(8)
-    spacing: dp(8)
 
     MDFloatLayout:
         size_hint_x: None
@@ -218,8 +222,9 @@
         MDLabel:
             text: root.group_name
             halign: "center"
-            pos_hint: {'center_x': 0.5,'top': 0}
+            pos_hint: {'center_x': 0.5,'top': -0.25}
             shorten: True
+            bold: True
             shorten_from: 'right'
             max_lines: 3
 

@@ -1,0 +1,420 @@
+<DeleteAccountScreen>:
+    Header:
+    
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                size_hint: None, None
+                size: dp(50), dp(50)
+                on_release: 
+                    app.root.ids.screen_manager.current = "personal_info"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                
+
+            MDLabel:
+                text: "Delete Account"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+                theme_text_color: "Error"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "8dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "20dp"
+                adaptive_height: True
+                padding: ["20dp", "20dp", "20dp", "20dp"]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "32dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    md_bg_color: app.theme_cls.errorContainerColor
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "48dp"
+
+                            MDIcon:
+                                icon: "alert-octagon"
+                                theme_icon_color: "Error"
+                                size_hint_x: None
+                                width: "48dp"
+                           
+                            MDLabel:
+                                text: "Warning"
+                                theme_text_color: "Error"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                                
+                        MDLabel:
+                            text: "This action cannot be undone. Deleting your account will permanently remove all your data, including your profile, settings, and any associated content."
+                            font_style: "Body"
+                            role: "large"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "delete-sweep"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "What Will Be Deleted"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "account-circle"
+                                theme_icon_color: "Secondary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "Profile information (name, bio, photo)"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "cog"
+                                theme_icon_color: "Secondary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "Account settings and preferences"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "database"
+                                theme_icon_color: "Secondary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "All stored data and content"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "key"
+                                theme_icon_color: "Secondary"
+                                size_hint_x: None
+                                width: "24dp"
+                            
+                            MDLabel:
+                                text: "Login credentials and access"
+                                theme_text_color: "Secondary"
+                                font_style: "Body"
+                                size_hint_y: None
+                                height: "24dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "lightbulb-on"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Consider These Alternatives"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDCard:
+                            style: "filled"
+                            padding: "16dp"
+                            size_hint_y: None
+                            height: "80dp"
+                            
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                spacing: "16dp"
+                                
+                                MDIcon:
+                                    icon: "pause-circle"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: "32dp"
+                                
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "4dp"
+                                    
+                                    MDLabel:
+                                        text: "Deactivate Account"
+                                        theme_text_color: "Primary"
+                                        font_style: "Body"
+                                        size_hint_y: None
+                                        height: "24dp"
+                                    
+                                    MDLabel:
+                                        text: "Temporarily disable your account without losing data"
+                                        theme_text_color: "Secondary"
+                                        font_style: "Body"
+                                        size_hint_y: None
+                                        height: "20dp"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: "24dp"
+                        
+                        MDCard:
+                            style: "filled"
+                            padding: "16dp"
+                            size_hint_y: None
+                            height: "80dp"
+                            
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                spacing: "16dp"
+                                
+                                MDIcon:
+                                    icon: "download"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: "32dp"
+                                
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "4dp"
+                                    
+                                    MDLabel:
+                                        text: "Export Your Data"
+                                        theme_text_color: "Primary"
+                                        font_style: "Body"
+                                        size_hint_y: None
+                                        height: "24dp"
+                                    
+                                    MDLabel:
+                                        text: "Download a copy of your data before deleting"
+                                        theme_text_color: "Secondary"
+                                        font_style: "Body"
+                                        size_hint_y: None
+                                        height: "20dp"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: "24dp"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    md_bg_color: app.theme_cls.errorContainerColor
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "shield-alert"
+                                theme_icon_color: "Error"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Final Confirmation"
+                                theme_text_color: "Error"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDLabel:
+                            text: "To confirm account deletion, please type 'DELETE' in the field below:"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                        
+                        MDTextField:
+                            id: confirmation_field
+                            hint_text: "Type DELETE to confirm"
+                            size_hint_y: None
+                            height: "56dp"
+                            
+                            MDTextFieldLeadingIcon:
+                                icon: "alert-circle"
+                        
+                        MDCheckbox:
+                            id: final_confirmation_checkbox
+                            size_hint_x: None
+                            width: "24dp"
+                            size_hint_y: None
+                            height: "24dp"
+                            pos_hint: {"center_y": 0.5}
+                            
+                        MDLabel:
+                            text: "I understand that this action is permanent and cannot be undone"
+                            font_style: "Body"
+                            size_hint_y: None
+                            height: "24dp"
+                
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    spacing: "16dp"
+                    size_hint_y: None
+                    height: "48dp"
+                    
+                    MDButton:
+                        style: "outlined"
+                        size_hint_x: 0.5
+                        on_release: 
+                            app.root.ids.screen_manager.current = "personal_info"
+                            app.root.ids.screen_manager.transition.direction = "right"
+                        
+                        MDButtonText:
+                            text: "Cancel"
+                    
+                    MDButton:
+                        id: delete_button
+                        style: "filled"
+                        size_hint_x: 0.5
+                        md_bg_color: app.theme_cls.errorColor
+                        on_release: 
+                            root.delete()
+                        
+                        MDButtonText:
+                            text: "Delete Account"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "help-circle"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Need Help?"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"

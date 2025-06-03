@@ -28,14 +28,12 @@
             size_hint_y: None
             height: self.minimum_height  
 
-            MDFloatLayout:
+            MDIconButton:
+                style: "filled"
                 size_hint: None, None
                 size: dp(40), dp(40)
-                md_bg_color: 1, 1, 1, 1
                 radius: self.height / 2
-                MDIcon:
-                    icon: "account"
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                icon: "account"
 
             MDBoxLayout:
                 orientation: 'horizontal'
@@ -51,12 +49,10 @@
                         valign: "middle"
                         MDLabel:
                             text: "[b]{}[/b]".format(root.username)
-                            # text: "[b]{}[/b][i][color=aaaaaa]{}[/color][/i]".format(root.username, root.user_email)
+                            padding: dp(4)
                             markup: True
                             size_hint_y: None
                             height: dp(20)
-                            theme_text_color: "Custom"
-                            text_color: 1, 1, 1, 1
                         
                         MDLabel:
                             id: title
@@ -68,8 +64,6 @@
                             text_size: self.width, None
                             font_style: "Body"
                             role: "large"
-                            theme_text_color: "Custom"
-                            text_color: 1, 1, 1, 1
                 MDBoxLayout:
                     orientation: 'vertical'
                     size_hint: None, None
@@ -104,13 +98,12 @@
                     text_size: self.width, None
                     font_style: "Body"
                     role: "large"
-                    theme_text_color: "Custom"
-                    text_color: (200/255.0, 200/255.0, 200/255.0, 1)
                 AsyncImage:
                     size_hint: None, None
-                    size: (dp(200), dp(150)) if root.image_url else (0, 0)
+                    halign: "center"
+                    size: (dp(400), dp(250)) if root.image_url else (0, 0)
                     opacity: 1 if root.image_url else 0
-                    source: root.image_url if root.image_url else ""
+                    source: root.image_url if root.image_url else "https://res.cloudinary.com/dccik7g13/image/upload/v1748808576/gmt7jdf4zbohytclrqwj.jpg"
 
                 MDBoxLayout:
                     orientation: "horizontal"
@@ -133,8 +126,6 @@
                             halign: "center"
                             valign: "middle"
                             pos_hint: {"center_y": 0.5}
-                            theme_text_color: "Custom"
-                            text_color: 1, 1, 1, 1
 
                     MDBoxLayout:
                         orientation: 'horizontal'
@@ -151,41 +142,6 @@
                             halign: "center"
                             valign: "middle"
                             pos_hint: {"center_y": 0.5}
-                            theme_text_color: "Custom"
-                            text_color: 1, 1, 1, 1
 
-                    MDBoxLayout:
-                        orientation: 'horizontal'
-                        MDIconButton:
-                            icon: "bookmark" if root.liked_by_user else "bookmark-outline"
-                            icon_size: "14sp"
-                            pos_hint: {"center_y": 0.5}
-                            on_release: root.toggle_like(root)
-
-                        MDLabel:
-                            text: str(root.like_count)
-                            size_hint: None, None
-                            size: dp(20), dp(40)
-                            halign: "center"
-                            valign: "middle"
-                            pos_hint: {"center_y": 0.5}
-                            theme_text_color: "Custom"
-                            text_color: 1, 1, 1, 1
-
-                    MDBoxLayout:
-                        orientation: 'horizontal'
-                        MDIconButton:
-                            icon: "repeat"
-                            icon_size: "14sp"
-                            pos_hint: {"center_y": 0.5}
-                            on_release: root.toggle_like(root)
-
-                        MDLabel:
-                            text: str(root.like_count)
-                            size_hint: None, None
-                            size: dp(20), dp(40)
-                            halign: "center"
-                            valign: "middle"
-                            pos_hint: {"center_y": 0.5}
-                            theme_text_color: "Custom"
-                            text_color: 1, 1, 1, 1
+                    Widget:
+                    Widget:

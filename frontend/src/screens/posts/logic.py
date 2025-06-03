@@ -4,7 +4,7 @@ import threading
 import requests
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import ListProperty, StringProperty
+from kivy.properties import BooleanProperty, ListProperty, StringProperty
 from kivymd.app import MDApp
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.screen import MDScreen
@@ -15,13 +15,14 @@ Builder.load_file("frontend/src/screens/posts/design.kv")
 
 class PostsScreen(MDScreen):
     posts_data = ListProperty([])
-    group_id = StringProperty("") 
+    group_id = StringProperty("")
+    is_loading_posts  = BooleanProperty(False)
 
     def on_pre_enter(self):
+        if len(self.posts_data) == 0:
+            self.show_loader()
+            
         threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
-
-    def on_enter(self):
-        self.show_loader()
         threading.Thread(target=self.fetch_posts_thread, daemon=True).start()
 
     def show_loader(self):
@@ -38,10 +39,15 @@ class PostsScreen(MDScreen):
 
     def on_leave(self):
         self.posts_data = []
+        self.group_id = ""
+        self.is_loading_posts = False
         self.hide_loader()
+        self.ids.title.text = ""
+        self.ids.description.text = ""
 
     def fetch_posts_thread(self):
         try:
+            self.is_loading_posts = True
             url = f"http://localhost:5000/groups/{self.group_id}/posts"
             response = requests.get(
                 url,
@@ -76,6 +82,8 @@ class PostsScreen(MDScreen):
         except Exception as e:
             data = []
             print(f"Error: {str(e)}")
+        self.is_loading_posts = False
+        
 
         Clock.schedule_once(lambda dt: self.update_posts_data(data), 0)
 
@@ -96,16 +104,17 @@ class PostsScreen(MDScreen):
             )
             if response.status_code == 200:
                 group = response.json()
-                group_name = group.get("name", "Unknown Group")
-                is_member = group.get("is_member", False)
-                Clock.schedule_once(lambda dt: self.update_group_ui(group_name, is_member), 0)
+                Clock.schedule_once(lambda dt: self.update_group_ui(group), 0)
             else:
                 print(f"Error fetching group info: {response.status_code}")
         except Exception as e:
             print(f"Error fetching group info: {str(e)}")
 
-    def update_group_ui(self, group_name, is_member):
-        self.ids.title.text = group_name
+    def update_group_ui(self, group):
+        self.ids.title.text = group.get("name", "Unknown Group")
+        self.ids.description.text = group.get("description", "")
+        
+        is_member = group.get("is_member", False)
         app = MDApp.get_running_app()
         user_data = app.user_data
         if not is_member and user_data:
@@ -134,7 +143,6 @@ class PostsScreen(MDScreen):
                 }
             )
             if response.status_code == 200:
-                # All UI updates must go inside Clock.schedule_once
                 Clock.schedule_once(lambda dt: self.on_join_success(), 0)
                 threading.Thread(target=self.fetch_group_info_thread, daemon=True).start()
             else:

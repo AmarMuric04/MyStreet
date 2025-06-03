@@ -1,33 +1,25 @@
 <EmailCode>:
-    FloatLayout:
-        MDBoxLayout:
-            pos_hint: {"top": 1}
-            size_hint_y: None
-            height: dp(50)
-            padding: dp(10)
-            MDLabel:
-                text: "MyStreet"
-                bold: True
-            
-            MDIconButton:
-                icon: "hamburger"
-                on_release: app.root.ids.nav_drawer.set_state("toggle")
+    Header:
+
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
 
         MDBoxLayout:
             orientation: "vertical"
+            padding: ('5dp', '40dp', '5dp', '5dp')
             spacing: dp(20)
             size_hint: None, None
             width: dp(400)
             height: dp(700)
 
             MDLabel:
-                text: "[i]MyStreet[/i]"
-                halign: "left"
+                text: "[b]Enter the code![/b]"
+                halign: "center"
+                theme_text_color: "Primary"
                 markup: True
-                theme_text_color: "Custom"
+                font_style: "Display"
+                role: "medium"
 
             MDBoxLayout:
                 orientation: "vertical"
@@ -70,17 +62,17 @@
                 height: dp(40)
 
                 MDButton:
-                    style: "filled"
+                    style: "elevated"
                     size_hint_x: 1
                     radius: 8
-                    on_press: root.on_verify()
+                    on_press: root.proceed()
                     MDButtonIcon:
                         icon: "check"
                     MDButtonText:
                         id: verify_button
                         text: "Verify"
                 MDButton:
-                    style: "filled"
+                    style: "elevated"
                     size_hint_x: 1
                     radius: 8
                     on_press: root.on_send_again()
@@ -91,7 +83,7 @@
                         text: "Send Again"
 
             MDLabel:
-                text: "Already have an account? [ref=login][color=00FF00][u][b]Log in[/b][/u][/ref]"
+                text: "Already have an account? [ref=login][u][b]Log in[/b][/u][/ref]"
                 markup: True
                 halign: "center"
                 theme_text_color: "Primary"

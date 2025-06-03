@@ -1,0 +1,147 @@
+<PrivacySecurityScreen>:
+    Header:
+
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Privacy & Security"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "16dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "16dp"
+                adaptive_height: True
+                padding: ["16dp", "16dp", "16dp", "16dp"]
+                
+                # Privacy Policy Section
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Privacy Policy"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "small"
+                            size_hint_y: None
+                            height: "32dp"
+                        
+                        MDLabel:
+                            text: "We are committed to protecting your privacy. This application does not collect, store, or transmit any personal information without your explicit consent.\\n\\n• No personal data is shared with third parties\\n• All data processing occurs locally on your device\\n• We do not track your usage patterns or behavior\\n• Optional analytics can be disabled in settings"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                # Security Measures Section
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Security Measures"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "small"
+                            size_hint_y: None
+                            height: "32dp"
+                        
+                        MDLabel:
+                            text: "Your security is our priority. We implement industry-standard security practices to protect your information.\\n\\n• End-to-end encryption for sensitive data\\n• Secure authentication protocols\\n• Regular security updates and patches\\n• Local data storage with encryption\\n• No cloud storage of sensitive information"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                # Data Protection Section
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Data Protection"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "small"
+                            size_hint_y: None
+                            height: "32dp"
+                        
+                        MDLabel:
+                            text: "We follow strict data protection guidelines to ensure your information remains secure and private.\\n\\n• Data minimization - we only collect what's necessary\\n• Right to deletion - remove your data anytime\\n• Data portability - export your information\\n• Transparent data usage policies\\n• Regular security audits and assessments"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                
+                # Contact Section
+                MDCard:
+                    style: "elevated"
+                    padding: "16dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Contact Us"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "small"
+                            size_hint_y: None
+                            height: "32dp"
+                        
+                        MDLabel:
+                            text: "If you have any questions about our privacy practices or security measures, please don't hesitate to reach out.\\n\\nEmail: privacy@example.com\\nLast updated: June 2025"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]

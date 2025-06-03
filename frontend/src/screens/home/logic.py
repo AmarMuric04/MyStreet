@@ -28,6 +28,11 @@ class HomeScreen(MDScreen):
     groups_data = ListProperty([])
     posts_data = ListProperty([])
     cached_posts_data = []
+    
+    is_loading_my_groups = BooleanProperty(False)
+    is_loading_groups = BooleanProperty(False)
+    is_loading_posts = BooleanProperty(False)
+    is_searching_groups = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -37,14 +42,17 @@ class HomeScreen(MDScreen):
     
     def on_leave(self):
         self.ids.search_for_groups.text = ""
+        self.posts_data = []
+        self.groups_data = []
+        self.my_groups_data = []
+        self.ids.scroll_box.parent.refresh_from_data()
 
-    def on_enter(self):
-        print("Fetching groups")
+    def on_pre_enter(self):
         self.fetch_my_groups()
-        # Initial full fetch
         self._schedule_debounced_groups_fetch(0)
         Thread(target=self.fetch_posts_thread, daemon=True).start() 
         Clock.schedule_once(self.check_login_and_show_button)
+
 
     def on_search_text(self, instance, value):
         self.posts_data = []
@@ -56,14 +64,18 @@ class HomeScreen(MDScreen):
             self.groups_data = []
             self.ids.groups_view.size_hint = (1, 0)
             self.posts_data = self.cached_posts_data
+            self.is_searching_groups = False
             return
 
         if self._groups_search_event:
             self._groups_search_event.cancel()
 
+        self.is_searching_groups = True
+
         self._groups_search_event = Clock.schedule_once(
             lambda dt: self._schedule_debounced_groups_fetch(value), 0.5
         )
+    
     def _schedule_debounced_groups_fetch(self, value):
         Thread(target=self.fetch_groups_thread, args=(value,), daemon=True).start()
 
@@ -75,6 +87,9 @@ class HomeScreen(MDScreen):
                 if search_input:
                     params["name"] = search_input
 
+                if search_input == "":
+                    Clock.schedule_once(lambda dt: setattr(self, 'is_loading_groups', True), 0)
+                
                 response = requests.get(
                     PUBLIC_GROUPS_URL,
                     headers={
@@ -106,17 +121,21 @@ class HomeScreen(MDScreen):
                 print(f"Error fetching groups: {e}")
                 data = []
 
-        # Only update if current search input matches the latest one
-        if search_input == self._latest_search_value and search_input != "":
+        if search_input == self._latest_search_value:
             Clock.schedule_once(lambda dt: (
-                self.update_groups_data(data)
+                self.update_groups_data(data, search_input)
             ), 0)
 
-    def update_groups_data(self, data):
+    def update_groups_data(self, data, search_input=""):
         self.groups_data = data
-        self.ids.groups_view.size_hint = (1, 1)
+        if search_input != "":
+            self.ids.groups_view.size_hint = (1, 1)
+            self.is_searching_groups = False
+        else:
+            self.is_loading_groups = False
 
     def fetch_my_groups(self):
+        self.is_loading_my_groups = True
         Thread(target=self.fetch_my_groups_thread, daemon=True).start()
 
     def fetch_my_groups_thread(self):
@@ -155,12 +174,12 @@ class HomeScreen(MDScreen):
 
     def update_my_groups_data(self, data):
         self.my_groups_data = data
+        self.is_loading_my_groups = False
         
 
-    #
-    # ——— Posts Fetch (unchanged) ————————————————————————————————
-    #
     def fetch_posts_thread(self):
+        Clock.schedule_once(lambda dt: setattr(self, 'is_loading_posts', True), 0)
+        
         try:
             url = f"{API_GROUPS_URL}/posts"
             response = requests.get(
@@ -206,10 +225,9 @@ class HomeScreen(MDScreen):
     def update_posts_data(self, data):
         self.posts_data = data
         self.cached_posts_data = data
+        self.is_loading_posts = False
+        Clock.schedule_once(lambda dt: self.ids.scroll_box.parent.refresh_from_data())
 
-    #
-    # ——— UI Helpers ——————————————————————————————————————————————
-    #
     def check_login_and_show_button(self, dt):
         app = MDApp.get_running_app()
         is_logged_in = app.user_data

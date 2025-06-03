@@ -1,0 +1,479 @@
+<SettingsScreen>:
+    Header:
+
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": 0.93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "profile"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Settings"
+                bold: True
+                size_hint_y: None
+                height: dp(50)
+            
+            Widget:
+                size_hint: None, None
+                size: dp(50), dp(50)
+
+        ScrollView:
+            pos_hint: {"top": 0.87}
+            size_hint_y: 0.9
+            padding: ('0dp', '40dp', '0dp', '0dp')
+            
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'top'
+                size_hint_y: None
+                height: dp(1025)
+                
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(20)
+                    size_hint: None, None
+                    width: dp(400)
+                    height: dp(1000)
+
+                    MDLabel:
+                        text: "[b]Account[/b]"
+                        markup: True
+                        font_style: "Title"
+                        role: "medium"
+                        theme_text_color: "Primary"
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(180)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.root.ids.screen_manager.current = "personal_information"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "account-edit"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Personal Information"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release: 
+                                app.root.ids.screen_manager.current = "privacy_security"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "shield-account"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Privacy & Security"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.root.ids.screen_manager.current = "change_password"
+                                app.root.ids.screen_manager.transition.direction = "left"
+
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "lock-reset"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Change Password"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+
+                    MDLabel:
+                        text: "[b]Preferences[/b]"
+                        markup: True
+                        font_style: "Title"
+                        role: "medium"
+                        theme_text_color: "Primary"
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(330)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "theme-light-dark"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Dark Mode"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDSwitch:
+                                    id: dark_mode_switch
+                                    size_hint_x: None
+                                    width: dp(50)
+                                    on_active: root.on_dark_mode_toggle(self, self.active)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release: print("Language clicked")
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "translate"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Language"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDLabel:
+                                    text: "English"
+                                    font_style: "Body"
+                                    role: "medium"
+                                    theme_text_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(60)
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release: 
+                                app.root.ids.screen_manager.current = "themes"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDLabel:
+                                    text: "{}".format(app.theme_cls.primary_palette)
+                                    font_style: "Body"
+                                    role: "medium"
+                                    theme_text_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(60)
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "bell"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Push Notifications"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDSwitch:
+                                    id: notifications_switch
+                                    active: True
+                                    size_hint_x: None
+                                    width: dp(50)
+                                    on_active: root.show_snackbar("Updated push notifications!")
+
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "email"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Email Notifications"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDSwitch:
+                                    id: email_notifications_switch
+                                    active: True
+                                    size_hint_x: None
+                                    width: dp(50)
+                                    on_active: root.show_snackbar("Updated email notifications!")
+
+                    MDLabel:
+                        text: "[b]Support[/b]"
+                        markup: True
+                        font_style: "Title"
+                        role: "medium"
+                        theme_text_color: "Primary"
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(180)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.root.ids.screen_manager.current = "help_center"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "help-circle"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Help Center"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release: 
+                                app.root.ids.screen_manager.current = "contact_us"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "message-text"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Contact Us"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release: 
+                                app.root.ids.screen_manager.current = "about_us"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "information"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "About"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+                                
+                                MDIcon:
+                                    icon: "chevron-right"
+                                    theme_icon_color: "Secondary"
+                                    size_hint_x: None
+                                    width: dp(30)
+
+                    MDLabel:
+                        text: "[b]Account Actions[/b]"
+                        markup: True
+                        font_style: "Title"
+                        role: "medium"
+                        theme_text_color: "Primary"
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDBoxLayout:
+                        spacing: dp(15)
+                        size_hint_y: None
+                        height: dp(50)
+
+                        MDButton:
+                            style: "outlined"
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(50)
+                            on_release:
+                                app.logout()
+                            MDButtonIcon:
+                                icon: "logout"
+                            MDButtonText:
+                                text: "Sign Out"
+
+                        MDButton:
+                            style: "filled"
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(50)
+                            theme_bg_color: "Custom"
+                            md_bg_color: "#F44336"
+                            on_release: 
+                                app.root.ids.screen_manager.current = "delete_account"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                            MDButtonIcon:
+                                icon: "delete"
+                                theme_icon_color: "Custom"
+                                icon_color: "white"
+                            MDButtonText:
+                                text: "Delete Account"
+                                theme_text_color: "Custom"
+                                text_color: "white"

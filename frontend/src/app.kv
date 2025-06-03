@@ -8,38 +8,96 @@
 #:import CreateGroup screens.create_group.logic.CreateGroup
 #:import EmailCode screens.email_code.logic.EmailCode
 #:import Comments screens.comments.logic.Comments
+#:import ProfileScreen screens.profile.logic.ProfileScreen
+#:import SettingsScreen screens.settings.logic.SettingsScreen
+#:import PrivacySecurityScreen screens.privacy_and_security.logic.PrivacySecurityScreen
+#:import ChangePasswordScreen screens.change_password.logic.ChangePasswordScreen
+#:import HelpCenterScreen screens.help_center.logic.HelpCenterScreen
+#:import AboutUsScreen screens.about_us.logic.AboutUsScreen
+#:import ContactUsScreen screens.contact_us.logic.ContactUsScreen
+#:import PersonalInfoScreen screens.personal_information.logic.PersonalInfoScreen
+#:import DeleteAccountScreen screens.delete_account.logic.DeleteAccountScreen
+#:import ThemesScreen screens.themes.logic.ThemesScreen
 
 MDNavigationLayout:
-
     ScreenManager:
         id: screen_manager
 
         HomeScreen:
             name: "home" 
+            md_bg_color: self.theme_cls.backgroundColor
 
         Comments:
             name: "comments" 
+            md_bg_color: self.theme_cls.backgroundColor
 
         LoginScreen:
             name: "login"
+            md_bg_color: self.theme_cls.backgroundColor
 
         SignupScreen:
             name: "signup"
+            md_bg_color: self.theme_cls.backgroundColor
 
         PostsScreen:
             name: "posts"
+            md_bg_color: self.theme_cls.backgroundColor
 
         ForgotPassword:
             name: "forgot_password"
+            md_bg_color: self.theme_cls.backgroundColor
 
         CreatePost:
             name: "create_post"
+            md_bg_color: self.theme_cls.backgroundColor
 
         EmailCode:
             name: "email_code"
+            md_bg_color: self.theme_cls.backgroundColor
 
         CreateGroup:
             name: "create_group"
+            md_bg_color: self.theme_cls.backgroundColor
+        
+        ProfileScreen:
+            name: "profile"
+            md_bg_color: self.theme_cls.backgroundColor
+
+        SettingsScreen:
+            name: "settings"
+            md_bg_color: self.theme_cls.backgroundColor
+
+        PrivacySecurityScreen:
+            name: "privacy_security"
+            md_bg_color: self.theme_cls.backgroundColor
+        
+        ChangePasswordScreen:
+            name: "change_password"
+            md_bg_color: self.theme_cls.backgroundColor
+        
+        HelpCenterScreen:
+            name: "help_center"
+            md_bg_color: self.theme_cls.backgroundColor
+
+        AboutUsScreen:
+            name: "about_us"
+            md_bg_color: self.theme_cls.backgroundColor
+
+        ContactUsScreen:
+            name: "contact_us"
+            md_bg_color: self.theme_cls.backgroundColor
+        
+        PersonalInfoScreen:
+            name: "personal_information"
+            md_bg_color: self.theme_cls.backgroundColor
+
+        DeleteAccountScreen:
+            name: "delete_account"
+            md_bg_color: self.theme_cls.backgroundColor
+
+        ThemesScreen:
+            name: "themes"
+            md_bg_color: self.theme_cls.backgroundColor
 
     MDNavigationDrawer:
         id: nav_drawer
@@ -47,3 +105,60 @@ MDNavigationLayout:
 
         MDNavigationDrawerMenu:
             id: nav_drawer_menu
+            
+            MDLabel:
+                text: "MyStreet"
+                theme_text_color: "Primary"
+                size_hint_y: None
+                height: dp(40)
+                padding: [dp(16), 0, 0, 0]
+            
+            MDNavigationDrawerItem:
+                id: profile_item
+                on_release: app.goto_screen("profile")
+                MDNavigationDrawerItemLeadingIcon:
+                    icon: "account"
+                MDNavigationDrawerItemText:
+                    id: username_text
+                    text: "User"
+            
+            MDNavigationDrawerDivider:
+                id: user_divider
+            
+            MDNavigationDrawerItem:
+                on_release: app.goto_screen("home")
+                MDNavigationDrawerItemLeadingIcon:
+                    icon: "home"
+                MDNavigationDrawerItemText:
+                    text: "Home"
+            
+            MDNavigationDrawerItem:
+                id: login_item
+                on_release: app.goto_screen("login")
+                MDNavigationDrawerItemLeadingIcon:
+                    icon: "login"
+                MDNavigationDrawerItemText:
+                    text: "Log in"
+            
+            MDNavigationDrawerItem:
+                id: signup_item
+                on_release: app.goto_screen("signup")
+                MDNavigationDrawerItemLeadingIcon:
+                    icon: "account-plus"
+                MDNavigationDrawerItemText:
+                    text: "Sign up"
+            
+            MDNavigationDrawerItem:
+                id: logout_item
+                on_release: app.logout()
+                MDNavigationDrawerItemLeadingIcon:
+                    icon: "logout"
+                MDNavigationDrawerItemText:
+                    text: "Log out"
+            
+            MDNavigationDrawerItem:
+                on_release: app.theme_cls.theme_style = "Dark" if app.theme_cls.theme_style == "Light" else "Light"
+                MDNavigationDrawerItemLeadingIcon:
+                    icon: "white-balance-sunny" if app.theme_cls.theme_style == "Light" else "weather-night"
+                MDNavigationDrawerItemText:
+                    text: "Toggle Theme"

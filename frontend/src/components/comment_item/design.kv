@@ -9,21 +9,19 @@
         orientation: 'vertical'
         size_hint_x: None
         width: dp(40)
-        MDFloatLayout:
+        MDIconButton:
+            style: "filled"
+            icon: "account"
             size_hint: None, None
             size: dp(40), dp(40)
-            md_bg_color: 1, 1, 1, 1
             radius: self.height / 2
-            MDIcon:
-                icon: "account"
-                pos_hint: {'center_x': 0.5,'center_y': 0.5}
         MDBoxLayout:
     
     MDBoxLayout:
         orientation: 'vertical'
         size_hint_y: None
         height: self.minimum_height
-        Label:
+        MDLabel:
             text: root.username
             bold: True
             size_hint_y: None
@@ -31,7 +29,7 @@
             halign: 'left'
             valign: 'middle'
             text_size: self.size
-        Label:
+        MDLabel:
             id: label
             text: root.message
             size_hint_y: None

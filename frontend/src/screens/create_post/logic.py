@@ -128,7 +128,7 @@ class CreatePost(MDScreen):
                 app = App.get_running_app()
                 posts_screen = app.root.ids.screen_manager.get_screen("posts")
                 posts_screen.posts_fetched = False
-                Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "posts"), 0)
+                Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "home"), 0)
                 MDSnackbar(
                     MDSnackbarText(
                         text="Post updated successfully!",
@@ -146,7 +146,6 @@ class CreatePost(MDScreen):
             
     def create_post_thread(self, post_data):
         try:
-            # Build the URL for posting to the specific group using group_id.
             url = f"http://localhost:5000/groups/{self.group_id}/posts"
             response = requests.post(
                 url,
@@ -162,7 +161,7 @@ class CreatePost(MDScreen):
                 app = App.get_running_app()
                 posts_screen = app.root.ids.screen_manager.get_screen("posts")
                 posts_screen.posts_fetched = False
-                Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "posts"), 0)
+                Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "home"), 0)
                 MDSnackbar(
                     MDSnackbarText(
                         text="Post added successfully!",
@@ -191,6 +190,8 @@ class CreatePost(MDScreen):
 
     def on_leave(self):
         self.editing_post = None
+        self.selected_image_path = None
+        
         
     def update_post_status(self, msg):
         print(msg)
@@ -207,12 +208,10 @@ class CreatePost(MDScreen):
             self.current_dialog = None
 
     def post_and_close_dialog(self, *args):
-        # Call the post creation logic, then close the dialog.
         self.create_post()
         self.close_dialog()
 
     def show_alert_dialog(self):
-        # ----------------------- Custom content container -----------------------
         content_container = MDDialogContentContainer(orientation="vertical")
         content_container.add_widget(MDDivider())
         
@@ -239,22 +238,19 @@ class CreatePost(MDScreen):
         content_preview = MDBoxLayout(
             orientation='vertical'
         )
-        # Example labels for the preview; adjust as needed
         content_preview.add_widget(MDLabel(text="You", bold=True, font_style="Body", role="large"))
         content_preview.add_widget(MDLabel(text=self.ids.title_input.text, bold=True, font_style="Body", role="large"))
         content_preview.add_widget(MDLabel(text=self.ids.text_input.text, font_style="Body", role="medium"))
 
-        # Interactions preview: like, comment, bookmark and repost icons with labels.
         interactions_preview = MDBoxLayout(
             orientation="horizontal",
         )
         
-        # Like box
         like_box = MDBoxLayout(orientation='horizontal')
         like_button = MDIconButton(
             icon="thumb-up-outline",
             pos_hint={"center_y": 0.5},
-            on_release=lambda x: print("Toggle like")  # Replace with your like toggle method
+            on_release=lambda x: print("Toggle like") 
         )
         like_label = MDLabel(
             text="0",
@@ -263,19 +259,16 @@ class CreatePost(MDScreen):
             halign="center",
             valign="middle",
             pos_hint={"center_y": 0.5},
-            theme_text_color="Custom",
-            text_color=(1, 1, 1, 1),
         )
         like_box.add_widget(like_button)
         like_box.add_widget(like_label)
         interactions_preview.add_widget(like_box)
 
-        # Comment box
         comment_box = MDBoxLayout(orientation='horizontal')
         comment_button = MDIconButton(
             icon="comment-outline",
             pos_hint={"center_y": 0.5},
-            on_release=lambda x: print("Toggle comment")  # Replace with your comment method
+            on_release=lambda x: print("Toggle comment")  
         )
         comment_label = MDLabel(
             text="0",
@@ -284,53 +277,15 @@ class CreatePost(MDScreen):
             halign="center",
             valign="middle",
             pos_hint={"center_y": 0.5},
-            theme_text_color="Custom",
-            text_color=(1, 1, 1, 1),
         )
         comment_box.add_widget(comment_button)
         comment_box.add_widget(comment_label)
         interactions_preview.add_widget(comment_box)
 
-        # Bookmark box
         bookmark_box = MDBoxLayout(orientation='horizontal')
-        bookmark_button = MDIconButton(
-            icon="bookmark-outline",
-            pos_hint={"center_y": 0.5},
-            on_release=lambda x: print("Toggle bookmark")  # Replace with your bookmark method
-        )
-        bookmark_label = MDLabel(
-            text="0",
-            size_hint=(None, None),
-            size=(dp(20), dp(40)),
-            halign="center",
-            valign="middle",
-            pos_hint={"center_y": 0.5},
-            theme_text_color="Custom",
-            text_color=(1, 1, 1, 1),
-        )
-        bookmark_box.add_widget(bookmark_button)
-        bookmark_box.add_widget(bookmark_label)
         interactions_preview.add_widget(bookmark_box)
 
-        # Repost box
         repost_box = MDBoxLayout(orientation='horizontal')
-        repost_button = MDIconButton(
-            icon="repeat",
-            pos_hint={"center_y": 0.5},
-            on_release=lambda x: print("Toggle repost")  # Replace with your repost method
-        )
-        repost_label = MDLabel(
-            text="0",
-            size_hint=(None, None),
-            size=(dp(20), dp(40)),
-            halign="center",
-            valign="middle",
-            pos_hint={"center_y": 0.5},
-            theme_text_color="Custom",
-            text_color=(1, 1, 1, 1),
-        )
-        repost_box.add_widget(repost_button)
-        repost_box.add_widget(repost_label)
         interactions_preview.add_widget(repost_box)
 
         content_preview.add_widget(interactions_preview)
@@ -340,11 +295,8 @@ class CreatePost(MDScreen):
         content_container.add_widget(post_preview)
         content_container.add_widget(MDDivider())
 
-        # --------------------------- Button container --------------------------
         button_container = MDDialogButtonContainer(spacing="8dp")
-        button_container.add_widget(Widget())  # For spacing
-
-        # "Change" button closes the dialog
+        button_container.add_widget(Widget()) 
         button_container.add_widget(
             MDButton(
                 MDButtonText(text="Change"),
@@ -352,7 +304,6 @@ class CreatePost(MDScreen):
                 on_release=lambda x: self.close_dialog()
             )
         )
-        # "Post" button calls create_post() then closes the dialog.
         button_container.add_widget(
             MDButton(
                 MDButtonText(text="Post"),
@@ -361,7 +312,6 @@ class CreatePost(MDScreen):
             )
         )
 
-        # ------------------------------ Dialog ---------------------------------
         dialog = MDDialog(
             MDDialogIcon(icon="plus"),
             MDDialogHeadlineText(text="Continue with posting?"),

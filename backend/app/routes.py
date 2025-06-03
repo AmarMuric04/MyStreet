@@ -1,16 +1,17 @@
 import datetime
 import random
 import smtplib
+from email.message import EmailMessage
 
 import bcrypt
 import jwt
 from app import app, mongo
 from bson import ObjectId
 from flask import jsonify, request
-from jwt import ExpiredSignatureError, InvalidTokenError
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from pymongo import DESCENDING
 
-from .session import get_token, save_token
+from .session import clear_token, get_token, save_token
 
 """
     TL;DR
@@ -30,7 +31,6 @@ def login():
     email = data.get("email")
     password = data.get("password")
 
-    # Retrieve the user from MongoDB
     user = mongo.db.users.find_one({"email": email})
 
     if user and bcrypt.checkpw(password.encode("utf-8"), user["password"]):
@@ -43,7 +43,6 @@ def login():
             algorithm="HS256",
         )
         print(f"Created a token: {token}")
-        # For PyJWT v2.x token is returned as a string, if not decode it.
         if isinstance(token, bytes):
             token = token.decode("utf-8")
 
@@ -61,11 +60,9 @@ def signup():
     email = data.get("email")
     password = data.get("password")
 
-    # Check if the user already exists
     if mongo.db.users.find_one({"email": email}):
         return jsonify({"error": "User already exists"}), 400
 
-    # Hash the password before saving it
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
     user_id = mongo.db.users.insert_one(
         {"email": email, "password": hashed_password, "username": username}
@@ -82,32 +79,42 @@ def send_code():
     if not recipient_email:
         return {"status": "error", "message": "Email address not provided"}, 400
 
-    # Check if the user already exists
     existing_user = mongo.db.users.find_one({"email": recipient_email})
     if existing_user:
         return {"status": "error", "message": "Email already registered"}, 400
 
-    # Generate a 6-digit code
     code = f"{random.randint(0, 999999):06}"
     subject = "Signup Code from MyStreet"
     message_body = f"Your signup code is: {code}"
     message = f"Subject:{subject}\n\n{message_body}"
 
     try:
-        with smtplib.SMTP("smtp.gmail.com") as connection:
+        msg = EmailMessage()
+        msg["From"] = "MyStreet <muricamar2005@gmail.com>"
+        msg["To"] = recipient_email
+        msg["Subject"] = "Welcome to MyStreet!"
+        msg.set_content("This is the plain text fallback.")
+        msg.add_alternative(
+            f"""
+            <html>
+                <body>
+                    <h1 style="color: #2e6c80;">Welcome to <strong>MyStreet</strong>!</h1>
+                    <p>We're excited to have you on board. 🎉</p>
+                    <p>{message_body}</p>
+                </body>
+            </html>
+            """,
+            subtype="html",
+        )
+
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
             connection.starttls()
             connection.login(
                 user="muricamar2005@gmail.com", password="jpdvuuwfipwgninx"
             )
-            connection.sendmail(
-                from_addr="muricamar2005@gmail.com",
-                to_addrs=recipient_email,
-                msg=message,
-            )
+            connection.send_message(msg)
 
-        # Remove any existing code for the email
         mongo.db.codes.delete_many({"email": recipient_email})
-        # Insert the new code
         mongo.db.codes.insert_one({"email": recipient_email, "code": code})
 
         return {
@@ -128,13 +135,6 @@ def verify_code():
 
     record = mongo.db.codes.find_one({"email": email})
 
-    if not record:
-        return {"status": "error", "message": "Code not found or expired"}, 400
-
-    if record["code"] != input_code:
-        return {"status": "error", "message": "Invalid code"}, 400
-
-    # Delete the code after successful verification for cleanup.
     mongo.db.codes.delete_one({"email": email})
     return {"status": "success", "message": "Code verified successfully"}, 200
 
@@ -161,38 +161,29 @@ def get_current_user():
 
 @app.route("/current_user", methods=["GET"])
 def current_user():
-    # 1) Grab the token from the session file
     token = get_token()
     if not token:
         return jsonify({"error": "Not authenticated"}), 401
 
-    # 2) Try to decode it and handle expiration/invalid cases
     try:
         payload = jwt.decode(
             token,
             app.config["SECRET_KEY"],
             algorithms=["HS256"],
-            # optional: leeway=datetime.timedelta(seconds=30)
         )
     except ExpiredSignatureError:
-        # Token expired → clear local copy and force re-login
         clear_token()
         return jsonify({"error": "Session expired"}), 401
     except InvalidTokenError:
-        # Any other decode failure → clear and reject
         clear_token()
         return jsonify({"error": "Invalid token"}), 401
 
-    # 3) At this point the token is valid; you can pull user info
-    #    from your payload or fetch fresh from the DB
     email = payload.get("email")
     user = mongo.db.users.find_one({"email": email})
     if not user:
-        # In case the user was deleted or similar
         clear_token()
         return jsonify({"error": "User not found"}), 401
 
-    # 4) Return only the safe fields
     return (
         jsonify(
             {"user": {"username": user.get("username"), "email": user.get("email")}}
@@ -203,14 +194,12 @@ def current_user():
 
 @app.route("/users/me/groups", methods=["GET"])
 def get_my_groups():
-    # Authenticate the user
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status
 
     user_obj_id = user["_id"]
 
-    # Find groups where this user is in the members array, sorted newest first
     groups_cursor = mongo.db.groups.find({"members": user_obj_id}).sort(
         "created_at", -1
     )
@@ -233,25 +222,21 @@ def get_my_groups():
 
 @app.route("/users/me/groups/posts", methods=["GET"])
 def get_my_groups_posts():
-    # 1) Authenticate
     user, error_response, status = get_current_user()
     if error_response:
         return error_response, status
 
     user_obj_id = user["_id"]
 
-    # 2) Find all group IDs the user belongs to
     group_cursor = mongo.db.groups.find({"members": user_obj_id}, {"_id": 1})
     group_ids = [g["_id"] for g in group_cursor]
     if not group_ids:
         return jsonify([]), 200
 
-    # 3) Fetch all posts in those groups, newest first
     posts_cursor = mongo.db.posts.find({"group_id": {"$in": group_ids}}).sort(
         "created_at", -1
     )
 
-    # 4) Build response list
     posts = []
     for post in posts_cursor:
         if not post.get("anonymous"):
@@ -261,7 +246,6 @@ def get_my_groups_posts():
 
         liked_by_user = user_obj_id in post.get("likes", [])
 
-        # 🔥 Fetch comment count from comments collection
         comment_count = mongo.db.comments.count_documents({"post_id": post["_id"]})
 
         posts.append(
@@ -361,7 +345,6 @@ def get_posts_in_group(group_id):
 
     posts = []
     for post in posts_cursor:
-        # Fetch comments from the comments collection
         comments_cursor = mongo.db.comments.find({"post_id": post["_id"]}).sort(
             "created_at", 1
         )
@@ -418,7 +401,6 @@ def get_single_post_in_group(group_id, post_id):
     if not post:
         return jsonify({"error": "Post not found in this group"}), 404
 
-    # Prepare the post data for output.
     post_data = {
         "post_id": str(post["_id"]),
         "user_id": str(post["user_id"]),
@@ -469,7 +451,6 @@ def update_post_in_group(group_id, post_id):
     if not post:
         return jsonify({"error": "Post not found in this group"}), 404
 
-    # For example, only allow the post creator to update.
     if post["user_id"] != user["_id"]:
         return jsonify({"error": "Not authorized to update this post"}), 403
 
@@ -555,14 +536,16 @@ def get_group(group_id):
     if user_id:
         is_member = any(user_id == str(member) for member in group.get("members", []))
 
-    # Fetch creator's username
     creator_id = group.get("creator")
     creator = mongo.db.users.find_one({"_id": ObjectId(creator_id)})
     creator_username = creator.get("username") if creator else "Unknown"
 
+    print(group)
+
     group["_id"] = str(group["_id"])
     group["creator"] = creator_username
     group["members"] = [str(member) for member in group.get("members", [])]
+    group["description"] = group.get("description", "No description")
     group["created_at"] = (
         group.get("created_at").isoformat() if group.get("created_at") else None
     )
@@ -581,17 +564,15 @@ def list_groups():
 
     query = {}
 
-    # Filter by group name (case-insensitive)
     if name_query:
         query["name"] = {"$regex": name_query, "$options": "i"}
 
-    # Filter by creator username
     if creator_query:
         creator = mongo.db.users.find_one({"username": creator_query})
         if creator:
             query["creator"] = str(creator["_id"])
         else:
-            return jsonify([]), 200  # No such creator, return empty list
+            return jsonify([]), 200
 
     groups_cursor = mongo.db.groups.find(query).sort("created_at", -1)
     groups = []
@@ -673,7 +654,6 @@ def request_to_join(group_id):
     if not creator_email:
         return jsonify({"error": "Creator has no email"}), 400
 
-    # Construct email
     subject = "MyStreet: Join Request"
     accept_link = (
         f"http://localhost:5000/groups/{group_id}/accept?user_id={user['_id']}"
@@ -722,7 +702,6 @@ def approve_request(group_id, user_id):
 
 @app.route("/groups/<group_id>/deny/<user_id>", methods=["GET"])
 def deny_request(group_id, user_id):
-    # You can log it or notify the user later
     return "Join request denied", 200
 
 
@@ -741,7 +720,6 @@ def update_group(group_id):
     if not update_fields:
         return jsonify({"error": "No valid fields to update"}), 400
 
-    # Optional: Only allow the creator to edit group details.
     group = mongo.db.groups.find_one({"_id": ObjectId(group_id)})
     if not group:
         return jsonify({"error": "Group not found"}), 404
@@ -764,7 +742,6 @@ def delete_group(group_id):
     if not group:
         return jsonify({"error": "Group not found"}), 404
 
-    # Only allow the creator of the group to delete it.
     if group["creator"] != user["_id"]:
         return jsonify({"error": "Not authorized to delete this group"}), 403
 
@@ -788,17 +765,14 @@ def toggle_like(post_id):
 
     user_id_str = str(user["_id"])
     likes = post.get("likes", [])
-    # Convert likes to string list for easy comparison
     likes_str = [str(like) for like in likes]
 
     if user_id_str in likes_str:
-        # Remove the like
         mongo.db.posts.update_one(
             {"_id": ObjectId(post_id)}, {"$pull": {"likes": user["_id"]}}
         )
         message = "Like removed"
     else:
-        # Add the like
         mongo.db.posts.update_one(
             {"_id": ObjectId(post_id)}, {"$push": {"likes": user["_id"]}}
         )
@@ -812,16 +786,13 @@ def toggle_like(post_id):
 @app.route("/posts/<post_id>/comments", methods=["GET"])
 def get_post_comments(post_id):
     try:
-        # 1) Try to authenticate
         user, error_response, status = get_current_user()
         current_user_id = user["_id"] if user else None
 
-        # 2) Query all comments for the post
         comments = mongo.db.comments.find({"post_id": ObjectId(post_id)})
         formatted = []
 
         for c in comments:
-            # 3) Determine if comment was made by current user
             is_current_user = (
                 current_user_id == c.get("user_id") if current_user_id else False
             )

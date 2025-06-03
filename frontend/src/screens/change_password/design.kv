@@ -1,0 +1,160 @@
+<ChangePasswordScreen>:
+    Header:
+
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Change password"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "16dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "24dp"
+                adaptive_height: True
+                padding: ["24dp", "32dp", "24dp", "24dp"]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "8dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Update Your Password"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "large"
+                            size_hint_y: None
+                            height: "32dp"
+                            halign: "center"
+                        
+                        MDLabel:
+                            text: "Choose a strong password to keep your account secure"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            halign: "center"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "20dp"
+                        adaptive_height: True
+                        
+                        MDTextField:
+                            id: current
+                            password: True
+                            size_hint_y: None
+                            height: "56dp"
+                            MDTextFieldHintText:
+                                text: "Current Password"
+                            MDTextFieldHelperText:
+                                text: "Enter your current password"
+                            MDTextFieldLeadingIcon:
+                                icon: "lock"
+                        
+                        MDTextField:
+                            id: new
+                            password: True
+                            size_hint_y: None
+                            height: "56dp"
+                            MDTextFieldHintText:
+                                text: "New Password"
+                            MDTextFieldHelperText:
+                                text: "Must be at least 8 characters"
+                            MDTextFieldLeadingIcon:
+                                icon: "lock-outline"
+                        
+                        MDTextField:
+                            id: confirm
+                            password: True
+                            size_hint_y: None
+                            height: "56dp"
+                            MDTextFieldHintText:
+                                text: "Confirm New Password"
+                            MDTextFieldHelperText:
+                                text: "Re-enter your new password"
+                            MDTextFieldLeadingIcon:
+                                icon: "lock-check"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "16dp"
+                            size_hint_y: None
+                            height: "48dp"
+                            
+                            MDButton:
+                                style: "outlined"
+                                size_hint_x: 0.5
+                                MDButtonText:
+                                    text: "Cancel"
+                                
+                            MDButton:
+                                style: "filled"
+                                size_hint_x: 0.5
+                                on_release: 
+                                    root.show_snackbar("Password updated successfully!")
+                                MDButtonText:
+                                    text: "Update Password"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDLabel:
+                            text: "Password Security Tips"
+                            theme_text_color: "Primary"
+                            font_style: "Body"
+                            role: "large"
+                            bold: True
+                            size_hint_y: None
+                            height: "28dp"
+                        
+                        MDLabel:
+                            text: "• Use at least 8 characters\\n• Include uppercase and lowercase letters\\n• Add numbers and special characters\\n• Avoid common words or personal information\\n• Don't reuse passwords from other accounts"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]

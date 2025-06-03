@@ -1,45 +1,71 @@
 <CreateGroup>:
+    Header:
+
     FloatLayout:
         MDBoxLayout:
-            pos_hint: {"top": 1}
+            pos_hint: {"top": .93}
             size_hint_y: None
             height: dp(50)
-            padding: dp(10)
-            MDLabel:
-                text: "MyStreet"
-                bold: True
-            
+            padding: ('30dp', '0dp', '30dp', '0dp')
             MDIconButton:
-                icon: "hamburger"
-                on_release: app.root.ids.nav_drawer.set_state("toggle")
+                icon: "arrow-left"
+                on_release: app.root.ids.screen_manager.current = "home"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Back"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
     AnchorLayout:
         MDBoxLayout:
             orientation: "vertical"
             size_hint: None, None
-            padding: dp(20)
+            padding: ('30dp', '50dp', '30dp', '0dp')
             spacing: dp(32)
-            height: dp(400)
+            height: dp(550)
             width: dp(400)
             MDLabel:
                 text: "Create a Group"
                 bold: True
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
                 halign: "center"
-                size_hint: 1, None
-                height: dp(50)
+                font_style: "Display"
+                theme_text_color: "Primary"
+                role: "medium"
+
             MDTextField:
                 id: name_input
                 mode: "outlined"
+
                 MDTextFieldHintText:
-                    text: "Group Name"
+                    text: "Group name"
+
+                MDTextFieldHelperText:
+                    mode: "persistent"
+                    text: "Think of something cool"
+                
+                MDTextFieldLeadingIcon:
+                    icon: "text-box-outline"
+
                 MDTextFieldMaxLengthText:
                     max_text_length: 50
+
             MDTextField:
                 id: description_input
                 mode: "outlined"
+
                 MDTextFieldHintText:
                     text: "Description"
+
+                MDTextFieldHelperText:
+                    text: "What's your group about?"
+                    mode: "persistent"
+                
+                MDTextFieldLeadingIcon:
+                    icon: "text"
+
                 MDTextFieldMaxLengthText:
                     max_text_length: 256
 
@@ -59,14 +85,12 @@
                     width: dp(145)
                     MDLabel:
                         text: "Allow Previews"
-                        theme_text_color: "Custom"
-                        text_color: 1, 1, 1, 1
                         size_hint_y: None
                         height: dp(18)
                     MDIcon:
                         icon: "information"
             MDButton:
-                style: "filled"
+                style: "elevated"
                 size_hint_x: None
                 width: dp(400)
                 radius: 8

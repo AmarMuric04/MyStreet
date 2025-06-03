@@ -1,0 +1,19 @@
+<Header>:
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": 1}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            md_bg_color: self.theme_cls.surfaceVariantColor
+            MDLabel:
+                text: "MyStreet"
+                bold: True
+                size_hint_y: None
+                height: dp(50)
+            
+            MDIconButton:
+                icon: "menu"
+                on_release: app.root.ids.nav_drawer.set_state("toggle")
+                size_hint: None, None
+                size: dp(50), dp(50)

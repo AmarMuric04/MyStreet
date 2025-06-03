@@ -15,7 +15,6 @@ API_URL = "http://localhost:5000/groups"
 
 class CreateGroup(MDScreen):
     def create_group(self):
-        # Retrieve group name and description inputs from the UI.
         name = self.ids.name_input.text.strip()
         description = self.ids.description_input.text.strip()
         print("Creating group:", name, description)
@@ -24,7 +23,6 @@ class CreateGroup(MDScreen):
             print("Error: Group name is required.")
             return
         
-        # Update button state to reflect processing.
         self.ids.group_button.text = "Submitting Group..."
         self.ids.group_button.disabled = True
         allow_preview = self.ids.allow_preview_checkbox.active
@@ -35,7 +33,6 @@ class CreateGroup(MDScreen):
             "allow_preview": allow_preview
         }
         
-        # Start a thread for the network request (daemon thread to not block app exit).
         threading.Thread(target=self.create_group_thread, args=(group_data,), daemon=True).start()
 
     def create_group_thread(self, group_data):
@@ -50,7 +47,6 @@ class CreateGroup(MDScreen):
             )
             if response.status_code == 201:
                 msg = "Group created successfully!"
-                # Clear input fields on success.
                 Clock.schedule_once(lambda dt: self.clear_inputs(), 0)
                 app = App.get_running_app()
                 Clock.schedule_once(lambda dt: setattr(app.root.ids.screen_manager, "current", "home"), 0)
@@ -59,7 +55,6 @@ class CreateGroup(MDScreen):
         except Exception as e:
             msg = f"Error: {str(e)}"
 
-        # Update the UI to reflect status.
         Clock.schedule_once(lambda dt: self.update_group_status(msg), 0)
 
     def update_group_status(self, msg):

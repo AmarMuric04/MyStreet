@@ -1,58 +1,74 @@
 #:import dp kivy.metrics.dp
 #:import PostItem components.post_item.logic.PostItem
+#:import Header components.header.logic.Header
 
 <PostsScreen>:
+    Header:
+
     FloatLayout:
         MDBoxLayout:
-            pos_hint: {"top": 1}
+            pos_hint: {"top": .93}
             size_hint_y: None
             height: dp(50)
-            padding: dp(10)
-            MDLabel:
-                text: "MyStreet"
-                bold: True
-            
+            padding: ('30dp', '0dp', '30dp', '0dp')
             MDIconButton:
-                icon: "hamburger"
-                on_release: app.root.ids.nav_drawer.set_state("toggle")
+                icon: "arrow-left"
+                on_release: app.root.ids.screen_manager.current = "home"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Posts"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+            MDIconButton:
+                icon: "dots-vertical"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "center"
+        AnchorLayout:
+            MDLabel:
+                halign: "center"
+                text: "" if len(root.posts_data) > 0 or root.is_loading_posts else "There's no posts here..."
+
 
         MDBoxLayout:
             orientation: 'vertical'
-            padding: ('5dp', '40dp', '5dp', '5dp')
+            padding: ('5dp', '80dp', '5dp', '5dp')
             size_hint: None, None
             height: dp(700)
             width: dp(400)
             
-            MDLabel:
-                text: "You're viewing posts for"
-                font_style: "Body"
-                role: "small"
-                italic: True
-                size_hint_y: None
-                height: dp(8)
             MDBoxLayout:
                 size_hint_y: None
                 height: dp(50)
-                padding: 8
-                MDBoxLayout:
-                    orientation: 'horizontal'
-                    spacing: dp(10)
-                    MDIcon:
-                        icon: "account-group"
-                    MDLabel:
-                        id: title
-                        text: ""
-                        role: "large"
-                        bold: True
-                        theme_text_color: "Custom"
-                        text_color: 1, 1, 1, 1
-                        font_style: "Headline"
-                        role: "medium"
-                        size_hint_y: None
-                        height: dp(20)
+                spacing: 20
+                 
+                MDIconButton:
+                    icon: "account-group"
+                    style: "filled"
+                    size_hint: None, None
+                    size: dp(50), dp(50)
+                    pos_hint: {'center_x': 0.5,'top': 1}
+                    on_press: 
+                        app.root.ids.screen_manager.get_screen("posts").group_id = root.group_id
+                        app.root.ids.screen_manager.current = "posts"
+                MDLabel:
+                    id: title
+                    text: ""
+                    role: "large"
+                    bold: True
+                    font_style: "Headline"
+                    role: "small"
+                    size_hint_y: None
+                    height: dp(38)
+
                 MDButton:
                     id: join_btn
                     opacity: 0.0
@@ -61,28 +77,46 @@
                         icon: "plus"
                     MDButtonText:
                         text: "Join"
-            RecycleView:
-                id: posts_rv
-                viewclass: "PostItem"
-                data: root.posts_data
-                RecycleBoxLayout:
-                    spacing: dp(25)
-                    pos_hint: {'center_x': 0.5,'center_y': 0.8}
-                    default_size: None, dp(170)
-                    default_size_hint: 1, None
-                    size_hint_y: None
-                    height: self.minimum_height
-                    orientation: "vertical"
+            MDBoxLayout:
+                size_hint_y: None
+                height: dp(25)
+            MDLabel:
+                text: "Description:"
+                role: "large"
+                font_style: "Body"
+                role: "large"
+                bold: True
+                size_hint_y: None
+                height: dp(24)
+            MDLabel:
+                id: description
+                text: ""
+                italic: True
+                role: "large"
+                font_style: "Body"
+                role: "large"
+                size_hint_y: None
+                height: dp(32)
+                
+            MDBoxLayout:
+                size_hint_y: None
+                height: dp(25)
+
+            FloatLayout:
+                RecycleView:
+                    viewclass: 'PostItem'
+                    size_hint: 1, 1
+                    pos_hint: {"x": 0, "y": 0}
+                    data: root.posts_data
+
+                    RecycleBoxLayout:
+                        id: scroll_box
+                        orientation: 'vertical'
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(25)
         FloatLayout:
-            # MDIconButton:
-            #     icon: "plus"
-            #     style: "filled"
-            #     radius: [self.height / 2, ]
-            #     size: "56dp", "56dp"
-            #     pos_hint: {"right": 0.95, "top": 0.10}
-            #     on_press:
-            #         app.switch_screen("create_post")
-            #         root.manager.transition.direction = "left"
             MDButton:
                 id: create_post_btn
                 opacity: 0.0

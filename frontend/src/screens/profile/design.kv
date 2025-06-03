@@ -1,0 +1,330 @@
+<ProfileScreen>:
+    Header:
+
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": 0.93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "home"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Profile"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+            
+            MDIconButton:
+                icon: "cog"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "left"
+
+                size_hint: None, None
+                size: dp(50), dp(50)
+
+        ScrollView:
+            pos_hint: {"top": 0.87}
+            size_hint_y: 0.9
+            
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'top'
+                size_hint_y: None
+                height: dp(800)
+                padding: ('30dp', '40dp', '30dp', '0dp')
+                
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(30)
+                    size_hint: None, None
+                    width: dp(400)
+                    height: dp(800)
+                    padding: ('0dp', '20dp', '0dp', '0dp')
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(20)
+                        size_hint_y: None
+                        height: dp(200)
+                        
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            size_hint_y: None
+                            height: dp(120)
+                            
+                            MDCard:
+                                size_hint: None, None
+                                size: dp(100), dp(100)
+                                radius: 50
+                                elevation: 2
+                                
+                                AnchorLayout:
+                                    MDIconButton:
+                                        icon: "account"
+                                        theme_icon_color: "Custom"
+                                        icon_color: "white"
+                                        icon_size: dp(50)
+                                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        
+                        MDLabel:
+                            id: name_label
+                            halign: "center"
+                            theme_text_color: "Primary"
+                            markup: True
+                            font_style: "Headline"
+                            role: "medium"
+                            size_hint_y: None
+                            height: dp(30)
+                        
+                        MDLabel:
+                            id: email_label
+                            halign: "center"
+                            theme_text_color: "Secondary"
+                            font_style: "Body"
+                            role: "medium"
+                            size_hint_y: None
+                            height: dp(20)
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        spacing: dp(15)
+                        size_hint_y: None
+                        height: dp(80)
+                        
+                        MDCard:
+                            elevation: 1
+                            radius: 12
+                            padding: dp(15)
+                            
+                            MDBoxLayout:
+                                orientation: 'vertical'
+                                
+                                MDLabel:
+                                    text: "[b]2[/b]"
+                                    halign: "center"
+                                    markup: True
+                                    font_style: "Headline"
+                                    role: "small"
+                                    theme_text_color: "Primary"
+                                
+                                MDLabel:
+                                    text: "Posts"
+                                    halign: "center"
+                                    font_style: "Body"
+                                    role: "small"
+                                    theme_text_color: "Secondary"
+                        
+                        MDCard:
+                            elevation: 1
+                            radius: 12
+                            padding: dp(15)
+                            
+                            MDBoxLayout:
+                                orientation: 'vertical'
+                                
+                                MDLabel:
+                                    text: "[b]0[/b]"
+                                    halign: "center"
+                                    markup: True
+                                    font_style: "Headline"
+                                    role: "small"
+                                    theme_text_color: "Primary"
+                                
+                                MDLabel:
+                                    text: "Followers"
+                                    halign: "center"
+                                    font_style: "Body"
+                                    role: "small"
+                                    theme_text_color: "Secondary"
+                        
+                        MDCard:
+                            elevation: 1
+                            radius: 12
+                            padding: dp(15)
+                            
+                            MDBoxLayout:
+                                orientation: 'vertical'
+                                
+                                MDLabel:
+                                    text: "[b]0[/b]"
+                                    halign: "center"
+                                    markup: True
+                                    font_style: "Headline"
+                                    role: "small"
+                                    theme_text_color: "Primary"
+                                
+                                MDLabel:
+                                    text: "Following"
+                                    halign: "center"
+                                    font_style: "Body"
+                                    role: "small"
+                                    theme_text_color: "Secondary"
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        spacing: dp(15)
+                        size_hint_y: None
+                        height: dp(50)
+                        
+                        MDButton:
+                            style: "elevated"
+                            radius: 8
+                            on_release:
+                                app.root.ids.screen_manager.current = "settings"
+                            MDButtonIcon:
+                                icon: "pencil"
+                            MDButtonText:
+                                text: "Edit Profile"
+                        
+                        MDButton:
+                            style: "outlined"
+                            radius: 8
+                            MDButtonIcon:
+                                icon: "share-variant"
+                            MDButtonText:
+                                text: "Share"
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(15)
+                        size_hint_y: None
+                        height: dp(350)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 12
+                            padding: dp(20)
+                            size_hint_y: None
+                            height: dp(100)
+                            
+                            MDBoxLayout:
+                                orientation: 'vertical'
+                                spacing: dp(10)
+                                
+                                MDLabel:
+                                    text: "[b]About[/b]"
+                                    markup: True
+                                    font_style: "Title"
+                                    role: "medium"
+                                    theme_text_color: "Primary"
+                                    size_hint_y: None
+                                    height: dp(25)
+                                
+                                MDLabel:
+                                    id: bio_label
+                                    text: ""
+                                    font_style: "Body"
+                                    role: "medium"
+                                    theme_text_color: "Secondary"
+                                    text_size: self.width, None
+                                    halign: "left"
+
+                        MDLabel:
+                            text: "[b]Quick Actions[/b]"
+                            markup: True
+                            font_style: "Title"
+                            role: "medium"
+                            theme_text_color: "Primary"
+                            size_hint_y: None
+                            height: dp(30)
+
+                        MDBoxLayout:
+                            orientation: 'vertical'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(200)
+
+                            MDCard:
+                                elevation: 1
+                                radius: 8
+                                size_hint_y: None
+                                height: dp(60)
+                                ripple_behavior: True
+                                on_release: print("My Posts clicked")
+                                
+                                MDBoxLayout:
+                                    padding: dp(20)
+                                    
+                                    MDIcon:
+                                        icon: "post"
+                                        theme_icon_color: "Primary"
+                                        size_hint_x: None
+                                        width: dp(30)
+                                    
+                                    MDLabel:
+                                        text: "My Posts"
+                                        font_style: "Body"
+                                        role: "large"
+                                        theme_text_color: "Primary"
+                                    
+                                    MDIcon:
+                                        icon: "chevron-right"
+                                        theme_icon_color: "Secondary"
+                                        size_hint_x: None
+                                        width: dp(30)
+
+                            MDCard:
+                                elevation: 1
+                                radius: 8
+                                size_hint_y: None
+                                height: dp(60)
+                                ripple_behavior: True
+                                on_release: print("Saved Items clicked")
+                                
+                                MDBoxLayout:
+                                    padding: dp(20)
+                                    
+                                    MDIcon:
+                                        icon: "bookmark"
+                                        theme_icon_color: "Primary"
+                                        size_hint_x: None
+                                        width: dp(30)
+                                    
+                                    MDLabel:
+                                        text: "Saved Items"
+                                        font_style: "Body"
+                                        role: "large"
+                                        theme_text_color: "Primary"
+                                    
+                                    MDIcon:
+                                        icon: "chevron-right"
+                                        theme_icon_color: "Secondary"
+                                        size_hint_x: None
+                                        width: dp(30)
+
+                            MDCard:
+                                elevation: 1
+                                radius: 8
+                                size_hint_y: None
+                                height: dp(60)
+                                ripple_behavior: True
+                                on_release: print("Activity clicked")
+                                
+                                MDBoxLayout:
+                                    padding: dp(20)
+                                    
+                                    MDIcon:
+                                        icon: "chart-line"
+                                        theme_icon_color: "Primary"
+                                        size_hint_x: None
+                                        width: dp(30)
+                                    
+                                    MDLabel:
+                                        text: "Activity"
+                                        font_style: "Body"
+                                        role: "large"
+                                        theme_text_color: "Primary"
+                                    
+                                    MDIcon:
+                                        icon: "chevron-right"
+                                        theme_icon_color: "Secondary"
+                                        size_hint_x: None
+                                        width: dp(30)

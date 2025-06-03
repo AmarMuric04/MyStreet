@@ -20,3 +20,9 @@ def get_token():
         except Exception:
             return None
     return None
+
+
+def clear_token():
+    """Delete the session file."""
+    if os.path.exists(SESSION_FILE):
+        os.remove(SESSION_FILE)

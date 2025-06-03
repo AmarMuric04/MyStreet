@@ -1,0 +1,419 @@
+<ThemesScreen>:
+    Header:
+
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": 0.93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Themes"
+                bold: True
+                size_hint_y: None
+                height: dp(50)
+            
+            Widget:
+                size_hint: None, None
+                size: dp(50), dp(50)
+
+        ScrollView:
+            pos_hint: {"top": 0.87}
+            size_hint_y: 0.9
+            padding: ('0dp', '40dp', '0dp', '0dp')
+            
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'top'
+                size_hint_y: None
+                height: dp(1150)
+                
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(20)
+                    size_hint: None, None
+                    width: dp(400)
+                    height: dp(1070)
+
+                    MDLabel:
+                        text: "[b]Themes[/b]"
+                        markup: True
+                        font_style: "Title"
+                        role: "medium"
+                        theme_text_color: "Primary"
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(840)
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Red"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Red Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Pink"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Pink Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Purple"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Purple Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Indigo"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Indigo Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Blue"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Blue Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Lightblue"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Light Blue Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Cyan"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Cyan Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Teal"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Teal Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Green"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Green Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Lightgreen"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Light Green Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Lime"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Lime Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Yellow"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Yellow Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Orange"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Orange Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Brown"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Brown Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"
+
+                        MDCard:
+                            elevation: 1
+                            radius: 8
+                            size_hint_y: None
+                            height: dp(60)
+                            ripple_behavior: True
+                            on_release:
+                                app.theme_cls.primary_palette = "Gray"
+                            
+                            MDBoxLayout:
+                                padding: dp(20)
+                                
+                                MDIcon:
+                                    icon: "palette"
+                                    theme_icon_color: "Primary"
+                                    size_hint_x: None
+                                    width: dp(30)
+                                
+                                MDLabel:
+                                    text: "Gray Theme"
+                                    font_style: "Body"
+                                    role: "large"
+                                    theme_text_color: "Primary"

@@ -1,0 +1,385 @@
+<PersonalInfoScreen>:
+    Header:
+    
+    FloatLayout:
+        MDBoxLayout:
+            pos_hint: {"top": .93}
+            size_hint_y: None
+            height: dp(50)
+            padding: ('30dp', '0dp', '30dp', '0dp')
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: 
+                    app.root.ids.screen_manager.current = "settings"
+                    app.root.ids.screen_manager.transition.direction = "right"
+                
+                size_hint: None, None
+                size: dp(50), dp(50)
+
+            MDLabel:
+                text: "Personal Information"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "8dp"
+        padding: ('0dp', '100dp', '0dp', '0dp')
+        
+        MDScrollView:
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "20dp"
+                adaptive_height: True
+                padding: ["20dp", "20dp", "20dp", "20dp"]
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "32dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+
+                            MDIcon:
+                                icon: "account-circle"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                           
+                            MDLabel:
+                                text: "Profile Picture"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "16dp"
+                            size_hint_y: None
+                            height: "80dp"
+                            
+                            MDIcon:
+                                icon: "account-circle"
+                                theme_icon_color: "Secondary"
+                                size_hint_x: None
+                                width: "80dp"
+                                size_hint_y: None
+                                height: "80dp"
+                            
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: "8dp"
+                                
+                                MDButton:
+                                    style: "filled"
+                                    size_hint_y: None
+                                    height: "36dp"
+                                    size_hint_x: None
+                                    width: "120dp"
+                                    
+                                    MDButtonText:
+                                        text: "Change Photo"
+                                
+                                MDButton:
+                                    style: "outlined"
+                                    size_hint_y: None
+                                    height: "36dp"
+                                    size_hint_x: None
+                                    width: "120dp"
+                                    
+                                    MDButtonText:
+                                        text: "Remove"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "card-account-details"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Basic Information"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDTextField:
+                            id: username_field
+                            hint_text: "Username"
+                            text: "john_doe"
+                            size_hint_y: None
+                            height: "56dp"
+                            
+                            MDTextFieldLeadingIcon:
+                                icon: "at"
+                        
+                        MDTextField:
+                            id: first_name_field
+                            hint_text: "First Name"
+                            text: ""
+                            size_hint_y: None
+                            height: "56dp"
+                            
+                            MDTextFieldLeadingIcon:
+                                icon: "account"
+                        
+                        MDTextField:
+                            id: last_name_field
+                            hint_text: "Last Name"
+                            text: ""
+                            size_hint_y: None
+                            height: "56dp"
+                            
+                            MDTextFieldLeadingIcon:
+                                icon: "account"
+                        
+                        MDTextField:
+                            id: email_field
+                            hint_text: "Email Address"
+                            text: "john.doe@example.com"
+                            size_hint_y: None
+                            height: "56dp"
+                            
+                            MDTextFieldLeadingIcon:
+                                icon: "email"
+                
+                MDCard:
+                    style: "elevated"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "text-box"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "About Me"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDTextField:
+                            id: bio_field
+                            hint_text: "Tell us about yourself..."
+                            text: ""
+                            multiline: True
+                            size_hint_y: None
+                            height: "120dp"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "24dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "16dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "shield-account"
+                                theme_icon_color: "Primary"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Privacy Settings"
+                                theme_text_color: "Primary"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "16dp"
+                            size_hint_y: None
+                            height: "48dp"
+                            
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: "4dp"
+                                
+                                MDLabel:
+                                    text: "Public Profile"
+                                    theme_text_color: "Primary"
+                                    font_style: "Body"
+                                    size_hint_y: None
+                                    height: "24dp"
+                                
+                                MDLabel:
+                                    text: "Allow others to find and view your profile"
+                                    theme_text_color: "Secondary"
+                                    font_style: "Body"
+                                    size_hint_y: None
+                                    height: "20dp"
+                            
+                            MDSwitch:
+                                id: public_profile_switch
+                                active: True
+                                size_hint_x: None
+                                width: "48dp"
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "16dp"
+                            size_hint_y: None
+                            height: "48dp"
+                            
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: "4dp"
+                                
+                                MDLabel:
+                                    text: "Show Email"
+                                    theme_text_color: "Primary"
+                                    font_style: "Body"
+                                    size_hint_y: None
+                                    height: "24dp"
+                                
+                                MDLabel:
+                                    text: "Display email address on your profile"
+                                    theme_text_color: "Secondary"
+                                    font_style: "Body"
+                                    size_hint_y: None
+                                    height: "20dp"
+                            
+                            MDSwitch:
+                                id: show_email_switch
+                                active: False
+                                size_hint_x: None
+                                width: "48dp"
+                
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    spacing: "16dp"
+                    size_hint_y: None
+                    height: "48dp"
+                    
+                    MDButton:
+                        style: "outlined"
+                        size_hint_x: 0.5
+                        
+                        MDButtonText:
+                            text: "Cancel"
+                    
+                    MDButton:
+                        style: "filled"
+                        size_hint_x: 0.5
+                        on_release:
+                            root.save()
+                        
+                        MDButtonText:
+                            text: "Save Changes"
+                
+                MDCard:
+                    style: "outlined"
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    md_bg_color: app.theme_cls.errorContainerColor
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "12dp"
+                        adaptive_height: True
+                        
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: "32dp"
+                            
+                            MDIcon:
+                                icon: "alert-circle"
+                                theme_icon_color: "Error"
+                                size_hint_x: None
+                                width: "32dp"
+                            
+                            MDLabel:
+                                text: "Danger Zone"
+                                theme_text_color: "Error"
+                                font_style: "Body"
+                                role: "large"
+                                bold: True
+                                size_hint_y: None
+                                height: "26dp"
+                        
+                        MDLabel:
+                            text: "Once you delete your account, there is no going back. Please be certain."
+                            font_style: "Body"
+                            text_size: self.width, None
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                        
+                        MDButton:
+                            style: "outlined"
+                            size_hint_y: None
+                            height: "48dp"
+                            pos_hint: {"center_x": 0.5}
+                            md_bg_color: app.theme_cls.errorColor
+                            on_release: 
+                                app.root.ids.screen_manager.current = "delete_account"
+                                app.root.ids.screen_manager.transition.direction = "left"
+                                
+                            MDButtonText:
+                                text: "Delete Account"

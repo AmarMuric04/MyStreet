@@ -1,0 +1,8 @@
+{
+  "dark_mode": true,
+  "language": "English",
+  "push_notifications": true,
+  "email_notifications": true,
+  "user_name": "John Doe",
+  "user_email": "john.doe@email.com"
+}

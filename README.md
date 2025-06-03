@@ -56,10 +56,6 @@ pip install -r requirements.txt
 Sit there for 2/5/10 minutes, don't worry if there's no UI, as long as it says installing ... It's installing.
 When it's done, it will say "Successfully installed ..."
 
-```bash
-deactivate
-```
-
 ## 5. Run the backend
 
 You can run the Flask - MongoDB backend by doing:
@@ -67,7 +63,7 @@ You can run the Flask - MongoDB backend by doing:
 ### Windows:
 
 ```bash
-python backend\\src\\microblog.py
+python backend/app.py
 ```
 
 ### macOS/Linux:
@@ -78,36 +74,26 @@ python3 backend/src/microblog.py
 
 ## 6. Open up a new terminal.
 
-## 6.5 Either run the Toga (Beeware) Frontend or the Kivy Frontend
+## 7. Run the venv!
 
-- Toga
+```bash
+source venv/bin/activate
+```
+
+## 8. Run the frontend
 
 ### Windows:
 
 ```bash
-python toga_frontend\\src\\app.py
+python frontend/src/app.py
 ```
 
 ### macOS/Linux:
 
 ```bash
-python3 toga_frontend/src/app.py
+python frontend/src/app.py
 ```
 
-- Kivy
-
-### Windows:
-
-```bash
-python kivy_frontend\\src\\main.py
-```
-
-### macOS/Linux:
-
-```bash
-python kivy_frontend/src/main.py
-```
-
-## 7. Enjoy a mock authentication with JWT & Sessions
+## 7. Enjoy the prototype!
 
 ---

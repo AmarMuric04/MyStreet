@@ -1,42 +1,60 @@
 <CreatePost>:
+    Header:
+
     FloatLayout:
         MDBoxLayout:
-            pos_hint: {"top": 1}
+            pos_hint: {"top": .93}
             size_hint_y: None
             height: dp(50)
-            padding: dp(10)
-            MDLabel:
-                text: "MyStreet"
-                bold: True
-            
+            padding: ('30dp', '0dp', '30dp', '0dp')
             MDIconButton:
-                icon: "hamburger"
-                on_release: app.root.ids.nav_drawer.set_state("toggle")
+                icon: "arrow-left"
+                on_release: app.root.ids.screen_manager.current = "posts"
+                size_hint: None, None
+                size: dp(50), dp(50)
+            
+            MDLabel:
+                text: "Back"
+                bold: True
+                size_hint_y: None
+                height: dp(44)
+
+
     AnchorLayout:
         MDBoxLayout:
             orientation: "vertical"
             size_hint: None, None
-            padding: dp(20)
+            padding: ('5dp', '50dp', '5dp', '5dp')
             spacing: dp(32)
-            height: dp(400)
+            height: dp(550)
             width: dp(400)
+
+
+            
             MDLabel:
                 text: "Create a Post"
                 bold: True
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
+                font_style: "Display"
+                theme_text_color: "Primary"
+                role: "medium"
                 halign: "center"
-                size_hint: 1, None
-                height: dp(50)
+
             MDTextField:
                 id: title_input
                 mode: "outlined"
 
                 MDTextFieldHintText:
                     text: "Title"
+                
+                MDTextFieldLeadingIcon:
+                    icon: "text-short"
+                
+                MDTextFieldHelperText:
+                    text: "Title of the post"
+                    mode: "persistent"
 
                 MDTextFieldMaxLengthText:
-                    max_text_length: 10
+                    max_text_length: 64
 
             MDTextField:
                 id: text_input
@@ -45,29 +63,25 @@
                 MDTextFieldHintText:
                     text: "Content"
 
+                MDTextFieldLeadingIcon:
+                    icon: "text"
+            
+                MDTextFieldHelperText:
+                    text: "Share your thoughts"
+                    mode: "persistent"
+
                 MDTextFieldMaxLengthText:
                     max_text_length: 512
-            # MDTextField:
-            #     id: title_input
-            #     hint_text: "Enter title"
-            #     multiline: False
-            #     size_hint: 1, None
-            #     height: dp(40)
-            # MDTextField:
-            #     id: text_input
-            #     hint_text: "Enter your post content"
-            #     multiline: True
-            #     size_hint: 1, None
-            #     height: dp(80)
-            AnchorLayout:
-                MDButton:
-                    style: "outlined"
-                    size_hint_x: None
-                    width: dp(400)
-                    radius: 8
-                    on_release: root.open_file_manager()
-                    MDButtonText:
-                        text: "Select Image"
+            MDButton:
+                style: "filled"
+                size_hint_x: None
+                width: dp(400)
+                radius: 8
+                on_release: root.open_file_manager()
+                MDButtonIcon:
+                    icon: "image"
+                MDButtonText:
+                    text: "Select Image"
             MDLabel:
                 id: selected_image_label
                 text: "No file selected"
@@ -88,25 +102,11 @@
 
                 MDLabel:
                     text: "Post anonymously"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
                     size_hint_y: None
                     height: dp(18)
-            # MDTextField:
-            #     id: image_input
-            #     hint_text: "Image URL or file path"
-            #     multiline: False
-            #     size_hint: 1, None
-            #     height: dp(40)
-            # MDTextField:
-            #     id: tags_input
-            #     hint_text: "Enter tags separated by commas"
-            #     multiline: False
-            #     size_hint: 1, None
-            #     height: dp(40)
 
             MDButton:
-                style: "filled"
+                style: "elevated"
                 size_hint_x: None
                 width: dp(400)
                 radius: 8
@@ -118,13 +118,3 @@
                 MDButtonText:
                     id: post_button
                     text: "Create Post"
-
-            # MDRaisedButton:
-            #     id: post_button
-            #     text: "Submit Post"
-            #     size_hint: 1, None
-            #     height: dp(50)
-            #     halign: "center"
-            #     md_bg_color: 1, 1, 1, 1
-            #     text_color: 0, 0, 0, 1
-            #     on_press: root.create_post()

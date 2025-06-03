@@ -40,6 +40,15 @@ class PostItem(MDBoxLayout):
     current_dialog = None
     image_url = StringProperty(allownone=True)
     
+    def show_snackbar(self, message):
+        snackbar = MDSnackbar(
+            MDSnackbarText(text=message),
+            y=dp(24),
+            pos_hint={"center_x": 0.5},
+            size_hint_x=0.8,
+        )
+        snackbar.open()
+        
     def toggle_like(self, post_item):
         app = MDApp.get_running_app()
         user_data = app.user_data
@@ -80,7 +89,11 @@ class PostItem(MDBoxLayout):
         menu_items = [
             {
                 "text": "Report",
-                "on_release": lambda x="Report": self.menu_callback(x),
+                "on_release": lambda x="Report", y=post: self.menu_callback(x, y),
+            },
+            {
+                "text": "Edit",
+                "on_release": lambda x="Edit", y=post: self.menu_callback(x, y),
             },
         ]
         if post.created_by_current_user:
@@ -112,6 +125,8 @@ class PostItem(MDBoxLayout):
             create_post_screen.editing_post = post
             create_post_screen.group_id = post.group_id
             app.root.ids.screen_manager.current = "create_post"
+        elif action == "Report":
+            self.show_snackbar("User has been reported.")
 
     def view_comments(self, post):
         app = MDApp.get_running_app()
@@ -127,7 +142,6 @@ class PostItem(MDBoxLayout):
         headers = {}
         headers["Authorization"] = f"Bearer {get_token()}"
 
-        # UrlRequest will do this on a background thread
         UrlRequest(
             url,
             on_success=self.on_delete_success,
@@ -138,7 +152,6 @@ class PostItem(MDBoxLayout):
         )
 
     def on_delete_success(self, request, result):
-        # e.g. remove the widget, show toast, refresh list, etc.
         self.parent.remove_widget(self)
         print("Ok!")
         MDSnackbar(
